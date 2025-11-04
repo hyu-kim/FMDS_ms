@@ -1,0 +1,65 @@
+\section*{\small Dimension Reduction for Permutation-based Hypothesis Testing in Ecological Data}
+\textit{Problem description.}\quad
+High-dimensional statistics have been the most powerful tool for addressing ecological data as they present a vast size and number of samples. Interpreting these high-dimensional data is difficult, given that the data contain redundant information and are not intuitive. To extract an essential information, dimension reduction has widely been used as a tool for visualizing ecological dataset. In addition to the visualization, quantitative analysis follows to provide a statistical validation on a specific observation. Such quantitative analyses include hypothesis testing / linear regression. 
+
+In my PhD project I have analyzed community structures of microbial samples located under two different environmental sites. After incubating the microbial cultures at each site under two different conditions (with / without their eukaryotic host), the communities were profiled by measuring their relative abundances with their 16S ribosomal RNA sequences [2].
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=5.7in]{images/flow.eps}
+\caption{Workflow to analyze high-dimensional data in ecological studies.}
+\end{figure}
+
+Because each community sample contained 50--100 different bacterial taxa, dimension reduction (multidimensional scaling, MDS) was performed to simplify the abundance data (Fig.1B). The data were also quantitatively validated for hypothesis testing, by using permutational multivariate analysis of variance (PERMANOVA) [1], to test for a difference between two conditions imposed to the samples (with or without the host, Fig.1C). A non-Euclidean distance metric (UniFrac [3]) has been chosen to represent phylogenetic dissimilarities between community samples comprised of distinct taxonomic agents (Fig.1A).
+
+Interestingly, MDS visualization resulted in a two-dimensional visualization with less clear difference between two conditions but with a higher \textit{F}-statistic (i.e. lower \textit{P}-value). As shown in Fig.2A, community samples in \textsf{Site 1} exhibit a more visible difference between conditions (presence of host) than those in \textsf{Site 2}. However, \textit{F}-statistic for the group difference in communities located in \textsf{Site 1} is lower than that located in \textsf{Site 2} (Fig.2B). Notably, at \textsf{Site 2} the ordination in two-dimension does not show a notable difference between the groups although it is statistically significant ($P = 0.001$). Based on the contradictory result, we hypothesized that the dimension reduction method (MDS) does not produce a visualizing result to consistently align with hypothesis testing for statistical difference between groups.
+\begin{figure}[h]
+\centering
+\includegraphics[width=5.6in]{images/pcoa-permanova.eps}
+\caption{(A) Multidimensional scaling and (B) statistical test results on a group difference between two conditions (groups).}
+\end{figure}
+
+\noindent\textit{Estimation method \& Regularization geometry.} \quad
+We aim to establish a new method that can reduce the dimension while carrying over the original structure of labeled data. In specific, we adopt a factor rotation (commonly used in factor analysis) to find improved principal components, where an orthogonal rotation vector is multiplied to original principal components. To formulate our problem we first consider a binary regression model,
+\begin{equation}
+    Y = \sigma(\X_{B}\beta) + \eps,
+\end{equation}
+where $Y\in\{0,1\}^{N}$ is a binary response vector, $\sigma(\cdot)$ is a sigmoid function, $\X_B\in\R^{N\times k}$ is a design matrix which has been projected from an original design matrix $\X\in\R^{N\times d}$ onto $k$ dimension using the first $k$ vectors from an orthonormal matrix $B\in[-1,1]^{d\times d}$, and $\eps$ is a Gaussian noise vector. 
+
+Next we consider an orthogonal rotation matrix $R\in\R^{d\times d}$, allowing us to write a revised principal component $B' = RB$ and to consider a different design matrix $\X_{B'}$ for the binary classification. We are interested in evaluating how $B'$ can well perform to classify the labeled data compared to the previous ordination $B$. For such evaluation we propose two measures that are commonly used: 1) a loss function $\cL(\X_{B'}, Y, \beta)$ which is derived from projected design matrix $\X_B'$, and 2) the \textit{F}-ratio $F(\X, Y)$ from the original design matrix $\X$. Specifically, the loss function $\cL$, writes
+\begin{equation*}
+    \cL(\X_{B'}, Y, \beta) = \frac{1}{2N}\norm{Y - \sigma(\X_{B'}\beta)}_2 + \lambda\norm{\beta}_1
+\end{equation*}
+and the latter, $F(\X, Y)$, is defined as described in Fig.1C. Furthermore, as discussed in the class we can find a Lasso estimator $\beta^*$ that minimizes the loss function, i.e.
+\begin{equation*}
+    \cL^* (\X_{B'}, Y, \beta^*) = \min_{\beta}\frac{1}{2N}\norm{Y - \sigma(\X_{B'}\beta)}_2 + \lambda\norm{\beta}_1,
+\end{equation*}
+so that we can write a pair $(\cL^*, F)$ for every given rotational matrix $R$.
+
+Finally, we use the permutation [2] to formulate our problem into optimization. In other words, we randomly shuffle elements in response vector $Y$ to obtain a new response vector $Y^\pi$, and write a `permuted' pair $(\cL^{*\pi}, F^\pi)$ which satisfies the following:
+\begin{equation*}
+\begin{aligned}
+    \cL^{*\pi} (\X_{B'}, Y^\pi, \beta^*) &= \min_{\beta}\frac{1}{2N}\norm{Y^\pi - \sigma(\X_{B'}\beta)}_2 + \lambda\norm{\beta}_1, \\
+    F^\pi (\X, Y^\pi) &= (\text{A new \textit{F}-ratio obtained from } \X\text{ and } Y^\pi)
+\end{aligned}
+\end{equation*}
+
+For a number of shuffling (e.g. $n$ = 1,000 permutations) we will obtain a sequence of pairs \newline $(\cL^{*\pi_1}, F^{\pi_1}), \cdots (\cL^{*\pi_n}, F^{\pi_n})$ which allows us to establish a linear regression model and its optimized loss function $\Tilde{\cL}^\dagger$ as
+\begin{equation*}
+\begin{aligned}
+    F^{\pi_i} &= \gamma \cL^{*\pi_i} + \eps'_i \\
+    \Tilde{\cL}^\dagger (\cL^{*\pi}, F^{\pi}) &= \min_{\gamma\in\R}\frac{1}{2n}\norm{F^\pi - \gamma\cL^{*\pi}}_2 + \lambda\norm{\beta}_1
+\end{aligned}
+\end{equation*}
+for a given rotation matrix $R$. Now it reduces to a problem to find an optimal matrix $R^*$ such that
+\begin{equation*}
+    R^{*} = \argmin_{R\in\R^{d\times d}} \Tilde{\cL}^\dagger (\cL^{*\pi}, F^{\pi}).
+\end{equation*}
+Overall, we observe how dimension reduction (which is one representing example for parsimonious principle) can sometimes lead to an inconsistent visualization results. We have formulated the problem into a binary and linear regression settings using a Lasso estimator, to obtain an estimator matrix that can resolve the inconsistency. This formulation can be applied to improve existing dimension reduction methods, including for Euclidean and non-Euclidean distance metric settings, which will bring a broad impact in ecological studies. \newline
+
+\small
+\begin{enumerate}[leftmargin=*, nolistsep]
+  \item H. Kim \textit{et al.}, Bacterial Response to Spatial Gradients of Algal-Derived Nutrients in a Porous Microplate, \textit{bioRxiv}, \href{https://www.biorxiv.org/content/10.1101/2021.06.23.449330v1.full}{doi:10.1101/2021.06.23.449330}.
+  \item M. J. Anderson, A New method for Non-Parametric Multivariate Analysis of Variance of Variance, \textit{Austral Ecol.} \textbf{26}, 32--46 (2001).
+  \item C. Lozupone and R. Knight, UniFrac: a New Phylogenetic Method for Comparing Microbial Communities, \textit{Appl. Environ. Microbiol.} \textbf{71}, 8228--8235 (2005).
+\end{enumerate}

@@ -1,0 +1,159 @@
+\documentclass{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% Setup %%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=3.3cm]{geometry}
+% \usepackage{fullpage}
+\usepackage{fmtcount} % 1st, 2nd...
+\usepackage[english]{babel}
+\usepackage{kotex}
+\usepackage{soul} % spacing
+\usepackage{enumerate} % change enum label
+\usepackage{framed} % frame pagebreak
+
+%%%%% Math, Code 
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{array}
+\usepackage{mathtools} 
+\usepackage{verbatim}
+\usepackage{fancyvrb} % verbatim
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+%%%%% Graphic, Figure, Table
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow} % table
+\usepackage{diagbox} % table
+\usepackage{booktabs} % pretty table
+\usepackage{colortbl} % color cells
+\usepackage{longtable} % table to next page
+\usepackage{rotating}
+\usepackage{lscape} % landscape page
+\usepackage{pdfpages} % insert external pdf file
+\usepackage{wrapfig} % wrap fig, tbl with text
+\usepackage{tikz}  % draw
+\usetikzlibrary{
+    arrows, decorations.pathmorphing, decorations.markings,
+    backgrounds, fit, positioning, shapes.symbols, chains
+}
+
+%%%%% Bib, Cite
+% \usepackage{natbib}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage[firstinits=true]{biblatex}
+% \addbibresource{thesisref.bib}
+
+%%%%%% Setup
+\captionsetup{compatibility=false} %subfig
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{dfn}{Definition}
+\newtheorem{ex}{Example}
+\newtheorem{cmt}{Cmt}[section]
+\newtheorem{rmk}{Remark}[section]
+\newcommand{\rb}[1]{\raisebox{-.5em}[0pt]{#1}}
+%\renewcommand{\baselinestretch}{1.9}
+\renewcommand{\mid}{\, | \ , }
+\newcommand{\1}{{\rm 1}\kern-0.24em{\rm I}}
+%\newcommand{\eighth}{{\textstyle \frac{1}{8}}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\bbr}{\mathbb{R}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{GD approach 2}
+\author{HK}
+\date{November 20, 2022}
+
+\begin{document}
+
+\maketitle
+\paragraph{Intuition.}
+Our previous approach did not converge when the hyperparameter $\lambd$ was large; we think this was because the confirmatory (classification) term was non-convex. Here I suggest a convex objective function to enable our effort using GD. 
+
+Again, consider a balanced design where the number of total observations is $N$, the number of groups $a$, and we want to find a configuration $\mathbf{z} = (\mathbf{z}_1, \cdots, \mathbf{z}_N) \in \bbr^{N \times S}$, $\mathbf{z}_i \in \bbr^S$. $S$ often equals to 2 or 3. Then the updated objective function is proposed as
+
+\begin{align}
+O(\mathbf{z}) = \underbrace{\frac{1}{2}\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2}_\text{$f(\mathbf{z})$} + \lambda \underbrace{(N-2) \left(\sum_{i,j} [1- (\Phi+1)\1\{y_i = y_j\}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right)^2}_\text{$g(\mathbf{z})$}
+\end{align}
+
+where $\Phi$ is defined as
+
+$$
+\Phi \vcentcolon= \frac{\sum_{i,j} \1\{y_i \neq y_j\} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2}
+$$
+
+and we want to find a minimizing configuration 
+
+$$
+\mathbf{z}^* = \argmin_{(\mathbf{z}_1, \cdots, \mathbf{z}_N)} O(\mathbf{z}).
+$$
+
+In detail, The second term $g(\mathbf{z})$ in Eq. (1) originates in a difference in pseudo-$F$ of the original and $S$ dimensional data structure. More precisely, the difference is expressed as
+
+\begin{align}
+F_{\text{MDS}}(\mathbf{z}) - F_0 &= 
+\left(\frac{\sum_{i,j} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\sum_{i,j} \1\{y_i = y_j\}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2} - \frac{\sum_{i,j} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2}\right) (N - a) \\
+&= \left(\frac{\sum_{i,j} \1\{y_i \neq y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2} - \frac{\sum_{i,j} \1\{y_i \neq y_j\} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2}\right) (N - a)
+\end{align}
+
+where we care about its nominator,
+
+\begin{align}
+\sum_{i,j} &\1\{y_i \neq y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 - \frac{\sum_{i,j} \1\{y_i \neq y_j\} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2}\cdot \sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 \\
+&= \sum_{i,j} \1\{y_i \neq y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 - \Phi\cdot \sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 \\
+&= \sum_{i,j} [1- (\Phi+1)\1\{y_i = y_j\}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2.
+\end{align}
+
+By taking squared on Eq. (6), we obtain a confirmatory term $g(\mathbf{z})$ in Eq. (1), and we know it is convex in regards to $\mathbf{z}$. A side note, an exact proof will be given later on a relationship between the MDS term $f(\mathbf{z})$ and a boundedness of the denominator term $\sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2$. It would allow us to guess how much $g(\mathbf{z^*})$ can deviate from $F_{\text{MDS}}(\mathbf{z^*}) - F_0$.
+
+
+\paragraph{Derivation.} Next we move on to obtain the derivative of $O(\mathbf{z})$ to perform GD. For MDS term we previously saw for a fixed $i$,
+$$
+\nabla f(\mathbf{z}_i) = \Bigg[ 2 \sum_{j=1}^N \bigg(1 - \frac{D_{ij}}{\| \mathbf{z}_i - \mathbf{z}_j \|_2} \bigg) (z_{is} - z_{js}) \Bigg]_{s = 1, \cdots, S}.
+$$
+
+For the confirmatory term we write
+
+\begin{align*}
+\nabla g(\mathbf{z}_i) 
+&= \left[\frac{\partial}{\partial z_{is}}g(\mathbf{z_i})\right]_{s = 1, \cdots, S} \\
+&= 2(N-2)\left. \sum_{i,j} [1- (\Phi+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\cdot \sum_{i,j} [1- (\Phi+1)\epsilon_{ij}]\frac{\partial\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\partial z_{is}} \right|_{s = 1, \cdots, S} \\
+&= 8(N-2)\left. \sum_{i,j} [1- (\Phi+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\cdot \sum_{j=1}^{N} [1- (\Phi+1)\epsilon_{ij}](z_{is}-z_{js}) \right|_{s = 1, \cdots, S}
+\end{align*}
+
+where we defined $\epsilon_{ij} = \1\{y_i = y_j\}$ for simplicity. Here we use a fact that
+
+\begin{align*}
+\sum_{i,j}^{N}\frac{\partial\|\mathbf{z}_i-\mathbf{z}_j\|_2^2}{\partial z_{is}} 
+&= \frac{\partial}{\partial z_{is}} \sum_{i,j}^{N}\sum_{k=1}^{S} (z_{ik}-z_{jk})^2 = 2\frac{\partial}{\partial z_{is}} \sum_{j=1}^{N}\sum_{k=1}^{S} (z_{ik}-z_{jk})^2 \\
+&= 2\frac{\partial}{\partial z_{is}} \sum_{j=1}^{N} (z_{is}-z_{js})^2 = 4 \sum_{j=1}^{N} (z_{is}-z_{js})
+\end{align*}
+
+\vspace{15mm}
+GD: Update
+
+$$
+\mathbf{z}_i^{(t+1)} \leftarrow \mathbf{z}_i^{(t)} - \eta_{(t)} \bigg(\nabla f \big(\mathbf{z}_i^{(t)}\big) + \lambda \nabla g\big(\mathbf{z}_i^{(t)}\big) \bigg)
+$$
+
+Initial value는 MDS solution으로 한다.
+
+\end{document}

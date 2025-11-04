@@ -1,0 +1,187 @@
+\documentclass[12pt]{article}
+\usepackage[letterpaper, margin=1in]{geometry}
+\usepackage{amsfonts,amssymb,amsmath}
+\usepackage{mathrsfs,mathtools}
+\usepackage{authblk, comment}
+\usepackage{graphicx}%
+\usepackage{verbatim}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+%\usepackage{biblatex}
+
+% %\hypersetup{
+%     colorlinks=true,
+%     linkcolor=blue,
+%     }
+% 색은 나중에 빼도 되는데 수정할 때에는 색 있는게 눈에 띄어서 편한 것 같음
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{February 2022}
+\lhead{Research proposal}
+\fancyfoot[C]{\thepage}
+
+\newcommand{\field}[1]{\mathbb{#1}}
+\newcommand{\X}{\field{X}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\R}{{\rm I}\kern-0.18em{\rm R}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\norm}[1]{\Vert#1\Vert}
+\newcommand{\argmin}{\mathop{\mathrm{argmin}}}
+\renewcommand{\baselinestretch}{1.15}
+\captionsetup[figure]{font=small, labelfont=small}
+
+\title{New Multidimensional Scaling for Hypothesis Testing}
+\author[1,3]{Soobin Kim}
+\author[2,3]{Hyungseok Kim}
+\affil[1]{\small Department of Statistics, Seoul National University}
+\affil[2]{\small Department of Mechanical Engineering \& Institute of Data, Systems, and Society, MIT}
+\affil[3]{Equal contribution.}
+
+\begin{document}
+\maketitle
+\section{Background}
+Multivariate statistics have increasingly been a powerful method for modern data analysis where they present a vast size and number of samples. Because they cannot be easily interpreted, it often involves using statistical tools that enable qualitative\,/\,quantitative methods such as data visualization and statistical hypothesis testing. 
+
+Data visualization is a straightforward way to observe data structure. When the dimension of data exceeds the extent to which we can visualize it, it should be transformed to a lower dimension (2-D or 3-D) by a process called dimension reduction. The most popular method in dimension reduction is principal component analysis (PCA), where it sequentially derives projection axes (principal components) based on their eigenvalues, thereby carrying over the original data structure as much as possible. Specifically, this is enabled by constructing a covariance matrix from a design matrix $X$, followed by singular value decomposition of the covariance matrix. The resulting eigenvalues and eigenvectors of the covariance matrix are ordered by their values and the principal axes are determined.
+
+While PCA is a classical linear method for dimension reduction, multidimensional scaling (MDS) performs nonlinear dimension reduction, based on dissimilarity or distance measures between observations \cite{fodor}. MDS seeks a lower-dimensional ordination (2-D or 3-D) that best preserves the original distance, which can either be measured using Euclidean, non-Euclidean metric, or even a non-metric. For example, analyzing microbial composition (microbiome) data relies on MDS, and each composition measure is based on a phylogenetic tree that is non-Euclidean.
+
+At the same time, quantitative analyses including hypothesis testing or statistical regression are carried out for statistical inference on the dataset. These procedures are often conducted separately from the data visualization and dimension reduction methods in that they use the original data rather than the reduced ones. A longstanding question exists on how to analyze high-dimensional data with a limited number of samples because there is no unique answer, which is often known as ``curse of dimensionality''. A few recent approaches are introduced in Section \ref{appdx}.
+
+Previously, we have interpreted community data of microbial samples located at different environmental sites \cite{kim}. The environmental sites have a predefined spatial arrangement of wells that can incubate microbial communities, where the incubating device is built by a porous material to allow metabolic crosstalk between the microbes located spatially distant (Fig.\,\ref{fig:scheme}a,b). By using this incubation system we analyzed microbial communities under various environmental factors, including their growth period, nutrient availability, and the presence of a bacterial host (Fig.\,\ref{fig:scheme}c). In this research, we are primarily interested in the difference in the microbial communities between with or without bacterial host.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=6in]{images/scheme.eps}
+    \caption{(a) Porous microplate with a spatial array of wells to culture microbial cells (scale bar, 10 mm). (b) Scanning electron microscopy structure of porous material that constructs the microplate (scale bar, 1 µm). (c) Experimental design to analyze microbial community structure for statistical analysis.}
+    \label{fig:scheme}
+\end{figure}
+
+As a measure of phylogenic distances between community taxon, a non-Euclidean metric called UniFrac \cite{lozupone} was applied to obtain the dissimilarity matrices for statistical analyses (Fig.\,\ref{fig:flow}a). Because each community sample contained 50--100 different bacterial taxa, dimension reduction (multidimensional scaling, MDS) was performed to simplify and visualize the dissimilarity matrices in two dimension (Fig.\,\ref{fig:flow}b). The data were also quantitatively validated for hypothesis testing using permutational multivariate analysis of variance (PERMANOVA) \cite{anderson}, which tests for a difference in sample variances between two treatments based on pseudo \textit{F}-statistic (Fig.\,\ref{fig:flow}c). 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5.7in]{images/flow.eps}
+    \caption{Workflow to analyze microbial communities dataset.}
+    \label{fig:flow}
+\end{figure}
+
+Interestingly, it was hard to distinguish between two treatments at every site from the visualization using multidimensional scaling whereas PERMANOVA hypothesis testing resulted in a statistical significance. Precisely, comparing \textsf{Site 1} and \textsf{Site 2}, MDS plot implied the distinction between two treatments that was more apparent in \textsf{Site 1} (Fig.\,\ref{fig:orig_res}a); however, PERMANOVA showed the opposite by resulting in a higher \textit{F}-statistic in \textsf{Site 1} than \textsf{Site 2} (Fig.\,\ref{fig:orig_res}b). Based on this unexpected inconsistency, we hypothesized that the current visualization (MDS) may not produce a satisfactory result that accords to hypothesis testing.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5.6in]{images/pcoa-permanova.eps}
+    \caption{(a) Multidimensional scaling and (b) statistical test results per site on difference between two treatments.}
+    \label{fig:orig_res}
+\end{figure}
+
+\section{Resolving discrepancy between supervised and unsupervised methods}
+Indeed, it is not surprising to see this inconsistency between the two methods, because they aim to extract different information. Multidimensional scaling is a non-supervised method that does not count any observations into consideration and relies on the design matrix and its distance metric. On the other hand, reformulating our problem into the scheme of binary classification by letting each treatment as label, binary classification is supervised learning that finds a criterion explaining the structural difference between labeled data. We believe this redefining would provide some meaningful insights to our problem.
+
+% Hypothesis testing과 classification의 차이에 대해서는 chapter 3에서 언급. 여기에서는 자연스럽게 classification에 대해서만 이야기.
+% Confirmatory MDS에 대해서 쓰기.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=2.2in]{images/label.eps}
+    \caption{Simple illustration of a labeled data with two different projecting axes.}
+    \label{fig:axes}
+\end{figure}
+
+A representative difference on these methods can be illustrated by considering a binary labeled, two-dimensional dataset as shown in Fig.\,\ref{fig:axes}. When reducing this two-dimensional into an one-dimensional while preserving their dispersion, one can perform the principal component analysis (PCA), which is equivalent to MDS with Euclidean distance, and choose \textsf{Axis 1} as the main principal component. On the other hand, \textsf{Axis 2} is the normal vector of a hyperplane that separates between labels, but it is perpendicular to \textsf{Axis 1}. This illustration suggests that when data is projected to a lower dimension, under an extreme case, a trade-off of information loss can occur between the covariance structure (dispersion) or observations (labels).
+
+To compromise this discrepancy, Witten and Tibshirani (2011) \cite{witten} proposed a new method that implements a supervised learning to MDS. Referred to as a ``supervised multidimensional scaling (SMDS)'', it configures the data to a lower dimension by balancing between MDS stress function and a supervised term. Specifically, given a $n\times n$ dissimilarity matrix $\mathbf{D}$ and observations vector $\mathbf{y}\in\R^n$, SMDS seeks a configuration $\mathbf{z_1},\cdots,\mathbf{z_n} \in \R^S$ by minimizing the "SDMS criterion" which is a combined sum of stress and supervised terms, expressed as
+\begin{equation}
+    \label{eq:1}
+    \argmin_{\mathbf{z_1},\cdots,\mathbf{z_n}} \left[
+        (1-\alpha)\underbrace{\frac{1}{2}\sum_{i=1}^n \sum_{j=1}^n (D_{ij}-\norm{\mathbf{z_i} - \mathbf{z_j}}_2)^2}_\text{Stress term} 
+        + \alpha\underbrace{\sum_{i,j: y_j > y_i} (y_j - y_i)\sum_{k=1}^S \left( \frac{D_{ij}}{\sqrt{S}} - (z_{jk}-z_{ik}) \right)}_\text{Supervised term}
+    \right],
+\end{equation}
+where $\alpha$ is the weighting parameter to balance between stress function and supervised term. Using real and simulation data examples the authors show how SMDS performs under varying $\alpha$ between 0 and 1. The authors recommend to visualize using these several $\alpha$ values and compare the result, so that the most insightful interpretation can be achieved. 
+
+More generally, SMDS falls into the category of confirmatory MDS \cite{alencar, borg}. Confirmatory MDS incorporates external information of the data or constraints to the solution by adding additional term to the stress function.
+
+\section{Scope of our work}
+To test how SMDS well performs with our microbial community data (Fig.\,\ref{fig:scheme},\ref{fig:orig_res}) we visualized their configurations with different $\alpha$ values as shown in Figs.\,\ref{fig:smds},\ref{fig:smds_crit}. As expected, with increasing $\alpha$ the configurations exhibits a more distinguishable visualization between treatments, converging to a single line due to the fact that the supervised term in Eq.\,(1) is an $L^1$-norm. Figure \ref{fig:smds_crit} provides a richer comparison between \textsf{Site 1} and \textsf{Site 2}, where all terms show a larger value in \textsf{Site 1} than in \textsf{Site 2} for every $\alpha$ ranging from 0 to 1. Noting that supervised term reflects how a binary-labeled group is well separated from one another, the observation may explain why \textsf{Site 1} dataset has a lower \textit{F}-statistic in the hypothesis testing than \textsf{Site 2} does (PERMANOVA, Fig. \ref{fig:orig_res}). Indeed, by setting $\alpha$ at an intermediate value (e.g. 0.5) one can find a precisely separating line between two treatments at \textsf{Site 2} while it does not exist at \textsf{Site 1}.%추세는 예상했던 대로-alpha 커지면 stress increase, 2nd term decrease. Sum of two=criterion is smaller for Site 2. This may have something to do with PERMANOVA result.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5in]{images/SMDS_res.pdf}
+    \caption{SMDS result on the microbial community dataset with tuning parameters $\alpha = 0, 0.5, 1$.}
+    \label{fig:smds}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5in]{images/SMDS_crit.pdf}
+    \caption{SMDS criterion (sum of stress and supervised terms), stress function, and supervised term for a set of $\alpha$ values.}
+    \label{fig:smds_crit}
+\end{figure}
+
+However, the limitations of SMDS are also apparent from Figure \ref{fig:smds}. First, SMDS may result in misleading visualization by selecting $\alpha$ in favor of class separation. In Fig.\,\ref{fig:sim}, we simulated 100 independent 10 dimensional samples from the same distribution, $\mathbf{x}_i \sim N_{10}(\mathbf{0}, \mathbf{I})$, $\mathbf{x}_i \in \mathbb{R}^{10}$ with $i = 1, \cdots, 100$, and split the sample into a half to equally assign a binary label $y_i$. Therefore, the labels $y_i$ are independent to $\mathbf{x}_i$, thus we would expect the visualization of two datasets to be indistinguishable. Contrary to our expectation, the result shows that even a relatively small $\alpha$ can impact the configuration due to a non-negligible supervised term, visualizing the data structure as well-classified. That is, SMDS does not inform us whether the sample groups are different from one another at all, suggesting that an interpretation can be misled by an unfair choice of the tuning parameter $\alpha$. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=6in]{images/sim_smds.pdf}
+    \caption{SMDS on the simulated dataset with different values of $\alpha$. Although two groups of samples (black circles and red triangles) are drawn from the same distribution, SMDS always differentiate them with suitably chosen $\alpha$ values.}
+    \label{fig:sim}
+\end{figure}
+
+Secondly, SMDS is designed for binary classification rather than hypothesis testing, while our interest lies on the latter. Although the two concepts are closely related, the focus of each is different \cite{li}. Classification is for prediction, and true labels are observable at least for train set. Decision rule for classification is usually constructed from the data. Hypothesis testing, on the other hand, is for statistical inference where the truth and falsehood of a hypothesis is unknown. Decision rule of a test does not depend on the data, so it makes more sense to compare the behavior of different datasets. 
+
+Based on these observations, we want to improve current MDS method by constructing a new objective function that encompasses stress and class-separating terms. Overall, we set our goal to 1) preserve the original distance structure as MDS does, 2) distinguish treatments to the degree that the difference between treatments is significant using PERMANOVA, and 3) result in a single visualization with chosen tuning parameter. For the first aim, we seek an alternative expression for the norm (summation) in class-separating function that does not sacrifice an increase of the stress function. %can add a plot [stress / loss] vs. [\alpha] and link it here
+For the second and third aim, we propose a criterion of a selection of tuning parameter $\alpha$ in that the visualization result can accord to the hypothesis testing such as pseudo \textit{F}-statistic.
+
+% 구체적인 방법? PERMANOVA의 statistic 활용?
+
+\section{Appendix: Recent methods in hypothesis testing under high-dimensional settings} \label{appdx}
+While there are extensive statistical literature that present hypothesis testings for high-dimensional data, here we introduce two papers that use the idea of projection for developing the testing methods.
+\subsection{Direction-projection-permutation (DiProPerm)}
+DiProPerm is a computational method in an effort to rigorously assess whether distributions of two samples of high dimension are statistically different to each other by repeatedly permuting sample labels and performing binary classification \cite{wei}. In brief, this method undergoes the following three steps. First, for a given design matrix and its class labels, a binary linear classifier is computed to find an optimally separating plane and normal vector. Second, a univariate two-sample statistic is obtained after data are \textit{projected} onto the normal vector. Finally, the class labels are permuted repetitively to obtain multiple statistics which are used to assess statistical significance (\textit{P}-value) of the original design matrix.
+
+At a glance, the goal of DiProPerm is similar to what we have addressed in the previous section in that it suggests an idea how a testing method and projection can be aligned together to produce a consistent result. 
+%However, our basis assumes that a significant amount of information can be lost under a low dimension, which has motivated us to seek a new ordination method (rather than a new testing procedure), apparently different than DiProPerm.
+However, we aim to apply our analysis to distance matrices not to observational sample matrices, so that the analysis becomes compatible with existing bioinformatic analysis such as UniFrac \cite{lozupone}.
+
+\subsection{Random projection}
+Random projection has been regarded as a computationally efficient method without compromising a information loss \cite{fodor}. In this paper authors propose that random projection can also be applied to Hotelling $T^2$ test for an equality between two sample means at high-dimensional \cite{lopes}. In specific, a single random projection is drawn and used to map from the high dimensional space to a lower dimensional, with a dimension equal or lower than the size of samples. Next, The Hotelling $T^2$ test is performed in the projected space and the same conclusion is drawn to decide whether to reject the null hypothesis in the original space.
+
+The authors claim the random projection overcomes a prominent limitation in hypothesis testing when the number of sample is smaller than the dimension, by randomly projecting the high-dimensional data onto a lower dimensional so that a pooled sample covariance matrix is non singular. While the paper focuses on developing a new hypothesis testing method, different than our scope as described earlier, it is sill worth to note how the concept of random projection can be applied to resolve existing problems in statistical research.
+
+\begin{thebibliography}{}
+\bibitem{fodor}
+I.\,K.\,Fodor, \href{https://faculty.cc.gatech.edu/~isbell/tutorials/dimred-survey.pdf}{\color{blue}{A survey of dimension reduction techniques}} (2002).
+
+\bibitem{kim}
+H.\,Kim, J.\,A.\,Kimbrel, C.\,A.\,Vaiana, J.\,A.\,Wollard, X.\,Mayali and C.\,R.\,Buie, \href{https://www.nature.com/articles/s41396-021-01147-x}{\color{blue}{Bacterial response to spatial gradients of algal-derived nutrients in a porous microplate}}, \textit{The ISME Journal} (2021).
+
+\bibitem{lozupone}
+C.\,Lozupone and R.\,Knight, \href{https://journals.asm.org/doi/10.1128/AEM.71.12.8228-8235.2005}{\color{blue}{UniFrac: a New Phylogenetic Method for Comparing Microbial Communities}}, \textit{Appl. Environ. Microbiol.} \textbf{71}, 8228--8235 (2005).
+
+\bibitem{anderson}
+M.\,J.\,Anderson, \href{https://onlinelibrary.wiley.com/doi/10.1111/j.1442-9993.2001.01070.pp.x}{\color{blue}{A New method for Non-Parametric Multivariate Analysis of Variance of Variance}}, \textit{Austral Ecol.} \textbf{26}, 32--46 (2001).
+
+\bibitem{witten}
+D.\,M.\,Witten and R.\,Tibshirani, \href{https://www.sciencedirect.com/science/article/pii/S0167947310002732}{\color{blue}{Supervised multidimensional scaling for visualization, classification, and bipartite ranking}}, \textit{Comput. Stat. Data Anal.} \textbf{55}, 789--801 (2011).
+
+\bibitem{alencar}
+J.\,Alencar, C.\,Lavor, and T.\,O.\,Bonates, \href{https://ieeexplore.ieee.org/document/6906829}{\color{blue}{A Combinatorial Approach to Multidimensional Scaling}}, \textit{2014 IEEE International Congress on Big Data} (2014).
+
+\bibitem{borg}
+I.\,Borg and P.\,Groenen, \textit{Modern Multidimensional Scaling: Theory and Applications  (Second Edition)}, New York: Springer (2005).
+
+\bibitem{li}
+J.\,J.\,Li and X.\,Tong, \href{https://www.sciencedirect.com/science/article/pii/S2666389920301562#!}{\color{blue}{Statistical Hypothesis Testing versus Machine Learning Binary Classification: Distinctions and Guidelines}}, \textit{Patterns} \textbf{1}(7) (2020).
+
+\bibitem{wei}
+S.\,Wei, C.\,Lee, L.\,Wichers, J.\,S.\,Marron, \href{https://www.tandfonline.com/doi/full/10.1080/10618600.2015.1027773}{\color{blue}{Direction-Projection-Permutation for High-Dimensional Hypothesis Tests}}, \textit{Journal of Computational and Graphical Statistics} (2016).
+
+\bibitem{lopes}
+M.\,E.\,Lopes, L.\,J.\,Jacob, M.\,J.\,Wainwright, \href{https://proceedings.neurips.cc/paper/2011/hash/5487315b1286f907165907aa8fc96619-Abstract.html}{\color{blue}{A More Powerful Two-Sample Test in High Dimensions using Random Projection}}, \textit{Advances in Neural Information Processing Systems} (NeurIPS \textbf{24}) (2011).
+\end{thebibliography}
+
+\end{document}

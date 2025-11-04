@@ -1,0 +1,144 @@
+\documentclass{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% Setup %%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=3.3cm]{geometry}
+% \usepackage{fullpage}
+\usepackage{fmtcount} % 1st, 2nd...
+\usepackage[english]{babel}
+\usepackage{kotex}
+\usepackage{soul} % spacing
+\usepackage{enumerate} % change enum label
+\usepackage{framed} % frame pagebreak
+
+%%%%% Math, Code 
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{array}
+\usepackage{mathtools} 
+\usepackage{verbatim}
+\usepackage{fancyvrb} % verbatim
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+%%%%% Graphic, Figure, Table
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow} % table
+\usepackage{diagbox} % table
+\usepackage{booktabs} % pretty table
+\usepackage{colortbl} % color cells
+\usepackage{longtable} % table to next page
+\usepackage{rotating}
+\usepackage{lscape} % landscape page
+\usepackage{pdfpages} % insert external pdf file
+\usepackage{wrapfig} % wrap fig, tbl with text
+\usepackage{tikz}  % draw
+\usetikzlibrary{
+    arrows, decorations.pathmorphing, decorations.markings,
+    backgrounds, fit, positioning, shapes.symbols, chains
+}
+
+%%%%% Bib, Cite
+% \usepackage{natbib}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage[firstinits=true]{biblatex}
+% \addbibresource{thesisref.bib}
+
+%%%%%% Setup
+\captionsetup{compatibility=false} %subfig
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{dfn}{Definition}
+\newtheorem{ex}{Example}
+\newtheorem{cmt}{Cmt}[section]
+\newtheorem{rmk}{Remark}[section]
+\newcommand{\rb}[1]{\raisebox{-.5em}[0pt]{#1}}
+%\renewcommand{\baselinestretch}{1.9}
+\renewcommand{\mid}{\, | \ , }
+%\newcommand{\eighth}{{\textstyle \frac{1}{8}}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\bbr}{\mathbb{R}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{GD approach}
+\author{soobin0417 }
+\date{March 2022}
+
+\begin{document}
+
+\maketitle
+
+Consider balanced design (number of observations in each group is equal). Number of total observations $N$, number of groups $a$, number of observations per each group $n = N/a$.
+
+
+Configuration $\mathbf{z} = (\mathbf{z}_1, \cdots, \mathbf{z}_N) \in \bbr^{N \times S}$, $\mathbf{z}_i \in \bbr^S$. $S$ often equals to 2 or 3. 
+
+\vspace{15mm}
+Objective function:
+
+\begin{align*}
+O(\mathbf{z}) &= \frac{1}{2}\sum_{i,j} (D_{i,j} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2 + \lambda | F - F_z(\mathbf{z}) | \\
+&= f(\mathbf{z}) + \lambda g(\mathbf{z})
+\end{align*}
+
+We want to minimize $O(\mathbf{z})$ and find the minimizer. Ordinary MDS does this by majorization-minimization approach. However, I have not yet found a simple convex term that majors our second term, so we'll try gradient descent approach first, as a first-attempt.
+
+\vspace{15mm}
+$F$:
+
+\begin{align*}
+SS_T &= \frac{1}{2N} \sum_{i,j} D_{i,j}^2 \\
+SS_W &= \frac{a}{2N} \sum_{i,j} I(y_i = y_j) D_{i,j}^2 \\
+F &= \frac{SS_T - SS_W}{SS_W} (N - a)
+\end{align*}
+
+\vspace{15mm}
+Divide objective function into two parts: MDS term and classification term.
+
+MDS term:
+\begin{align*}
+f(\mathbf{z}) &= \frac{1}{2}\sum_{i,j} (D_{i,j} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2
+\end{align*}
+
+Classification term:
+\begin{align*}
+g(\mathbf{z}) &= | F - F_z(\mathbf{z}) |
+\end{align*}
+
+For fixed $i$,
+\begin{align*}
+\nabla f(\mathbf{z}_i) &= \Bigg[ 2 \sum_{j=1}^N \bigg(1 - \frac{D_{ij}}{\| \mathbf{z}_i - \mathbf{z}_j \|_2} \bigg) (z_{is} - z_{js}) \Bigg]_{s = 1, \cdots, S} \\
+\nabla g(\mathbf{z}_i) = 
+&4\cdot\frac{N-a}{a} \cdot sign(F_z - F)\\ 
+&\cdot \Bigg[ \bigg( \sum_j (z_{is} - z_{js}) \bigg) \bigg( \sum_{i,j} I(y_i = y_j) \,\|\mathbf{z}_i - \mathbf{z}_j \|_2^2 \bigg) \\
+&- \bigg( \sum_{i,j} \| \mathbf{z}_i - \mathbf{z}_j\|_2^2 \bigg) \bigg( \sum_j I(y_i = y_j) \,(z_{is} - z_{js}) \bigg) \Bigg]\\
+&\cdot \textcolor{black}{\bigg( \sum_{i,j} I(y_i = y_j) \,\| z_i - z_j\|_2^2\bigg)^{-2} \bigg|_{s = 1, \cdots, S} }
+\end{align*}
+
+\vspace{15mm}
+GD: Update
+
+$$
+\mathbf{z}_i^{(t+1)} \leftarrow \mathbf{z}_i^{(t)} - \eta_{(t)} \bigg(\nabla f \big(\mathbf{z}_i^{(t)}\big) + \lambda \nabla g\big(\mathbf{z}_i^{(t)}\big) \bigg)
+$$
+
+Initial value는 MDS solution으로 하면 좋을 것 같다.
+
+\end{document}

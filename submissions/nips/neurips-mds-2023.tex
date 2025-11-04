@@ -1,0 +1,403 @@
+\documentclass{article}
+
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2023
+
+
+% ready for submission
+\usepackage{neurips_2023}
+
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2023}
+
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{neurips_2023}
+
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2023}
+
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{xcolor}         % colors
+\usepackage{algorithm}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{dfn}{Definition}
+\newtheorem{ex}{Example}
+\newtheorem{cmt}{Cmt}[section]
+\newtheorem{rmk}{Remark}[section]
+\newcommand{\rb}[1]{\raisebox{-.5em}[0pt]{#1}}
+\newcommand{\1}{{\rm 1}\kern-0.24em{\rm I}}
+\newcommand{\cN}{\mathcal{N}}
+\renewcommand{\mid}{\, | \ , }
+\renewcommand\Affilfont{\normalsize}
+\renewcommand{\baselinestretch}{1.5} 
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\bbr}{\mathbb{R}}
+
+\title{Self-supervised Multidimensional Scaling with $F$-ratio: Improving Microbiome Visualization}
+
+\author{%
+  Hyungseok Kim$^*$ \\
+  Massachusetts Institute of Technology\\
+  Cambridge, MA 02139 \\
+  \texttt{hskimm@mit.edu} \\
+  % examples of more authors
+  \And
+  Soobin Kim$^*$ \\
+  University of California, Davis \\
+  Davis, CA 95616 \\
+  \texttt{sbbkim@ucdavis.edu} \\
+  \And
+  Megan M. Morris \\
+  Lawrence Livermore National Laboratory \\
+  Livermore, CA 94550 \\
+  \texttt{morris81@llnl.gov} \\
+  \And
+  Jeffrey A. Kimbrel \\
+  Lawrence Livermore National Laboratory \\
+  Livermore, CA 94550 \\
+  \texttt{kimbrel1@llnl.gov} \\
+  \And
+  Xavier Mayali \\
+  Lawrence Livermore National Laboratory \\
+  Livermore, CA 94550 \\
+  \texttt{mayali1@llnl.gov} \\
+  \And
+  Cullen R. Buie \\
+  Massachusetts Institute of Technology\\
+  Cambridge, MA 02139 \\
+  \texttt{crb@mit.edu} \\
+}
+
+
+\begin{document}
+
+
+\maketitle
+\def\thefootnote{*}\footnotetext{Equal contribution.}
+
+\begin{abstract}
+    Multidimensional scaling (MDS) is an unsupervised learning technique that preserves pairwise distances between observations and is commonly used for analyzing multivariate biological datasets. Recent advances in MDS have achieved successful classification results, but the configurations heavily depend on the choice of hyperparameters, limiting its broader application. Here, we present a self-supervised MDS approach informed by the dispersions of observations that share a common binary label ($F$-ratio). Our visualization accurately configures the $F$-ratio while consistently preserving the global structure with a low data distortion compared to existing dimensionality reduction tools. Using an algal microbiome dataset, we show that this new method better illustrates the community's response to the host, suggesting its potential impact on microbiology and ecology data analysis. 
+\end{abstract}
+
+%%%%
+\section{Introduction}
+
+Biotechnological advances in the past several decades have expanded a size and features of the multivariate data, necessitating a dimensionality reduction as a tool for the interpretation. 
+By extracting an essential information from the biological data, the dimensionality reduction seeks a visual representation of the multivariate in a lower dimensional space. 
+To retain a consistent data structure while performing the dimension reduction, a configuration is sought in a way that preserves dispersion or dissimilarity between samples, a process called as the multidimensional scaling (MDS). 
+Compared to other nonlinear methods in dimensionality reduction \cite{tenenbaum00, mcInnes18, maaten08}, MDS is known to retain a global structure and represent a long-range interaction between samples, allowing its popularity for a long time since its inception. 
+
+In a classical MDS, the configuration is determined in a way that minimizes the difference between the dissimilarity in the original and the lower dimensional space.
+Because biological observations often present a compositional structure (highly skewed, zero-inflated \cite{gijbels13}), 
+choosing an appropriate dissimilarity metric is an important step for processing the data and representing in the low dimensional space.
+% In microbial ecology where the observational data are compositional (i.e., a sample is comprised of different species expressing a level of abundance), the dissimilarity is measured by a difference in expression level of species within samples. 
+For example, when interpreting a microbial community dataset such as 16S rRNA gene expression, a distance metric such as Unifrac \cite{lozupone05, lozupone07} allows to incorporate taxonomic information as well as the compositional structure. 
+
+Whereas the dimensionality reduction provides a qualitative interpretation on the multivariate data structure, statistical inference such as hypothesis testing is carried out at the same time to give a quantitative analysis on the structural difference by biological responses. 
+% For most of the biological data, a probabilistic distribution cannot be assumed a priori, and a nonparametric hypothesis testing can be constructed instead. 
+% When the response is assumed to be independent between the samples, the statistic can be readily obtained by permuting the data labels \cite{holmes96}. 
+One way to test the difference between response groups is to compare dispersions of the multivariate structure that are calculated across or within the sample groups, which gives an \textit{F}-statistic\cite{gijbels13}.
+The process employs a different information than those used for MDS, in that it is unsupervised learning method and does not use label information. 
+Therefore, MDS configuration under a low dimension (e.g., 2) may not fully explain a small but statistically meaningful difference between groups of different treatment.
+% This is because most MDS (e.g., PCA, PCoA) are unsupervised learning, whereas the hypothesis testing aims to infer whether responses (e.g., class, label) can influence the distribution of each group of observations. 
+% For example, a configuration from the classical MDS is not able to explain a small but statistically meaningful difference between groups of different treatment. 
+
+The insufficient explanation by the classical MDS has encouraged to revise the method and to address a structural hypothesis by including an external information which is conferred by the responses or class \cite{ding18} labels. 
+Broadly termed as the confirmatory MDS, this approach is based on applying an external constraint to the classical MDS, thereby providing a more contextual illustration of data structure \cite{borg97b}.
+Given that several local configurations can be produced from classical MDS, there is a notion accepting altered configurations up to a point where they do not deviate too much from the original configuration. 
+
+In these confirmatory MDS methods, an objective function is constructed by adding a confirmatory term to the stress, weighed by a hyperparameter, and informed by the labels or responses. 
+These confirmatory MDS methods have successfully visualized the multivariate structure in a way that differentiates sample groups with a discriminative purpose \cite{cox93, yang18}.
+However, choosing a proper hyperparameter remains as a bottleneck towards a broader application of these inventive methods. 
+For example, setting a high hyperparameter can result in an undesirable stress and a misleading configuration heavily distorted from the original.
+
+In this work we introduce a weakly supervised version of MDS, which we refer to as FMDS, that is informed by a hypothesis testing results under a binary class setting using $F$-statistic. 
+The proposed approach is motivated by a purpose to explain a statistical difference between groups, if any, which is incorporated to the confirmatory analysis to combine with classical MDS. 
+Because the method does not target to directly discriminate between groups, our motivation distinguishes itself from existing variations in confirmatory MDS.
+Furthermore, by characterizing the proposed framework we show that FMDS configuration is less dependent to the choice of the model hyperparameter, mediating the previous issue with the distortion.
+
+
+%%%%
+\section{Related Work}
+
+\paragraph{Classical multidimensional scaling:}
+Consider a balanced design where the number of total observations is $N$, and each observation $x_i$ is $S$-dimensional, pertaining to a set of labels $y_i\in\{0,1\}$ for every $i=1\cdots N$. 
+Using on the set of observations $(x_1,\cdots x_N)$, a pairwise distance $d_{ij}\in\{0,\infty\}$ between $x_i$ and $x_j$ can be obtained using an appropriate distance metric (e.g., Bray-Curtis, UniFrac).
+In classical MDS, a lower-dimensional configuration $\mathbf{z} = (\mathbf{z}_1, \cdots, \mathbf{z}_N)\in \bbr^{N \times 2}$ is sought in a way that preserves the pairwise distance while the dimension is reduced. 
+This is enabled by minimizing the ``raw stress'' \cite{borg05c}: ${\rm Stress} = \frac{1}{2}\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2$.
+% a difference in the pairwise distance between the dimensions and summing the difference for all pairs, so-called 
+Again, classical MDS is unsupervised learning and it does not learn a feature from a set of labels $y_i$.
+
+\paragraph{Supervised multidimensional scaling:}
+Supervised multidimensional scaling imposes additional constraint to the configuration using a confirmatory feature that is informed by class labels. 
+The purpose is to discriminate observations by the labels as well as carrying out the task of minimizing the stress.
+To achieve this an objective function is proposed by summing the raw stress and a confirmatory term, where the latter contains labels $y_i$ so that the configuration points $z_i$ and $z_j$ are not too far apart when $y_i\approx y_j$ \cite{witten11}.
+Of note, a hyperparameter is chosen to determine the degree of classification task over the stress minimization.
+
+\paragraph{Non-parametric multivariate analysis of variance:}
+When testing a difference between groups of multivariate data, test statistics are obtained through calculating variances or a sum of distances / dissimilarities. 
+Most widely used metric is $F$-statistic, a ratio between two sums respectively calculated from inter- and intra-group variances.
+However, performing $F$-test necessitates an assumption that the observations follow a normal distribution with common variance, which is hardly met in practice when dealing with biological dataset.
+In this non-parametric context, an alternative approach has been proposed by permuting the labels iteratively to create an empirical distribution \cite{anderson01, holmes96}.
+% Using the distribution and (pseudo) $F-$statistic, a statistical significance can be obtained \cite{anderson01}. 
+First, define the pseudo $F$-ratio as
+\begin{equation}
+F = \frac{\sum_{i,j}d_{ij}^2 - 2\sum_{i,j}\1\{y_i=y_j\}d_{ij}^2}{2\sum_{i,j}\1\{y_i=y_j\}d_{ij}^2}\cdot (N-2),
+\end{equation}
+where $\1\{\cdot\}$ denotes an indicator function \cite{gijbels13, anderson01}. 
+While the pseudo $F$ does not always follow the $F$-distribution under the non-parametric setting, an empirical distribution can be constructed instead by `permuting' the labels for a large enough size of dataset. 
+In other words, denote $F^\Pi$ as a new $F$-ratio that is obtained from the permuted labels, and by iterating the permutation to obtain a $P$-value,
+\begin{equation}
+P = \frac{\textrm{Number of case where }(F^\Pi\geq F)}{\textrm{Number of total repeat}}.
+\end{equation}
+The process is known as permutational multivariate analysis of variance (PERMANOVA), and it is widely used in the field of ecology.
+
+%%%%
+\section{Approach}
+To incorporate the multivariate hypothesis testing result in classical MDS, we propose a new approach called the $F$-informed multidimensional scaling (FMDS). 
+In a similar way that the supervised MDS works \cite{witten11}, we add a confirmatory term to the classical MDS objective function, expressed as
+\begin{equation}\label{eq:fmds}
+    O(\mathbf{z}) = \underbrace{\frac{1}{2}\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2}_\text{MDS term} + 
+    \lambda\cdot \underbrace{\frac{1}{2} \left|\sum_{i,j} \left[1- 2\epsilon_{ij} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right|}_\text{\textit{F}-informed confirmatory term},
+\end{equation}
+where $f_\mathbf{z}(F):\bbr\rightarrow\bbr$ is a scalar function that maps $F$-ratio from $S$-dimension onto the lower dimension, 2, derived by the configuration $\mathbf{z}$. 
+A detailed derivation of $f_\mathbf{z}$ and a description on the confirmatory term is provided in Supplementary note 1. 
+Using Equation (\ref{eq:fmds}), the goal is to find an optimal configuration $\mathbf{z}^*$ such that $\mathbf{z}^* = \argmin_{(\mathbf{z}_1, \cdots, \mathbf{z}_N)} O(\mathbf{z}).$
+
+\subsection{Majorize-Minimization algorithm}
+Algorithms to minimize stress function have been proposed in MDS community. Traditionally, MM algorithm, and more recent using (stochastic) gradient descent. 
+While recent investigation on classical MDS \cite{zheng19} shows that stochastic gradient descent method can results in a faster convergence compared to MM when a randomly initialized. 
+Our approach, however, is initialized by a classical MDS configuration and we observed MM algorithm showed more consistent result in convergence (Supplementary Figure 5).
+
+Because the confirmatory term in Equation \ref{eq:fmds} is quadratic in terms of $\mathbf{z}$, we can analytically derive Majorize-Minimization (MM) algorithm to minimize $O(\mathbf{z})$ under a mild hyperparameter $\lambda$, a typical approach in MDS optimization task \cite{borg05c}. 
+In brief, for every $k=1,\cdots N$, Equation \ref{eq:fmds} is minimized by writing
+\begingroup
+\allowdisplaybreaks
+\begin{align}
+\mathbf{z}_k^* 
+&= \argmin_{\mathbf{z}_k}O(\mathbf{z}) \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{j=1}^N \left[1+\lambda\delta(\mathbf{z}) \left(1- 2\epsilon_{jk} (1+\frac{f_\mathbf{z}(F)}{N-2})\right) \right] 
+\|\mathbf{z}_k-\mathbf{z}_j\|_2^2 
+- 2\|\mathbf{z}_k-\mathbf{z}_j\|_2
+\label{eq:mm1}
+\end{align}
+\endgroup
+where we defined $\epsilon_{ij}= \1\{y_i = y_j\}$ and $\delta (\mathbf{z}) = \text{sign}\,\sum_{j=1}^N [1- (f_\mathbf{z}(F)+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2$ for simplicity.
+Knowing that Equation \ref{eq:mm1} is quadratic in terms of $\mathbf{z}$, a derivative can be analytically taken with respect to $z_{ks}$ and is set to zero to find a minimum at $z_{ks}=z_{ks}^\dagger$. Detailed procedure is described in Supplementary note 2 and the update rule is given in Algorithm \ref{alg:mm}.
+
+\begin{algorithm}
+\caption{MM algorithm for pseudo \textit{F}-informed MDS}
+\label{alg:mm}
+For epoch $t$ and every $i=1,\cdots N$,
+\begin{align*}
+\mathbf{z}_i^{[t+1]} \leftarrow 
+&\frac{2(N-2)}{N(N-2) - N\lambda\delta(\mathbf{z}^{[t]}) f_\mathbf{z}^{[t]}(F)} \\
+&\times \sum_{j=1}^N\,
+\left[1+\lambda\delta(\mathbf{z}^{[t]}) \left(1- 2\epsilon_{ij} (1+\frac{f_\mathbf{z}^{[t]}(F)}{N-2})\right) \right]  \mathbf{z}_{j}^{[t]} 
++ d_{ij}\frac{\mathbf{z}_{i}^{[t]}-\mathbf{z}_{j}^{[t]}}{\|\mathbf{z}_i^{[t]}-\mathbf{z}_j^{[t]}\|_2},
+\end{align*}
+where $\epsilon_{ij} = \1\{y_i = y_j\},\, \delta (\mathbf{z}^{[t]}) = \text{sign}\,\sum_{j=1}^N [1- (f_\mathbf{z}^{[t]}(F)+1)\epsilon_{ij}] \|\mathbf{z}_i^{[t]} - \mathbf{z}_j^{[t]}\|_2^2$, with an initial value obtained from a classical MDS.
+\end{algorithm}
+
+
+%%%%
+\section{Experiments}
+We first characterized the behavior of FMDS across a range of hyperparameters and compared its performance to benchmark dimensionality reduction methods, including supervised MDS \cite{witten11}, UMAP \cite{mcInnes18}, and a self-supervised neural network such as SimCLR \cite{chen20}.
+For the evaluation we considered two types of datasets, simulated and experimental, both of which serve as examples where the two-dimensional configurations from classical MDS were not consistent with the hypothesis testing results.
+Next, in Section \ref{sec:vis_fmds}, we demonstrate how FMDS can improve visualizing biological samples in a way that multivariate $F-$test results are addressed.
+
+\subsection{Evaluating performance of \textit{F}-informed MDS}
+We evaluated the performance of FMDS by quantifying a degree of deviation of the configuration $\mathbf{z}$ from the original distances $d_{ij}$.
+It is carried out by calculating two metrics; the first is the ``normalized'' stress or Stress-1 \cite{borg05c},
+\begin{equation}
+\text{Stress-1} = \frac{\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2)^2}{\sum_{i,j} d_{ij}^2},
+\label{eq:mds_stress1}
+\end{equation}
+and the second using a Shepard diagram \cite{dexter18} and its correlation coefficient. 
+% Both measures represent how much distortion has occurred in the configuration by each MDS.
+
+\subsubsection{Simulated dataset} \label{sec:eval_sim}
+We first considered a three-dimensional dataset of two balanced groups that follow normal distributions slightly different in means, $\mu_0$, $\mu_1$, but the same covariance matrix $D$. 
+Such set of observations $x_i$ can be constructed as, for example, 
+\begin{equation}
+x_i \sim 
+\begin{cases}
+\cN \left(\mu_0, D\right), & i=1,2,\cdots 50 \\
+\cN \left(\mu_1, D\right), & i=51,52,\cdots 100,
+\end{cases}
+\label{eq:distribution}
+\end{equation}
+where $\mu_0=[0,0,0]^\top$, $\mu_1=[0,0,1]^\top$, and $D = [[3,0,0], [0,3,0], [0,0,1]]$. 
+
+Here the means are different at the third dimension, where the lowest variance was imposed among the principal diagonals of $D$ (Supplementary Figure 4).
+Therefore, a classical MDS does not distinguish groups in a two-dimensional configuration, but performing a multivariate hypothesis testing on the datasets, e.g., PERMANOVA \cite{anderson01}, indicates there is a statistically significant difference between the groups with $P = 0.005$. 
+% In this simulated data, a classical MDS does not distinguish the binary groups in two-dimensional configuration ($p = 0.914$) because the difference is in the third dimension with the lowest variance among the principal diagonals (Figure \ref{fig:mds_sim_data}). 
+
+Using the simulated dataset, we measured the normalized stress (Equation \ref{eq:mds_stress1}) and correlation in Shepard diagram.
+Using Algorithm \ref{alg:mm} we confirmed the configuration converged over a number of iterations for a range of hyperparameter up to $\lambda= 0.7$, 
+a value that ensured the confirmatory term in Equation \ref{eq:fmds} becomes negligible compared to MDS term (see Supplementary Figure 5).
+
+Figure \ref{fig:mds_eval_sim} shows a summarized result of the performance of FMDS compared to existing MDS methods.
+Regardless of a choice of the hyperparameter $\lambda$, FMDS visualization exhibited a consistent performance with its stress $\sim0.2$ and correlation coefficient $>0.9$ (Figure \ref{fig:mds_eval_sim}a). 
+% suggesting either configuration can be used for visualizing the simulated data \cite{kruskal64, borg97b}. 
+The behavior is in contrast to the previous supervised MDS \cite{witten11} which was monotonically dependent to $\lambda$, as expected, because SMDS distinguishes groups at the expense of the original distance structure. 
+Overall, the stress obtained from the proposed MDS is consistently lower than those from SMDS. 
+Similarly, as displayed in Figure \ref{fig:mds_eval_sim}b, Shepard plot shows the proposed FMDS presents a higher correlation of the sample pair distance in between the original and two-dimensional space.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5.5in]{submissions/nips/eval_sim.png}
+    \caption{Evaluation of proposed FMDS using simulated data. (a) Performance of FMDS compared to supervised MDS \cite{witten11} by measuring stress and Pearson correlation coefficient from Shepard plot. (b) Shepard plot of the proposed MDS comparing to SuperMDS for a hyperparameter $\lambda=0.5$. More Shepard plots are provided in Supplementary Figure 7.}
+    \label{fig:mds_eval_sim}
+\end{figure}
+
+We then next compare the performance of FMDS to other dimensionality reductions such as UMAP \cite{mcInnes18}, that are widely used in visualizing multivariate data. 
+While UMAP does not employ the same hyperparameter as FMDS or SMDS, we evaluated its performance by varying the size of local neighborhood, used for manifold approximation, from 5 to 30.
+For a better comparison supervised learning mode with UMAP is also implemented.
+Table \ref{tab:eval_sim} shows the summarized result of performance by FMDS, SMDS, and UMAP with two different modes for the range of hyperparameters using simulated dataset.
+The result suggests the proposed FMDS produces a 2D configuration by imposing a consistently lower distortion of distance structure compared to other methods.
+
+\begin{table}[h]
+    \caption{Summary of performance of dimensionality reduction methods using simulated data.}
+    \centering
+    \begin{tabular}{c|c c c c}
+        & FMDS & SMDS \cite{witten11} & UMAP \cite{mcInnes18} & UMAP (supervised) \cite{mcInnes18} \\
+        \hline
+        Stress-1 & 0.15 -- 0.20 & 0.13 -- 0.42 & 0.32 -- 0.44 & 0.61 -- 0.70 \\
+        Pearson correlation & 0.90 -- 0.96 & 0.70 -- 0.96 & 0.69 -- 0.77 & 0.10 -- 0.30 \\
+    \end{tabular}
+    \label{tab:eval_sim}
+\end{table}
+
+\subsubsection{Microbial community}
+We next take a microbial community as another dataset to compare the performances of different dimensionality reductions.
+The dataset presents a compositional structure expressed by abundance of 16S rRNA gene of 72 bacterial taxa.
+As a distance metric, the weighted Unifrac \cite{lozupone07} is chosen to obtain pairwise distance between individual community samples.
+We considered two datasets (Site 1 and Site 2) where each contains thirty-six, balanced community samples with a binary label (e.g., with or without a presence of bacterial host) \cite{kim22}. 
+
+The performance of FMDS is evaluated by calculating Stress-1 and the Shepard plot visualization. 
+Again we observe that FMDS configuration produced a low stress that is less dependent on the hyperparameter $\lambda$, which even decreases with nonzero $\lambda$ (0.1, 0.3) than a classical MDS (Figure \ref{fig:mds_eval_sites}a). 
+Shepard plot and Pearson correlation also show that the configurations nicely preserve the original distance in the microbial community data, except for a case when the largest $\lambda$ = 0.5 is applied to Site 1 community dataset.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=4.5in]{submissions/nips/eval_site.png}
+    \caption[Evaluation of proposed MDS using community data.]{Evaluation of the FMDS using microbial community data, measured by (a) Stress-1 and Pearson correlation from Shepard plot. (c) Shepard plot from each sample site.}
+    \label{fig:mds_eval_sites}
+\end{figure}
+
+\paragraph{Self-supervised learning with SimCLR and PopPhy-CNN.}
+In addition to the above, we also sought to compare our FMDS with existing neural network models that are used for dimensionality reduction.
+For converting compositional microbial abundance with its phylogenetic information into a matrix, we implement PopPhy-CNN \cite{reiman20} architecture.
+In brief, the encoder consists of one Gaussian noise filter, two 2D convolution layers (with kernel size of 5 by 3), and one fully connected layer with 32 output nodes.
+For the self-supervised learning framework we choose SimCLR \cite{chen20}, where the data augmentation is performed by applying random brightness and contrast filter.
+In a pretraining step of SimCLR, a model is constructed by compiling encoder, projection head (two dense layers each of 32 output nodes), and one dense layer (10 output nodes).
+Site 1 and 2 datasets are merged and split into train and evaluation data (60, 12 each) for the pretraining step, resulting a linear probing accuracy of 53.3\% after 50 training epochs.
+In the following finetuning step, the encoder is added with linear probe, which resulted in a validation accuracy of 83.3\% after 50 epochs.
+Trained encoder is used to obtain a 32 nodes-sized feature for each microbial community sample in Site 1 and 2.
+Detailed parameters and steps for training / evaluating the neural network architecture is described in Supplementary note 3.
+
+\paragraph{Performace evaluation of FMDS with other methods.}
+Table \ref{tab:eval_sites} shows the summarized performance of FMDS with microbiome dataset compared to existing dimensionality reduction methods (UMAP, neural network architecture).
+Again we observe that the proposed MDS delivers a two-dimensional configuration with less distorted distance structure when compared to self-supervised learning model (SimCLR) or supervised UMAP.
+Overall, the evaluation suggests that FMDS outperforms existing (self-) supervised learning tools by preserving the global structure in regards to the pairwise distances.
+
+\begin{table}[h]
+    \caption{Summary of dimensionality reduction tool performances using 72 microbiome samples.}
+    \centering
+    \begin{tabular}{c|c c c c}
+        & \begin{tabular}{@{}c@{}}FMDS \\ (proposed)\end{tabular} & \begin{tabular}{@{}c@{}}SimCLR \cite{chen20} + \\ PopPhy-CNN \cite{reiman20}\end{tabular} & UMAP & UMAP (supervised) \\
+        \hline
+        Stress-1 & 0.21 -- 0.40 & 0.54 & 0.31 -- 0.54 & 0.63 -- 0.69 \\
+        Pearson correlation & 0.61 -- 0.92 & 0.076 & 0.63 -- 0.69 & 0.06 -- 0.29 \\
+    \end{tabular}
+    \label{tab:eval_sites}
+\end{table}
+
+\subsection{Discriminant analysis with FMDS} \label{sec:vis_fmds}
+We next demonstrate how FMDS can handle two-dimensional configuration by addressing sample group difference. 
+First, we consider the simulated dataset (Section \ref{sec:eval_sim}) again where a classical MDS does not distinguish the binary groups in two-dimensional configuration ($P = 0.914$) because the group difference lies in the third dimension which is not identifiable (Figure \ref{fig:mds_config_sim}a). 
+However, the group difference becomes more visible when FMDS is employed, as shown in Figure \ref{fig:mds_config_sim}b,c.
+The distinctions are also verified by a low $P$-value resulting from PERMANOVA test using the two-dimensional configurations ($P = 0.003$).
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=5in]{submissions/nips/config_sim.pdf}
+    \caption[2D visualization of simulated data using MDS.]{2D visualization of simulated data using MDS. Configurations are obtained by setting a hyperparameter (a) $\lambda=0$ (classical MDS), (b) $\lambda=0.3$, and (c) $\lambda=0.5$. For each configuration, a $p$-value is given based on PERMANOVA test.}
+    \label{fig:mds_config_sim}
+\end{figure}
+
+\paragraph{Bacterial community dataset.}
+Finally, we demonstrate how FMDS visualization can improve interpreting microbiome structure while addressing $F$-test results at the same time. 
+% To do this a bacterial community data is taken as an example where each dataset contains thirty-six, balanced samples of a binary label (e.g., with or without a presence of microbial host) \cite{kim22}. In detail, each data represents expression levels 16S rRNA gene of 72 bacterial taxa, and the distance between samples is measured using the weighted Unifrac \cite{lozupone07}, a non-Euclidean metric that is commonly used in microbial ecology.
+Our datasets, Site 1 and 2, present a unique case where a classical two-dimensional MDS does not fully explain statistical test results on group differences. 
+As shown in Figure \ref{fig:mds_config_sites}a, groups in site 1 are dispersed in a different location whereas site 2 groups are not, when visualized using the classical MDS. 
+In both Sites, however, moderately small $P$-values are obtained ($<0.1$, Table \ref{tab:site_stat}), indicating the group difference in the community structure is, in fact, statistically significant.
+
+We then visualize the microbiome data using classical and FMDS and compare the configurations.
+As expected, for Site 1 community samples the configuration retains its distinction between the class labels regardless of the choice of the hyperparameter $\lambda$ (Figure \ref{fig:mds_config_sites}). 
+Moreover, for Site 2 samples we observe a higher distinction between the groups with increasing $\lambda$ when compared to classical MDS (Figure \ref{fig:mds_config_sites}b, Supplementary Figure 7). 
+The observation with the visualizations is justified by a quantitative measure using $P$-value calculated on the 2D configurations (Table \ref{tab:site_stat}).
+% Overall, it exemplifies FMDS reflects the true difference between groups better
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=5.5in]{submissions/nips/config_site.png}
+    \caption{Visualization of algal microbiome data using FMDS. (a) Classical and (b) proposed FMDS comparing two-dimensional configurations sampled at Site 1 and 2. More configurations with other value of hyperparameters are displayed in Supplementary Figure 7.}
+    \label{fig:mds_config_sites}
+\end{figure}
+
+\begin{table}[h]
+    \caption{Statistical significance on the group difference between two treatments using PERMANOVA test \cite{anderson01}.}
+    \centering
+    \begin{tabular}{c|c c}
+        $P$-value & Site 1 & Site 2 \\
+        \hline
+        Original & < 0.001 & 0.093 \\
+        Classical MDS & < 0.001 & 0.05 \\
+        FMDS ($\lambda=0.5$) & < 0.001 & 0.099 \\
+    \end{tabular}
+    \label{tab:site_stat}
+\end{table}
+
+%%%%%
+\section{Conclusion}
+In this work, a self-supervised multidimensional scaling is proposed based on the \textit{F}-statistic and is characterized by comparing the configuration to hypothesis testing results. Using simulated dataset and ecological samples, it is shown that the proposed MDS outperforms an existing method for addressing class labels, as evaluated by its stress and Shepard plot. One limitation of FMDS is that it requires a high computational cost compared to existing methods, in its algorithmic performance during iterations (Supplementary note 4).
+
+A special attention has been given on its behavior where its performances were less dependent on the choice of hyperparameter to an extent where algorithm effectively converges. The finding suggests that the new approach mediates the downside of typical confirmatory MDS as a dimensionality reduction tool, in which stress minimization has been underscored by a discriminatory purpose via a high value of hyperparameter setting. In practice, users may avoid the hassle of hyperparameter selection using such as cross-validation.
+
+Taken together, The proposed MDS can be useful for interpreting a biological dataset with more visual information to explain a hypothesis testing result at the same time, thereby presenting a broader applicability of MDS in modern biological and multivariate data analysis.
+
+\begin{singlespace}
+\bibliographystyle{acm}
+\bibliography{refs}
+\end{singlespace}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}

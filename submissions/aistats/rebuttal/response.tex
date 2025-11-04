@@ -1,0 +1,48 @@
+\documentclass{article}
+
+\usepackage{response}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % define colors in text
+\usepackage{xspace}         % fix spacing around commands
+\usepackage{enumitem}
+
+
+\begin{document}
+
+\begin{flushright}
+December 5, 2023
+\end{flushright}
+
+We are grateful to the reviewers for their time leaving the comments, all of which we find very helpful for improving a quality of the manuscript in the future.  Below we summarize and answer the questions raised in the reviews.
+
+\begin{enumerate}[wide, labelwidth=!, labelindent = 0pt]
+    \item No intuition is given and the description is incomplete for the additional term in the proposed method is (Reviewer \#1). Also, the motivation behind the method is unclear (Reviewer \#11). 
+    
+    \textbf{We understand the comment raised by the reviewer.  Indeed, the intuition is not directly laid out in the main text, which is, instead, given in the Supplementary Note 1 as follows:}
+    \textbf{``The confirmatory term of the objective function is designed to minimize a difference in \textit{p}-values that are obtained by pseudo \textit{F} statistics under the original \textit{S}-dimension and the two-dimension.''}
+
+    \textbf{The above statement is indirectly laid out in the main text Section 3, with a sentence that reads as ``...a description on the confirmatory term is provided in Supplementary Note 1, ...''  The details have been excluded from the main text because of the page limit.} \newline
+
+    \item The evaluation of the experiments seems to be biased since it involves MDS stress and the \textit{F} ratio (Reviewer \#1).  Also, main results do not appear convincing as the authors did not explain why the evaluation metrics were suitable for achieving the task (Reviewer \#11).
+    
+    \textbf{We employed a set of four evaluation metrics ($F$-correlation, $p$-ratio, Stress-1, and correlation from the Shepard diagram) as shown in Table 1--3 of the main text. The metrics serve the dual purpose of (a) gauging each method's alignment with statistical inference and (b) assessing its proficiency in preserving distance structure. The initial two metrics address (a), while the latter two primarily concentrate on evaluating the aspect of (b). We note that existing evaluation metrics fall short in simultaneously addressing these dual goals, necessitating the consideration of multiple metrics for a comprehensive perspective.}
+    
+    \textbf{Acknowledging feedback from reviewers, we recognize the potential bias of our metrics towards unsupervised algorithms and the inherent challenge faced by methods focused on local structure preservation in achieving the goal (a). Nevertheless, we included these widely-used algorithms for comprehensive comparisons.} \newline
+    
+    \item The usefulness of the proposed method is unclear with the field's demand, when compared to existing dimensionality reduction methods such as t-SNE or UMAP (Reviewer \#4).  The dataset sizes are relatively small (Reviewer \#1).
+
+    \textbf{We agree with reviewers that the recent nonlinear dimension reduction methods have gained an interest in the field by preserving localized structures.  However, there still remains a challenge in the nonlinear methods as their configurations depend on the choice of the hyperparameter (e.g., number of neighbors).  Our proposed method, in contrast, presents a unique feature that it configures the data without relying on the hyperparameter choice, as shown in Figure 2, 3.  We admit that the proposed method is limited to binary dataset application and leave its extension towards multi-class labeled dataset as a future work.  Also, upon its acceptance we plan to publicize the work by sharing the source code in public repository and release a package linked to R CRAN or BioConductor for user friendliness.}
+    
+\end{enumerate}
+
+While reviewing the manuscript we have noticed that one of the numbers presented in Table 4 (\textit{p}-value of Site 2, classical MDS) is shown incorrect – currently it is displayed as 0.05 and should be corrected as 0.5.  We believe it has caused a confusion to the reviewers in understanding Table 4 that corresponds to Figure 5.  Indeed, the correspondence exemplifies how our method is advantageous than using traditional MDS, i.e., shows that the proposed FMDS can display a statistical inference whereas traditional MDS does not.  We would like to inform the misdisplay and gently ask reviewers to consider it before making a further recommendation of the manuscript in the proceedings track of AISTATS 2024.
+
+\end{document}

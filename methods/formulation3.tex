@@ -1,0 +1,182 @@
+\documentclass{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% Setup %%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=3.3cm]{geometry}
+% \usepackage{fullpage}
+\usepackage{fmtcount} % 1st, 2nd...
+\usepackage[english]{babel}
+\usepackage{kotex}
+\usepackage{soul} % spacing
+\usepackage{enumerate} % change enum label
+\usepackage{framed} % frame pagebreak
+
+%%%%% Math, Code 
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{array}
+\usepackage{mathtools} 
+\usepackage{verbatim}
+\usepackage{fancyvrb} % verbatim
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+%%%%% Graphic, Figure, Table
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow} % table
+\usepackage{diagbox} % table
+\usepackage{booktabs} % pretty table
+\usepackage{colortbl} % color cells
+\usepackage{longtable} % table to next page
+\usepackage{rotating}
+\usepackage{lscape} % landscape page
+\usepackage{pdfpages} % insert external pdf file
+\usepackage{wrapfig} % wrap fig, tbl with text
+\usepackage{tikz}  % draw
+\usetikzlibrary{
+    arrows, decorations.pathmorphing, decorations.markings,
+    backgrounds, fit, positioning, shapes.symbols, chains
+}
+
+%%%%% Bib, Cite
+% \usepackage{natbib}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage[firstinits=true]{biblatex}
+% \addbibresource{thesisref.bib}
+
+%%%%%% Setup
+\captionsetup{compatibility=false} %subfig
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{dfn}{Definition}
+\newtheorem{ex}{Example}
+\newtheorem{cmt}{Cmt}[section]
+\newtheorem{rmk}{Remark}[section]
+\newcommand{\rb}[1]{\raisebox{-.5em}[0pt]{#1}}
+%\renewcommand{\baselinestretch}{1.9}
+\renewcommand{\mid}{\, | \ , }
+\newcommand{\1}{{\rm 1}\kern-0.24em{\rm I}}
+%\newcommand{\eighth}{{\textstyle \frac{1}{8}}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\bbr}{\mathbb{R}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{MM approach}
+\author{HK}
+\date{November 23, 2022}
+
+\begin{document}
+
+\maketitle
+\section*{Motivation}
+Our previous approach using gradient descent did not converge when the hyperparameter $\lambda$ was large; we think this was because the confirmatory (classification) term was non-convex. Here I propose a new objective function where we can apply a majorization algorithm to find its minimum \cite{borg}. 
+
+Again, consider a balanced design where the number of total observations is $N$, the number of groups $a$, and we want to find a configuration $\mathbf{z} = (\mathbf{z}_1, \cdots, \mathbf{z}_N) \in \bbr^{N \times S}$, $\mathbf{z}_i \in \bbr^S$. $S$ often equals to 2 or 3. Then the updated objective function is proposed as
+
+\begin{align}
+O(\mathbf{z}) = \underbrace{\frac{1}{2}\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2}_\text{MDS term} + \lambda\cdot \underbrace{\frac{1}{2} \left|\sum_{i,j} [1- (\Phi+1)\1\{y_i = y_j\}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right|}_\text{Confirmatory term}
+\end{align}
+
+where $\Phi$ is defined as
+
+$$
+\Phi \vcentcolon= \frac{\sum_{i,j} \1\{y_i \neq y_j\} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2}
+$$
+
+and we want to find a minimizing configuration 
+
+$$
+\mathbf{z}^* = \argmin_{(\mathbf{z}_1, \cdots, \mathbf{z}_N)} O(\mathbf{z}).
+$$
+
+The confirmatory term in Eq. (1) originates in a difference in pseudo-$F$ of the original and $S$ dimensional data structure. In detail, the difference is expressed as
+
+\begin{align}
+F_{\text{MDS}}(\mathbf{z}) - F_0 &= 
+\left(\frac{\sum_{i,j} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\sum_{i,j} \1\{y_i = y_j\}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2} - \frac{\sum_{i,j} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2}\right) (N - a) \\
+&= \left(\frac{\sum_{i,j} \1\{y_i \neq y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2} - \frac{\sum_{i,j} \1\{y_i \neq y_j\} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2}\right) (N - a)
+\end{align}
+
+where we care about its nominator,
+
+\begin{align}
+\sum_{i,j} &\1\{y_i \neq y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 - \frac{\sum_{i,j} \1\{y_i \neq y_j\} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2}\cdot \sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 \\
+&= \sum_{i,j} \1\{y_i \neq y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 - \Phi\cdot \sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 \\
+&= \sum_{i,j} [1- (\Phi+1)\1\{y_i = y_j\}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2.
+\end{align}
+
+By taking absolute value of Eq. (6), we obtain a confirmatory term $g(\mathbf{z})$ in Eq. (1), and we know it is convex in regards to $\mathbf{z}$. A side note, an exact proof will be given later on a relationship between the MDS term $f(\mathbf{z})$ and a boundedness of the denominator term $\sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2$. It would allow us to guess how much $g(\mathbf{z^*})$ can deviate from $F_{\text{MDS}}(\mathbf{z^*}) - F_0$.
+
+
+\section*{Derivation of a majorization algorithm} 
+Now we move on to minimize $O(\mathbf{z})$ using the majorization algorithm. Specifically, for each $i=1,\cdots N$, we want to find $\mathbf{z^*}$ such that
+
+\begin{align}
+\mathbf{z}_i^* &= \argmin_{\mathbf{z}_i}O(\mathbf{z}) \\
+&= \argmin_{\mathbf{z}_i}\, \sum_{j=1}^N (d_{ij} - \|\mathbf{z}_i - \mathbf{z}_j\|_2)^2 + \lambda\left|\sum_{j=1}^N [1- (\Phi+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right| \\
+&= \argmin_{\mathbf{z}_i}\, \sum_{j=1}^N \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 - 2\sum_{j=1}^N d_{ij}\|\mathbf{z}_i - \mathbf{z}_j\|_2 + \lambda\left|\sum_{\substack{j=1\\\epsilon_{ij}=0}}^N \|\mathbf{z}_i-\mathbf{z}_j\|_2^2 - \Phi\sum_{\substack{j=1\\\epsilon_{ij}=1}}^N \|\mathbf{z}_i-\mathbf{z}_j\|_2^2\right| \\
+&= \argmin_{\mathbf{z}_i}\, (1+\lambda\delta_i (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{ij}=0}}^N \|\mathbf{z}_i-\mathbf{z}_j\|_2^2 + (1-\lambda\Phi\delta_i (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{ij}=1}}^N \|\mathbf{z}_i-\mathbf{z}_j\|_2^2 - 2\sum_{j=1}^N d_{ij}\,\|\mathbf{z}_i-\mathbf{z}_j\|_2
+\end{align}
+
+where we have defined
+
+$$
+\delta_i (\mathbf{z}) = \text{sign}\,\sum_{j=1}^N [1- (\Phi+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2
+$$
+
+for simplicity. Next we majorize Eq. (10) by writing
+
+\begin{equation}
+(1+\lambda\delta_i (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{ij}=0}}^N \|\mathbf{z}_i-\mathbf{z}_j\|_2^2 + (1-\lambda\Phi\delta_i (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{ij}=1}}^N \|\mathbf{z}_i-\mathbf{z}_j\|_2^2 - 2\sum_{j=1}^N d_{ij}\,\frac{\sum_{s=1}^S (z_{is}-z_{js})(\Tilde{z}_{is}-z_{js})}{\|\Tilde{\mathbf{z}}_i-\mathbf{z}_j\|_2}.
+\end{equation}
+
+Knowing the above is convex and quadratic, we take a derivative with respect to $z_{is}$ to find its minimum at $\mathbf{z}_{i}=\mathbf{z}_{i}^\dagger$. Taking derivative in Eq. (11) and setting it zero we have 
+
+$$
+2(1+\lambda\delta_{i}(\mathbf{z}))\sum_{\substack{j=1\\\epsilon_{ij}=0}}^N (z_{is}^\dagger-z_{js}) + 2(1-\lambda\Phi\delta_{i}(\mathbf{z}))\sum_{\substack{j=1\\\epsilon_{ij}=1}}^N (z_{is}^\dagger-z_{js}) - 2\sum_{j=1}^N d_{ij}\frac{\Tilde{z}_{is}-z_{js}}{\|\Tilde{\mathbf{z}}_i-\mathbf{z}_j\|_2} = 0
+$$
+
+$$
+\therefore z_{is}^\dagger = 
+\frac{1}{(a-1)(1+\lambda\delta_i(\mathbf{z}))+1-\lambda\Phi\delta_i(\mathbf{z})}\left[(1+\lambda\delta(\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{ij}=0}}^N z_{js} + (1-\lambda\Phi\delta_i(\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{ij}=1}}^N z_{js} + \sum_{j=1}^N d_{ij}\frac{\Tilde{z}_{is}-z_{js}}{\|\Tilde{\mathbf{z}}_i-\mathbf{z}_j\|_2}\right]
+$$
+
+This concludes our update rule as follows.
+\begin{algorithm}
+\caption{MM for pseudo \textit{F}-informed MDS}
+For epoch $t$ and every $i=1,\cdots N$,
+
+\begin{align*}
+\mathbf{z}_i^{(t+1)} \leftarrow 
+&\frac{1}{(a-1)(1+\lambda\delta_i(\mathbf{z}))+1-\lambda\Phi\delta_i(\mathbf{z}^{(t)})} \\
+&\times \left[(1+\lambda\delta(\mathbf{z}^{(t)})) \sum_{\substack{j=1\\\epsilon_{ij}=0}}^N \mathbf{z}_j^{(t)} + (1-\lambda\Phi\delta_i(\mathbf{z}^{(t)})) \sum_{\substack{j=1\\\epsilon_{ij}=1}}^N \mathbf{z}_j^{(t)} + \sum_{j=1}^N d_{ij}\frac{\mathbf{z}_{i}^{(t)}-\mathbf{z}_{j}^{(t)}}{\|\Tilde{\mathbf{z}}_i^{(t)}-\mathbf{z}_j^{(t)}\|_2}\right]    
+\end{align*}
+
+with an initial value obtained from pure MDS.
+\end{algorithm}
+
+\begin{thebibliography}{}
+
+\bibitem{borg}
+I.\,Borg and P.\,J.\,F.\,Groenen, Modern multidimensional scaling: Theory and applications, 2nd ed. Springer series in statistics, Springer New York, NY (2005).
+
+\end{thebibliography}
+
+\end{document}

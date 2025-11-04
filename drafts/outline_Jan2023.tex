@@ -1,0 +1,403 @@
+\documentclass[12pt]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% Setup %%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=1in]{geometry}
+\usepackage{fmtcount} % 1st, 2nd...
+\usepackage[english]{babel}
+\usepackage{kotex}
+\usepackage{soul} % spacing
+\usepackage{enumerate} % change enum label
+\usepackage{framed} % frame pagebreak
+\usepackage{authblk}
+
+%%%%% Math, Code 
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{array}
+\usepackage{mathtools} 
+\usepackage{verbatim}
+\usepackage{fancyvrb} % verbatim
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+%%%%% Graphic, Figure, Table
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow} % table
+\usepackage{diagbox} % table
+\usepackage{booktabs} % pretty table
+\usepackage{colortbl} % color cells
+\usepackage{longtable} % table to next page
+\usepackage{rotating}
+\usepackage{lscape} % landscape page
+\usepackage{pdfpages} % insert external pdf file
+\usepackage{wrapfig} % wrap fig, tbl with text
+\usepackage{tikz}  % draw
+\usetikzlibrary{
+    arrows, decorations.pathmorphing, decorations.markings,
+    backgrounds, fit, positioning, shapes.symbols, chains
+}
+
+%%%%% Bib, Cite
+\usepackage{url}
+\usepackage{cite}
+\usepackage{fancyref}
+\usepackage{hyperref}
+% \usepackage[firstinits=false]{biblatex}
+
+%%%%%% Setup
+\captionsetup{compatibility=false} %subfig
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+\setlength{\parskip}{0.5em}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{dfn}{Definition}
+\newtheorem{ex}{Example}
+\newtheorem{cmt}{Cmt}[section]
+\newtheorem{rmk}{Remark}[section]
+\newcommand{\rb}[1]{\raisebox{-.5em}[0pt]{#1}}
+\newcommand{\1}{{\rm 1}\kern-0.24em{\rm I}}
+\newcommand{\cN}{\mathcal{N}}
+\renewcommand{\mid}{\, | \ , }
+\renewcommand\Affilfont{\normalsize}
+% \renewcommand{\baselinestretch}{1.3}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\bbr}{\mathbb{R}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Multidimensinoal scaling for $F$-informed hypothesis testing}
+\author[1]{Hyungseok Kim$^*$}
+\author[2]{Soobin Kim$^*$}
+\author[3]{Xavier Mayali}
+\author[1]{Cullen R. Buie}
+% \author[1]{Professor}
+\affil[1]{Massachusetts Institute of Technology}
+\affil[2]{University of California, Davis}
+\affil[3]{Lawrence Livermore National Laboratory}
+\date{\today}
+
+\begin{document}
+\maketitle
+\def\thefootnote{*}\footnotetext{Equal contribution.}
+\def\thefootnote{\arabic{footnote}}
+
+\section*{\large Summary}
+We present a new multidimensional scaling method informed by a binary data label via $F$-ratio. We compare its performance to an existing label-informed MDS, and report a unique behavior that is less dependent on a selection of a model hyperparamter in a way that classical MDS configuration is minimally altered. We evaluate its two-dimensional MDS configuration from a simulated data or a 16S rRNA gene expression levels, and demonstrate that our method can address a hypothesis testing result at the same time. By efficiently incorporating a testing statistic from data labels, the proposed MDS method expands its applicability in modern biological data analysis and multivariate statistics.
+
+
+\section{Introduction}
+\begin{itemize}
+    \item Multivariate statistics has increasingly gained its importance in a modern biological analysis, as the data presents a vast size and a high-dimension. % It is enabled by technological advances in molecular and computational biology , so called "-omics"
+    \item Among the dimension reduction tools in multivariate statistics, multidimensional scaling (MDS) is one representative approach. It seeks a configuration at a lower dimension, usually 2 or 3 dimensions for visualization purposes, which best represents the original data structure so that essential information can be extracted for human interpretation.
+    % \item \st{In parallel, statistical inference complements the understanding of the data structure by correlating it to its outcome. For the inference, such as hypothesis testing, data labels (outcomes) are employed to produce a quantitative result.}
+    \item In parallel, when the data have a corresponding class or a label, a focus is made in identifying a difference between groups. In such case, a quantitative analysis is performed using a statistical inference, such as hypothesis testing.
+    \item Traditionally, these two approaches in the multidimensional setting are considered different from one another and play a complementary role in understanding biological data. 
+    \item Inevitably, there is a gap inherited by the difference in the approaches. For instance, the classical MDS does not consider data labels in its mathematical formulation. 
+    \item To address the gap, recent methods in multidimensional scaling utilize the label or group information. This is enabled by applying external constraints to the classical configuration in MDS, and the approach is broadly termed as the confirmatory MDS \cite{borg97}. Specifically, discrete-valued labels are the external constraints to improve the configuration. Examples include supervised MDS (SuperMDS) \cite{witten11}, discriminative MDS \cite{yang18}.
+    \item Motivated by the recent efforts, we present a new MDS approach that effectively addresses hypothesis testing inferences under a binary class setting. We describe how our approach is advantageous compared to other confirmatory MDS employing class labels.
+    \item In short, we find this new approach produces a visualization by which classical MDS configuration is minimally altered or improved, without distorting a structural group difference (as measured in statistical testing) at the same time.
+\end{itemize}
+
+
+\section{Methods}
+\subsection{Problem formulation}
+Consider a balanced design where the number of total observations is $N$, and each observation $x_i$ is $S$-dimensional, pertaining to a set of labels $y_i\in\{0,1\}$ for every $i=1\cdots N$. Based on the observations $(x_1,\cdots x_N)$, a distance matrix is obtained as $\mathbf{d}=[d_{ij}]\in\bbr^{N\times N}$.
+
+Now given the distance $\mathbf{d}$, we seek a two-dimensional configuration $\mathbf{z} = (\mathbf{z}_1, \cdots, \mathbf{z}_N) \in \bbr^{N \times 2}$, that best represents the original dimension either by the following criteria. 
+
+\subsection{Classical multidimensional scaling}
+In classical MDS, a configuration is realized by minimizing the following objective function.
+
+\begin{equation}\label{eq:cmds}
+    O(\mathbf{z}) = \frac{1}{2}\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2
+\end{equation}
+
+In other words, the configuration $\mathbf{z}$ is obtained in a way that tries to preserve a distance between a pair of observations $(x_i, x_j)$ for each $i,j\in N$. Note that Equation (\ref{eq:cmds}) does not contain any terms related to $y_i$s, meaning that classical MDS does not consider the class labels.
+
+\subsection{Multidimensional scaling for multivariate hypothesis}
+\subsubsection{Hypothesis testing for non-parametric multivariate analysis}
+When testing a statistical difference between groups in multivariate analysis, the group variance is the key measure, using a process called the $F$-test. Specifically, it uses an $F$-statistic, a ratio between two measures, each of which is respectively derived from across- and within-group variances. 
+
+While the traditional $F$-test requires an assumption that each observation follows a normal distribution, the strict assumption has recently been relaxed and generalized by introducing an analogous statistic (pseudo $F$-ratio) combined with label permutation to quantify a statistical significance. In this non-parametric approach \cite{anderson01}, a pseudo $F$-ratio is defined as
+
+\begin{equation}
+    F = \frac{\sum_{i,j}d_{i,j}^2 - 2\sum_{i,j}\1\{y_i=y_j\}d_{ij}^2}{2\sum_{i,j}\1\{y_i=y_j\}d_{ij}^2}\cdot (N-2),
+\end{equation}
+where $\1\{\cdot\}$ denotes an indicator function. Since the pseudo $F$-ratio does not follow an $F$-distribution under the relaxed model assumption, it is instead evaluated by an empirical distribution that is created by `permuting` the labels. That is, in every permutation a new $F$-ratio is obtained from the data structure ($F^\Pi$), and by repeating this we have a $P$-value written as
+
+\begin{equation}
+    P = \frac{\text{Number of case where }(F^\Pi\geq F)}{\text{Number of total repeat}}.
+\end{equation}
+
+The process is known as permutational multivariate analysis of variance (PERMANOVA), and it is widely used in the field of ecology.
+
+\subsubsection{Proposed multidimensional scaling}
+Now we propose a new multidimensional scaling that incorporates a hypothesis testing result in the multivariate setting. This is enabled by adding a confirmatory term to the classical MDS (Eq. (\ref{eq:cmds})), giving an objective function as
+
+\begin{equation}\label{eq:mds}
+    O(\mathbf{z}) = \underbrace{\frac{1}{2}\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2}_\text{MDS term} + \lambda\cdot \underbrace{\frac{1}{2} \left|\sum_{i,j} [1- (f_{\mathbf{z}}(\Phi_o)+1)\1\{y_i = y_j\}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right|}_\text{Confirmatory term}
+\end{equation}
+where $\Phi_o$ is a ratio constant expressed in terms of the distance $\mathbf{d}$ and labels $y_i$, defined as
+
+$$
+\Phi_o (\mathbf{d}, y) \vcentcolon= \frac{\sum_{i,j} \1\{y_i \neq y_j\} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2},
+$$
+and where $f_\mathbf{z}(\Phi_o):\bbr\rightarrow\bbr$ is a mapping function which is determined by the configuration $\mathbf{z}$. An exact derivation of $f_\mathbf{z}$ and a detailed description on the confirmatory term in Equation (\ref{eq:mds}) will be described in Appendix \hyperref[sec:supp-b]{B}. Given Equation (\ref{eq:mds}), we want to find an optimal configuration $\mathbf{z}^*$ such that $\mathbf{z}^* = \argmin_{(\mathbf{z}_1, \cdots, \mathbf{z}_N)} O(\mathbf{z}).$
+
+\subsubsection{Algorithm for the proposed MDS}
+Because the confirmatory term in (\ref{eq:mds}) is strictly convex in terms of $\mathbf{z}$, we are able to minimize $O(\mathbf{z})$ by using the Majorize-Minimization (MM) algorithm, a typical approach in MDS optimization task \cite{borg05}. While the implementation of MM algorithm is described in detail in Appendix \hyperref[sec:supp-c]{C}, we provide its update rule as below. 
+
+\begin{algorithm}
+\caption{MM algorithm for pseudo \textit{F}-informed MDS}
+\label{alg:mm}
+For epoch $t$ and every $i=1,\cdots N$,
+
+\begin{align*}
+\mathbf{z}_i^{[t+1]} \leftarrow 
+&\frac{2}{2(N-1)+\lambda\delta(\mathbf{z}_i^{[t]})(N-(N-2)f_\mathbf{z}(\Phi))} \\
+&\times \left[(1+\lambda\delta(\mathbf{z}_i^{[t]})) \sum_{\substack{j=1\\\epsilon_{ij}=0}}^N \mathbf{z}_j^{[t]} + (1-\lambda f_\mathbf{z}(\Phi)\delta(\mathbf{z}^{[t]})) \sum_{\substack{j=1\\\epsilon_{ij}=1}}^N \mathbf{z}_j^{[t]} + \sum_{j=1}^N d_{ij}\frac{\mathbf{z}_{i}^{[t]}-\mathbf{z}_{j}^{[t]}}{\|\mathbf{z}_i^{[t]}-\mathbf{z}_j^{[t]}\|_2}\right],
+\end{align*}
+
+where $\epsilon_{ij} = \1\{y_i = y_j\},\, \delta_i (\mathbf{z}) = \text{sign}\,\sum_{j=1}^N [1- (f_\mathbf{z}(\Phi)+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2$, with an initial value obtained from a classical MDS.
+
+\end{algorithm}
+
+
+\section{Results and Discussion}
+Using Algorithm \ref{alg:mm}, we sought to determine how well our proposed MDS approach can produce a two-dimensional configuration in simulated and experimental data. We then assess its performance by comparing ours to a recent method in confirmatory MDS \cite{witten11}.
+
+\subsection{Simulated data}
+We first provide a representing case where our method can be useful in visualizing multidimensional setting. To do this we consider a binary labeled dataset where each group originates in a different multivariate Gaussian distribution. In a three-dimensional setting, for example, consider a balanced design where an observation
+
+\begin{equation}
+x_i \sim \begin{cases}
+\cN \left([0,0,0]^\top, \begin{bmatrix} 3&0&0\\ 0&3&0\\ 0&0&1 \end{bmatrix}\right), & i=1,2,\cdots 50 \\
+\cN \left([0,0,1]^\top, \begin{bmatrix} 3&0&0\\ 0&3&0\\ 0&0&1 \end{bmatrix}\right), & i=51,52,\cdots 100.
+\end{cases} \label{eq:distribution}
+\end{equation}
+
+As expected, PERMANOVA testing result indicates there is a statistically significant difference between the groups with pseudo $F = 5.402$ and $p = 0.005$. However, a classical MDS does not distinguish groups in two-dimensional configuration (Figure \ref{fig:config_sim}a) with $p = 0.914$, because the difference is in the third dimension with the lowest variance among the principal diagonals (see Figure \ref{fig:sim_data} in Appendix \hyperref[sec:supp-c]{C}). 
+
+On the other hand, our MDS configuration can better display the difference, and it becomes clearer when a hyperparameter $\lambda$ is set large (Figure \ref{fig:config_sim}b,c). The distinctions are also verified by a low $p$-value resulting from PERMANOVA test using the two-dimensional configurations.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5.9in]{images/outline/config_sim.eps}
+    \caption{Two-dimensional visualization of proposed MDS with a hyperparameter (a) $\lambda=0$ (classical MDS), (b) $\lambda=0.3$, and (c) $\lambda=0.5$. For each configuration, a $p$-value is given based on PERMANOVA test. An ellipse is drawn for each group with a confidence interval of 80\%.}
+    \label{fig:config_sim}
+\end{figure}
+
+We next evaluate the performance of our method to existing confirmatory MDS by calculating a stress, which is defined as
+$$
+\text{Stress} = \frac{\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2)^2}{\sum_{i,j} d_{ij}^2},
+$$
+or a Spearman correlation based on Shepard diagram, both of which are widely used in the field of multivariate statistics \cite{dexter18}. As a result, our proposed MDS visualization presents a stress $\sim 0.2$ regardless of a choice of a hyperparameter $\lambda$ (Figure \ref{fig:eval_sim}a), suggesting either configuration can be used for visualizing the simulated data \cite{kruskal64}. This is in contrast to the previous method \cite{witten11} where the stress increases as $\lambda$ becomes large, implying their approach distinguishes groups at the expense of the original distance structure. Similarly, in Shepard plot with a choice of $\lambda$, our method presents a more consistent correlation of the sample pair distance in between three- and two-dimension (Figure \ref{fig:eval_sim}b,\ref{fig:eval_sim}c, and \ref{fig:shepard_sim} in Appendix \hyperref[sec:supp-a]{A}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=6.2in]{images/outline/evaluation.png}
+    \caption{Performance of proposed MDS compared to an existing label-informed confirmatory MDS (SuperMDS \cite{witten11}) by using (a) Stress and (b) Spearman correlation from the simulated data. (c) Shepard plot of the proposed MDS comparing to SuperMDS for a hyperparameter $\lambda=0.5$. More results are displayed in Figure \ref{fig:shepard_sim}.}
+    \label{fig:eval_sim}
+\end{figure}
+
+It is worth noting the invariant behavior in the proposed MDS by the choice of the hyperparameter, which has not been observed in existing class-informed MDS methods. We believe this opens a door to characterize our method further in theoretical depth and leave it as a future work.
+
+\subsection{Example with a bacterial community dataset}
+Next, we demonstrate how an MDS visualization can be enhanced for interpreting biological data under hypothesis testing. To do this we take microbial community data as an example where each dataset contains thirty-six, balanced samples of a binary label (e.g., with or without a presence of microbial host) \cite{kim22}. In detail, each data represents expression levels 16S rRNA gene of 72 bacterial taxa, and the distance between samples is measured using the weighted Unifrac \cite{lozupone07}, a non-Euclidean metric that is commonly used in microbial ecology.
+
+Particular attention is made on these datasets since they present a case where a classical two-dimensional MDS does not fully explain statistical test results on group differences. As shown in Figure \ref{fig:mds_sites}a, groups in site 1 are dispersed in a different location whereas site 2 groups are not, when visualized using the classical MDS. In both sites, however, moderately small $P$-values are obtained ($<0.1$, Figure \ref{fig:mds_sites}b), indicating the group difference in the community structure is, in fact, statistically significant.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=6.5in]{images/outline/mds_test_sites.png}
+    \caption{(a) Multidimensional scaling and (b) statistical test result on a group difference between two sample groups for each site. The sample presents a microbial community measured by 16S rRNA gene expression.}
+    \label{fig:mds_sites}
+\end{figure}
+
+Using the given community dataset, we present a configuration with the proposed MDS visualization. As expected, for site 1 community samples the configuration retains its distinction between the class labels regardless of the choice of the hyperparameter $\lambda$ (Figure \ref{fig:config_sites}a-c). Moreover, for site 2 samples we observe a higher distinction between the groups with increasing $\lambda$ (Figure \ref{fig:config_sites}d-f). The observation with the visualizations is justified by a quantitative measure using $P$-value calculated on the 2D configurations (Figure \ref{fig:config_sites}g).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=6.5in]{images/outline/config_site.eps}
+    \caption{Two-dimensional configuration of microbial community samples using the proposed MDS method, where samples are collected from (a-c) site 1 and (d-f) site 2. (g) Statistical significance on the group difference between two treatments using PERMANOVA test.}
+    \label{fig:config_sites}
+\end{figure}
+
+We then evaluate the performance of the proposed MDS using stress measurement and Shepard plot. Again it is worth to note that stress does not strictly depend on the hyperparameter $\lambda$ or even show a decreased value when $\lambda$ is nonzero (e.g., 0.1, 0.3) compared to the classical MDS ($\lambda=0$, Figure \ref{fig:eval_sites}a). Shepard plot and Spearman correlation also show that the configurations nicely preserve the original distance in the microbial community data, except for a case when the largest $\lambda$ is set to site 1 community.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=6.2in]{images/outline/evaluation_site.png}
+    \caption{Evaluation of the proposed MDS using microbial community data, measured by (a) stress, (b) Spearman correlation, and (c) Shepard plot from each sample site. More results are displayed in Figure \ref{fig:shepard_site}.}
+    \label{fig:eval_sites}
+\end{figure}
+
+
+\section{Conclusion}
+\begin{itemize}
+    \item A new multidimensional scaling method which incorporates an $F$ statistic-informed hypothesis testing is proposed.
+    \item We find that the performance of the proposed MDS excels existing MDS methods for addressing class labels, as evaluated by its stress and Shepard plot, validated using both simulated and real datasets.
+    \item The proposed MDS can be useful when analyzing a biological dataset with $F$-informed hypothesis testing, providing informative and precise dimension reduction, especially for visualization.
+    \item The method is less dependent on the choice of hyperparameter when producing the configuration. This lessens the risk of overreliance on the class labels in that the data are automatically grouped to a suitable degree. Also, users may avoid the hassle of hyperparameter selection using such as cross-validation.
+    \item Remaining works include further stabilizing the algorithm with large $\lambda$ cases, and further (theoretical) characterization of our method in terms of the role of hyperparameter.
+\end{itemize}
+
+
+\section*{\large Contribution statement}
+\begin{enumerate}
+    \itemsep0em
+    \item Conceptualization -- Soobin, Hyu
+    \item Methodology -- Soobin, Hyu
+    \item Validation -- Hyu
+    \item Formal analysis -- Soobin
+    \item Data curation -- Soobin, Hyu
+    \item Writing -- Everyone
+    \item Supervision -- Cullen, Xavier, Professor 1
+    \item Funding -- Cullen, Xavier
+\end{enumerate}
+
+
+\begin{thebibliography}{}
+\bibitem{borg97}
+Borg, I., Groenen, P. (1997). Confirmatory MDS. In: Modern Multidimensional Scaling. Springer Series in Statistics. Springer, New York, NY.
+
+\bibitem{witten11}
+Witten, D.M., Tibshirani, R. (2011). Supervised multidimensional scaling for visualization, classification, and bipartite ranking, Computational Statistics \& Data Analysis, 55(1), pp. 789-801.
+
+\bibitem{yang18}
+Yang, F., Yang, W., Gao, R. Liao, Q. (2018), Discriminative Multidimensional Scaling for Low-Resolution Face Recognition, in IEEE Signal Processing Letters, 25(3), pp. 388-392.
+
+\bibitem{anderson01}
+Anderson, M.J. (2001), A new method for non-parametric multivariate analysis of variance. Austral Ecology, 26, pp. 32-46.
+
+\bibitem{borg05}
+Borg, I. and Groenen, P.J.F. (2005), Modern multidimensional scaling: Theory and applications, 2nd ed. Springer series in statistics, Springer New York, NY.
+
+\bibitem{dexter18}
+Dexter, E., Rollwagen-Bollens, G. and Bollens, S.M. (2018), The trouble with stress: A flexible method for the evaluation of nonmetric multidimensional scaling. Limnology and Oceanography Methods, 16, 434-443.
+
+\bibitem{kruskal64}
+Kruskal, J.B. (1964) Multidimensional scaling by optimizing goodness of fit to a nonmetric hypothesis. Psychometrika, 29, 1–27.
+
+\bibitem{kim22}
+Kim, H., Kimbrel, J.A., Vaiana, C.A., Wollard, J.R., Mayali, X. and Buie, C.R. (2022). Bacterial response to spatial gradients of algal-derived nutrients in a porous microplate. The ISME journal, 16(4), 1036–1045.
+
+\bibitem{lozupone07}
+Lozupone, C. A., Hamady, M., Kelley, S. T. and night, R. (2007). Quantitative and qualitative beta diversity measures lead to different insights into factors that structure microbial communities. Applied and environmental microbiology, 73(5), 1576–1585.
+
+\end{thebibliography}
+
+
+\newpage
+\section*{\large Appendix A. Supplementary figures}\label{sec:supp-a}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=6.5in]{images/outline/sim_data.eps}
+    \caption{Configuration of simulated data following Equation \ref{eq:distribution}, displayed in two-dimension projected from each axis.}
+    \label{fig:sim_data}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=6.5in]{images/outline/shepard_sim_all.png}
+    \caption{Shepard plot in simulation data using SuperMDS\cite{witten11} (first row) and proposed MDS (second row). Because a different hyperparameter is used in the two methods, a comparison is made based on a ratio between confirmatory and MDS term in the objective function (Equation \ref{eq:mds}).}
+    \label{fig:shepard_sim}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=6.5in]{images/outline/shepard_site.png}
+    \caption{Shepard plot in microbial community data collected from site 1 (first row) and site 2 (second row) for a range of hyperparameter $\lambda$.}
+    \label{fig:shepard_site}
+\end{figure}
+
+
+\section*{\large Appendix B. Derivation of mapping function $f_\mathbf{z}(\Phi_o)$}\label{sec:supp-b}
+
+The confirmatory term in Equation (\ref{eq:mds}) originates in an effort to minimize a difference in the distribution of pseudo $F$ of the original and two-dimensional data, represented by the \textit{p}-values of each pseudo $F$ statistics. Here \textit{p}-value is obtained by a quantile of pseudo $F$ among its distribution of a set of permuted labels \cite{anderson01}. 
+
+To estimate the closest pseudo $F$ minimizing the difference in \textit{p}-values, we first derive the following statistics
+\begin{equation}
+\Phi_o^\Pi = \frac{\sum_{i,j} \1\{y_i^\Pi \neq y_j^\Pi\} d_{ij}^2}{\sum_{i,j} \1\{y_i^\Pi = y_j^\Pi\}d_{ij}^2}, \quad 
+\Phi_\mathbf{z}^\Pi = \frac{\sum_{i,j} \1\{y_i^\Pi \neq y_j^\Pi\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\sum_{i,j} \1\{y_i^\Pi = y_j^\Pi\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2}, \label{eq:map1}
+\end{equation}
+where the superscript $\Pi$ denotes a permutation of labels $\{y_i\}$. 
+
+Next step is to correlate $\Phi_o^\Pi$ and $\Phi_\mathbf{z}^\Pi$ by repeating the permutation and performing a local regression (LOESS) on the pair set. This allows us to obtain an approximation of function $f_\mathbf{z}(\cdot)$ that maps $\Phi_o$ to $\Phi_\mathbf{z}$ (Figure \ref{fig:fval}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5.5in]{images/outline/Fval.eps}
+    \caption{Correlation plot of pseudo F in the orginal and two-dimensional by permuting $y$ labels over 1,000 iteration. Created by setting a hyperparameter $\lambda$ for MM algorithm (left, 0.3; right, 0).}
+    \label{fig:fval}
+\end{figure}
+
+In addition, we explain why $\Phi_o$, $\Phi_\mathbf{z}$ in Equation (\ref{eq:map1}) represent our pseudo $F$ statistics in terms of obtaining the $p$-values. This is simply by observing the pseudo $F$ of the original and two-dimensional configuration,
+$$
+F_\mathbf{z} = (N-2)\cdot\frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\sum_{i,j}\1\{y_i = y_j\}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2} = (N-2)(1+\Phi_\mathbf{z}), 
+$$
+$$
+F_o = (N-2)\cdot\frac{\sum_{i,j} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2} = (N-2)(1+\Phi_o),
+$$
+so it suggests that the same $p$-value can be obtained by calculating a quantile of $\Phi$-distribution.
+
+Finally, we derive the confirmatory term in Equation (\ref{eq:mds}) by observing
+
+\begin{align}
+\argmin_\mathbf{z}\,&\left|\Phi_\mathbf{z}(\mathbf{z}) - f_\mathbf{z}(\Phi_o)\right| \\
+&= \argmin_\mathbf{z}\,\left|\frac{\sum_{i,j} \1\{y_i \neq y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2} - f_\mathbf{z}(\Phi_o)\right| \\
+&\approx\argmin_\mathbf{z}\,\left|\sum_{i,j}\1\{y_i \neq y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 - f_\mathbf{z}(\Phi_o)\cdot \sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right| \\
+&=\argmin_\mathbf{z}\,\left|\sum_{i,j} \left[1- (f_\mathbf{z}(\Phi_o)+1)\1\{y_i = y_j\}\right]\|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right|.
+\end{align}
+
+Note that the last equation is strictly convex in regards to $\mathbf{z}$; therefore, when it is added to the MDS term we ensure that the MM algorithm will still work.
+
+
+\section*{\large Appendix C. Derivation MM algorithm for proposed MDS}\label{sec:supp-c}
+For each $k=1,\cdots N$, we want to find $\mathbf{z_k^*}$ such that
+
+\begin{align}
+\mathbf{z}_k^* &= \argmin_{\mathbf{z}_k}O(\mathbf{z}) \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{i,j} (d_{ij} - \|\mathbf{z}_i - \mathbf{z}_j\|_2)^2 + \lambda\left|\sum_{i,j} [1- (f_\mathbf{z}(\Phi)+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right| \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{j=1}^N (d_{jk} - \|\mathbf{z}_j - \mathbf{z}_k\|_2)^2 + \lambda\delta(\mathbf{z})\sum_{i,j} [1- (f_\mathbf{z}(\Phi)+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{j=1}^N \|\mathbf{z}_k - \mathbf{z}_j\|_2^2 - 2\sum_{j=1}^N d_{jk}\|\mathbf{z}_k - \mathbf{z}_j\|_2 + \lambda\delta(\mathbf{z})\sum_{j=1}^N [1- (f_\mathbf{z}(\Phi)+1)\epsilon_{jk}] \|\mathbf{z}_k - \mathbf{z}_j\|_2^2 \\
+&= \argmin_{\mathbf{z}_k}\, (1+\lambda\delta (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{jk}=0}}^N \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 + (1-\lambda f_\mathbf{z}(\Phi)\delta (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{kj}=1}}^N \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 - 2\sum_{j=1}^N d_{jk}\,\|\mathbf{z}_k-\mathbf{z}_j\|_2 \label{eq:mm1}
+\end{align}
+where we have defined
+
+$$
+\epsilon_{ij} = \1\{y_i = y_j\}, \quad \delta_i (\mathbf{z}) = \text{sign}\,\sum_{j=1}^N [1- (f_\mathbf{z}(\Phi)+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2
+$$
+for simplicity. Next we majorize Equation \ref{eq:mm1} by writing
+
+\begin{equation}
+(1+\lambda\delta (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{jk}=0}}^N \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 + (1-\lambda f_\mathbf{z}(\Phi)\delta (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{jk}=1}}^N \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 - 2\sum_{j=1}^N d_{jk}\,\frac{\sum_{s=1}^2 (z_{ks}-z_{js})(\Tilde{z}_{ks}-z_{js})}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}. \label{eq:mm2}
+\end{equation}
+
+Knowing the above is convex and quadratic, we take a derivative with respect to $z_{ks}$ to find its minimum at $\mathbf{z}_{k}=\mathbf{z}_{k}^\dagger$. Taking derivative in Equation \ref{eq:mm2} and setting it zero we have 
+
+$$
+2(1+\lambda\delta(\mathbf{z}))\sum_{\substack{j=1\\\epsilon_{jk}=0}}^N (z_{ks}^\dagger-z_{js}) + 2(1-\lambda f_\mathbf{z}(\Phi)\delta(\mathbf{z}))\sum_{\substack{j=1\\\epsilon_{kj}=1}}^N (z_{ks}^\dagger-z_{js}) - 2\sum_{j=1}^N d_{jk}\frac{\Tilde{z}_{ks}-z_{js}}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2} = 0
+$$
+
+\begin{multline}
+\therefore z_{ks}^\dagger = 
+\frac{2}{2(N-1)+\lambda\delta(\mathbf{z})(N-(N-2)f_\mathbf{z}(\Phi))}\cdot \\
+\left[(1+\lambda\delta(\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{jk}=0}}^N z_{js} + (1-\lambda f_\mathbf{z}(\Phi)\delta(\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{jk}=1}}^N z_{js} + \sum_{j=1}^N d_{jk}\frac{\Tilde{z}_{ks}-z_{js}}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}\right],
+\end{multline}
+giving the update rule as written in Algorithm \ref{alg:mm}. $\quad\square$
+
+
+\end{document}

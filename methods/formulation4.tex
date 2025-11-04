@@ -1,0 +1,234 @@
+\documentclass{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% Setup %%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=3.3cm]{geometry}
+% \usepackage{fullpage}
+\usepackage{fmtcount} % 1st, 2nd...
+\usepackage[english]{babel}
+\usepackage{kotex}
+\usepackage{soul} % spacing
+\usepackage{enumerate} % change enum label
+\usepackage{framed} % frame pagebreak
+
+%%%%% Math, Code 
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{array}
+\usepackage{mathtools} 
+\usepackage{verbatim}
+\usepackage{fancyvrb} % verbatim
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+%%%%% Graphic, Figure, Table
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow} % table
+\usepackage{diagbox} % table
+\usepackage{booktabs} % pretty table
+\usepackage{colortbl} % color cells
+\usepackage{longtable} % table to next page
+\usepackage{rotating}
+\usepackage{lscape} % landscape page
+\usepackage{pdfpages} % insert external pdf file
+\usepackage{wrapfig} % wrap fig, tbl with text
+\usepackage{tikz}  % draw
+\usetikzlibrary{
+    arrows, decorations.pathmorphing, decorations.markings,
+    backgrounds, fit, positioning, shapes.symbols, chains
+}
+
+%%%%% Bib, Cite
+% \usepackage{natbib}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage[firstinits=true]{biblatex}
+% \addbibresource{thesisref.bib}
+
+%%%%%% Setup
+\captionsetup{compatibility=false} %subfig
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{dfn}{Definition}
+\newtheorem{ex}{Example}
+\newtheorem{cmt}{Cmt}[section]
+\newtheorem{rmk}{Remark}[section]
+\newcommand{\rb}[1]{\raisebox{-.5em}[0pt]{#1}}
+%\renewcommand{\baselinestretch}{1.9}
+\renewcommand{\mid}{\, | \ , }
+\newcommand{\1}{{\rm 1}\kern-0.24em{\rm I}}
+%\newcommand{\eighth}{{\textstyle \frac{1}{8}}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\bbr}{\mathbb{R}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{Progress update with MM algorithm}
+\author{HK}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\section*{Motivation}
+Our previous approach using gradient descent did not converge when the hyperparameter $\lambda$ was large; we think this was because the previous confirmatory (classification) term was non-convex. Here I propose a new objective function where we apply the majorization-minimization (MM) algorithm to find its minimum \cite{borg}. 
+
+Again, consider a balanced design where the number of total observations is $N$ with the number of groups equal to 2, each observation is $S$-dimensional. Given a distance matrix $[d_{ij}]\in\bbr^{N\times N}$ and a binary label set $y_i\in\{0,1\}$, we seek a configuration $\mathbf{z} = (\mathbf{z}_1, \cdots, \mathbf{z}_N) \in \bbr^{N \times 2}$, $\mathbf{z}_i$. Then a new objective function is proposed as
+
+\begin{align}
+O(\mathbf{z}) = \underbrace{\frac{1}{2}\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2}_\text{MDS term} + \lambda\cdot \underbrace{\frac{1}{2} \left|\sum_{i,j} [1- (f_{\mathbf{z}}(\Phi_o)+1)\1\{y_i = y_j\}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right|}_\text{Confirmatory term}
+\end{align}
+
+where $\Phi_o$ is a constant ratio expressed in terms of $[d_{ij}]$ and $y_i$, which is defined as
+
+$$
+\Phi_o \vcentcolon= \frac{\sum_{i,j} \1\{y_i \neq y_j\} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2},
+$$
+
+and where $f_\mathbf{z}:\bbr\rightarrow\bbr$ is a mapping of the ratio $\Phi_o$ which determined by the configuration $\mathbf{z}$. An exact derivation of the $f_\mathbf{z}(\Phi_o)$ and a detailed description on the confirmatory term in Eq. (1) will be described later in Appendix.
+
+Given equation (1), we want to find a configuration $\mathbf{z}^*$ such that
+
+$$
+\mathbf{z}^* = \argmin_{(\mathbf{z}_1, \cdots, \mathbf{z}_N)} O(\mathbf{z}).
+$$
+
+
+\section*{Derivation of a majorization algorithm} 
+Now we move on to minimize $O(\mathbf{z})$ using the MM algorithm. For each $k=1,\cdots N$, we want to find $\mathbf{z_k^*}$ such that
+
+\begin{align}
+\mathbf{z}_k^* &= \argmin_{\mathbf{z}_k}O(\mathbf{z}) \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{i,j} (d_{ij} - \|\mathbf{z}_i - \mathbf{z}_j\|_2)^2 + \lambda\left|\sum_{i,j} [1- (f_\mathbf{z}(\Phi)+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right| \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{j=1}^N (d_{jk} - \|\mathbf{z}_j - \mathbf{z}_k\|_2)^2 + \lambda\delta(\mathbf{z})\sum_{i,j} [1- (f_\mathbf{z}(\Phi)+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{j=1}^N \|\mathbf{z}_k - \mathbf{z}_j\|_2^2 - 2\sum_{j=1}^N d_{jk}\|\mathbf{z}_k - \mathbf{z}_j\|_2 + \lambda\delta(\mathbf{z})\sum_{j=1}^N [1- (f_\mathbf{z}(\Phi)+1)\epsilon_{jk}] \|\mathbf{z}_k - \mathbf{z}_j\|_2^2 \\
+&= \argmin_{\mathbf{z}_k}\, (1+\lambda\delta (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{jk}=0}}^N \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 + (1-\lambda f_\mathbf{z}(\Phi)\delta (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{kj}=1}}^N \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 - 2\sum_{j=1}^N d_{jk}\,\|\mathbf{z}_k-\mathbf{z}_j\|_2
+\end{align}
+
+where we have defined
+
+$$
+\epsilon_{ij} = \1\{y_i = y_j\}, \quad \delta_i (\mathbf{z}) = \text{sign}\,\sum_{j=1}^N [1- (f_\mathbf{z}(\Phi)+1)\epsilon_{ij}] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2
+$$
+
+for simplicity. Next we majorize Eq. (6) by writing
+
+\begin{equation}
+(1+\lambda\delta (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{jk}=0}}^N \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 + (1-\lambda f_\mathbf{z}(\Phi)\delta (\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{jk}=1}}^N \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 - 2\sum_{j=1}^N d_{jk}\,\frac{\sum_{s=1}^2 (z_{ks}-z_{js})(\Tilde{z}_{ks}-z_{js})}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}.
+\end{equation}
+
+Knowing the above is convex and quadratic, we take a derivative with respect to $z_{ks}$ to find its minimum at $\mathbf{z}_{k}=\mathbf{z}_{k}^\dagger$. Taking derivative in Eq. (7) and setting it zero we have 
+
+$$
+2(1+\lambda\delta(\mathbf{z}))\sum_{\substack{j=1\\\epsilon_{jk}=0}}^N (z_{ks}^\dagger-z_{js}) + 2(1-\lambda f_\mathbf{z}(\Phi)\delta(\mathbf{z}))\sum_{\substack{j=1\\\epsilon_{kj}=1}}^N (z_{ks}^\dagger-z_{js}) - 2\sum_{j=1}^N d_{jk}\frac{\Tilde{z}_{ks}-z_{js}}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2} = 0
+$$
+
+\begin{multline}
+\therefore z_{ks}^\dagger = 
+\frac{2}{2(N-1)+\lambda\delta(\mathbf{z})(N-(N-2)f_\mathbf{z}(\Phi))}\cdot \\
+\left[(1+\lambda\delta(\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{jk}=0}}^N z_{js} + (1-\lambda f_\mathbf{z}(\Phi)\delta(\mathbf{z})) \sum_{\substack{j=1\\\epsilon_{jk}=1}}^N z_{js} + \sum_{j=1}^N d_{jk}\frac{\Tilde{z}_{ks}-z_{js}}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}\right]
+\end{multline}
+
+This concludes our update rule as follows. \newpage
+\begin{algorithm}
+\caption{MM algorithm for pseudo \textit{F}-informed MDS}
+For epoch $t$ and every $i=1,\cdots N$,
+
+\begin{align*}
+\mathbf{z}_i^{[t+1]} \leftarrow 
+&\frac{2}{2(N-1)+\lambda\delta(\mathbf{z}_i^{[t]})(N-(N-2)f_\mathbf{z}(\Phi))} \\
+&\times \left[(1+\lambda\delta(\mathbf{z}_i^{[t]})) \sum_{\substack{j=1\\\epsilon_{ij}=0}}^N \mathbf{z}_j^{[t]} + (1-\lambda f_\mathbf{z}(\Phi)\delta(\mathbf{z}^{[t]})) \sum_{\substack{j=1\\\epsilon_{ij}=1}}^N \mathbf{z}_j^{[t]} + \sum_{j=1}^N d_{ij}\frac{\mathbf{z}_{i}^{[t]}-\mathbf{z}_{j}^{[t]}}{\|\mathbf{z}_i^{[t]}-\mathbf{z}_j^{[t]}\|_2}\right]    
+\end{align*}
+
+with an initial value obtained from pure MDS.
+\end{algorithm}
+
+
+\section*{Preliminary result}
+To see whether our approach is effective, we take a microbial community dataset as an example where its number of features is 72, and we visualize the data using MDS. By applying different hyperparameter $\lambda$ to the dataset, we obtain a different MDS configurations as below.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5.5in]{images/mm_site2.eps}
+    \caption{MDS visualization of a bacterial community dataset, each of which is treated with/without the host (colored in blue/black, respectively). An ellipse for each group is drawn to represent 80\% confidence interval on its distribution.}
+    \label{res}
+\end{figure}
+
+Here, the two groups are statistically different to each other (PERMANOVA, $P$ = 0.042), but a classical MDS visualization does not show such difference (left panel, $\lambda = 0$). When $\lambda$ increases, however, the difference in MDS becomes more apparent, which can be confirmed by a low $P$-value.
+
+
+\section*{Future work}
+Now that we have applied MM algorithm to minimize our objective function, we proceed to a further application of our approach by
+
+\begin{itemize}
+    \item creating a simulation data of two groups where the groups are statistically different, but where a classical MDS visualiztion cannot differentiate to one another, and
+    \item applying to other biological dataset (by communicating with LLNL collaborators).
+\end{itemize}
+
+
+\section*{Appendix}
+The confirmatory term in Eq. (1) originates in an effort to minimize a difference in \textit{p}-values each determined by pseudo $F$ of the original and two-dimensional data structure. Here \textit{p}-value is obtained by a quantile of pseudo $F$ among its distribution of a set of permuted labels \cite{anderson}. 
+
+To estimate the closest pseudo $F$ minimizing the difference in \textit{p}-values, we first derive the following statistics
+\begin{equation}
+\Phi_o^\Pi = \frac{\sum_{i,j} \1\{y_i^\Pi \neq y_j^\Pi\} d_{ij}^2}{\sum_{i,j} \1\{y_i^\Pi = y_j^\Pi\}d_{ij}^2}, \quad 
+\Phi_\mathbf{z}^\Pi = \frac{\sum_{i,j} \1\{y_i^\Pi \neq y_j^\Pi\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\sum_{i,j} \1\{y_i^\Pi = y_j^\Pi\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2},
+\end{equation}
+where the superscript $\Pi$ denotes a permutation of labels $\{y_i\}$. 
+
+Next step is to correlate $\Phi_o^\Pi$ and $\Phi_\mathbf{z}^\Pi$ by repeating the permutation and performing a local regression (LOESS) on the pair set. This allows us to obtain a function $f_\mathbf{z}(\cdot)$ that maps $\Phi_o$ to $\Phi_\mathbf{z}$ (Figure \ref{fig:fval}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5.5in]{images/Fval.eps}
+    \caption{Correlation plot of pseudo F in the orginal and two-dimensional by permuting $y$ labels over 1,000 iteration. Created by setting a hyperparameter $\lambda$ for MM algorithm (left, 0.3; right, 0).}
+    \label{fig:fval}
+\end{figure}
+
+We also describe why $\Phi_o$, $\Phi_\mathbf{z}$ in Eq. (7) represent our pseudo $F$ statistics in terms of obtaining the $p$-values. This is simply by observing the pseudo $F$ of the original and two-dimensional configuration,
+$$
+F_\mathbf{z} = (N-2)\cdot\frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\sum_{i,j}\1\{y_i = y_j\}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2} = (N-2)(1+\Phi_\mathbf{z}), 
+$$
+$$
+F_o = (N-2)\cdot\frac{\sum_{i,j} d_{ij}^2}{\sum_{i,j} \1\{y_i = y_j\}d_{ij}^2} = (N-2)(1+\Phi_o),
+$$
+so it suggests that the same $p$-value can be obtained by calculating a quantile of $\Phi$-distribution.
+
+Finally, we derive the confirmatory term in Eq. (1) by observing
+
+\begin{align}
+\argmin_\mathbf{z}\,&\left|\Phi_\mathbf{z}(\mathbf{z}) - f_\mathbf{z}(\Phi_o)\right| \\
+&= \argmin_\mathbf{z}\,\left|\frac{\sum_{i,j} \1\{y_i \neq y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{\sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2} - f_\mathbf{z}(\Phi_o)\right| \\
+&\approx\argmin_\mathbf{z}\,\left|\sum_{i,j}\1\{y_i \neq y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2 - f_\mathbf{z}(\Phi_o)\cdot \sum_{i,j} \1\{y_i = y_j\} \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right| \\
+&=\argmin_\mathbf{z}\,\left|\sum_{i,j} \left[1- (f_\mathbf{z}(\Phi_o)+1)\1\{y_i = y_j\}\right]\|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right|.
+\end{align}
+
+Note that the last equation is strictly convex in regards to $\mathbf{z}$; therefore, when it is added to the MDS term we ensure that the MM algorithm will still work.
+
+
+\begin{thebibliography}{}
+
+\bibitem{borg}
+Borg,\,I. and Groenen,\,P.\,J.\,F. (2005), Modern multidimensional scaling: Theory and applications, 2nd ed. Springer series in statistics, Springer New York, NY.
+
+\bibitem{anderson}
+Anderson,\,M.J. (2001), A new method for non-parametric multivariate analysis of variance. Austral Ecology, 26: 32-46.
+
+\end{thebibliography}
+
+\end{document}

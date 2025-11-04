@@ -1,0 +1,78 @@
+\documentclass[12pt]{article}
+\usepackage[letterpaper, margin=1in]{geometry}
+\usepackage{amsfonts,amssymb,amsmath}
+\usepackage{mathrsfs,mathtools}
+\usepackage{comment}
+\usepackage{graphicx}%
+\usepackage{verbatim}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\newcommand{\field}[1]{\mathbb{#1}}
+\newcommand{\X}{\field{X}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\R}{{\rm I}\kern-0.18em{\rm R}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\norm}[1]{\Vert#1\Vert}
+\newcommand{\argmin}{\mathop{\mathrm{argmin}}}
+
+\title{Dimension Reduction for Permutation-based Hypothesis Testing via factor rotation
+% \textcolor{red}{Tree-distance Metric}
+% \footnote{I narrowed down our scope, because I think saying ``non-Euclidean distance'' may sound too broad}
+}
+\author{
+    Soobin Kim$^\dag$, Hyungseok Kim\thanks{Equal contribution.} , Cullen R. Buie, Hee-Seok Oh\thanks{Corresponding authors.}
+    }
+\date{December 2021}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+\begin{itemize}
+    \item Dimension reduction is becoming a widely used method for analyzing high-dimensional data, e.g. ecological, biological sequences, ...
+    \item However, reduction towards a low dimension, to make an original data interpret-able by human, often fails to convey the original structure \textcolor{red}{\{ref1, ref2..\}}
+    \item This is especially the case when the number of dimension of given dataset is very high compared to the number of samples (aka ``curse of dimensionality''). One example is  sequence analysis of biological samples, where the number of samples (replicates) less than the number of features (dimension) in a practical sense.
+    \item Indeed, such failure to accurately project the original dispersion info can result in an inconsistency with quantitative analysis, such as hypothesis testing (see appendix for detail).
+    \item In this study we introduce a new reduction method to overcome the inconsistency between projected data structure and hypothesis testing result. 
+    % \textcolor{red}{specifically we focus on tree distance matrix, one of non-Euclidean space, and we study what their properties are in determining principle coordinates}
+\end{itemize}
+
+\section{Algorithms and main result}
+Will describe soon. See appendix for details
+% \subsection{Notations and preliminaries}
+% \subsection{Main result}
+
+\section{Questions}
+\begin{itemize}
+    \item Can we prove the existence of our solution? If so, which assumptions do we need to prove its existence?
+    \item What's the time complexity of our algorithm? How fast does it converge? Can it be improved to perform better?
+    \item We yet do not mention why we particularly focus on tree-based distance metric (or non Euclidean). For example, does tree-based metric help us answer any of the above? \textcolor{blue}{Two possible uses for example: 1) Use sparsity of distance matrix (I remember you mentioning that our distance matrix is sparse). 2) We may assume appropriate distribution to the data. For example, some use Markov models on trees. (Yet I'm not sure if this model is appropriate for our data)}
+    \item Intuitively, I think it would be wise to start studying our algorithm with Euclidean metric, then expand its property to non-Euclidean such as phylogenic tree distances. How are Euclidean and non-Euclidean are different in their distance matrices? \textcolor{blue}{Not necessarily.. I think we should use properties of metric for proofs. Then we'll show properties of our method for general metrics, including Euclidean AND non-Euclidean. I guess generalization from Euclidean to non-Euclidean would be more difficult. (not quite certain though)}
+\end{itemize}
+
+\section{Related works}
+Related previous works we've found out so far may be classified into two tracks:
+
+\begin{enumerate}
+    \item Projection Pursuit: Includes Principal Component Analysis, Factor Analysis, DiProPerm (Wei, Lee, Wichers \& Marron. 2016). In short, find the best ordination (or basis) that suits your purpose. For our data, it would be finding the best 2 or 3-dimensional projection that distinguishes two microrbial groups.
+    \item Rotation based Method: Our current idea. Using existing ordination, find rotation that suits your purpose.
+\end{enumerate}
+
+I think the benefits of Rotation based Methods could be (given finding rotation matrix is feasible):
+\begin{itemize}
+    \item Less dependent on initial projection: Projection pursuit heavily relies on the choice of original projection, while rotation method "rotates" them (?)
+    \item Interpretability: Often we give meanings to factors or PC's. We may do that to rotated ordinations. (?)
+    \item Recent methods on projection pursuit heavily rely on observations (ex. \href{https://doi.org/10.1080/10618600.2015.1027773}{DiProPerm}, \href{https://arxiv.org/abs/1108.2401}{Wainwright2016}). These methods can nicely cover the addressed issue on hypothesis testing consistency. However, because the projections originate from either random process or from binary classificaion vectors. These have not yet confirmed whether the PCs can cover the covariance structure (i.e. explain variances by first few components).
+\end{itemize}
+
+% but I'm not that certain. I think we can also consider extending Projection pursuit methods as well. Also, random projection theories (especially random rotation) might come in handy.
+
+\section{Appendix: Research context}
+% this section is to provide a context to PIs how I would like to include this work in my doctoral thesis.
+\input{appendix}
+
+\end{document}

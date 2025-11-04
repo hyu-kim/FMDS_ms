@@ -1,0 +1,320 @@
+\documentclass[twoside]{article}
+
+\usepackage{aistats2024}
+% If your paper is accepted, change the options for the package
+% aistats2022 as follows:
+%
+%\usepackage[accepted]{aistats2024}
+%
+% This option will print headings for the title of your paper and
+% headings for the authors names, plus a copyright note at the end of
+% the first column of the first page.
+
+% If you set papersize explicitly, activate the following three lines:
+%\special{papersize = 8.5in, 11in}
+%\setlength{\pdfpageheight}{11in}
+%\setlength{\pdfpagewidth}{8.5in}
+
+% If you use natbib package, activate the following three lines:
+\usepackage[round]{natbib}
+\renewcommand{\bibname}{References}
+\renewcommand{\bibsection}{\subsubsection*{\bibname}}
+
+% If you use BibTeX in apalike style, activate the following line:
+%\bibliographystyle{apalike}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\bbr}{\mathbb{R}}
+\newcommand{\1}{{\rm 1}\kern-0.24em{\rm I}}
+\newcommand{\cO}{\mathcal{O}}
+\makeatletter
+\renewcommand\theequation{S\@arabic\c@equation}
+\renewcommand\thetable{S\@arabic\c@table}
+\makeatother
+
+%%%%% Math
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+%%%%% Graphic, Figure, Table
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tablefootnote}
+
+\begin{document}
+
+% If your paper is accepted and the title of your paper is very long,
+% the style will print as headings an error message. Use the following
+% command to supply a shorter title of your paper so that it can be
+% used as headings.
+%
+%\runningtitle{I use this title instead because the last one was very long}
+
+% If your paper is accepted and the number of authors is large, the
+% style will print as headings an error message. Use the following
+% command to supply a shorter version of the authors names so that
+% they can be used as headings (for example, use only the surnames)
+%
+%\runningauthor{Surname 1, Surname 2, Surname 3, ...., Surname n}
+
+% Supplementary material: To improve readability, you must use a single-column format for the supplementary material.
+\onecolumn
+\aistatstitle{Multidimensional scaling informed by $F$-ratio: 
+Visualizing microbiome for inference (supplementary material)}
+
+
+\section{MAPPING FUNCTION} \label{sec:mds-deriv-f}
+
+In this section, we provide a rationale in deriving a mapping function $f_\mathbf{z}(F)$ that is used to minimize an FMDS objective function (Equation 4 of main text).
+The confirmatory term of the objective function is designed to minimize a difference in $p$-values that are obtained by pseudo $F$ statistics under the original $S$-dimension and the two-dimension. 
+Each \textit{p}-value can be obtained based on an empirical distribution of pseudo $F$ from permuted labels under respective dimension \citep{anderson01}. 
+
+To estimate such pseudo $F$ that satisfies the above, we permute the label set $\{y_i\}$ ($i=1,\cdots N$), denoted with a superscript $\pi$ (namely $y_i^\pi$) and derive the following statistics:
+\begin{align}
+F^\pi &= 
+\left(\frac{\sum_{i,j}d_{ij}^2}{2\sum_{i,j}d_{ij}^2\,\1\{y_i^\pi = y_j^\pi\}} -1 \right) \cdot (N-2), \\
+F^\pi_\mathbf{z} &= 
+\left(\frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{2\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2\,\1\{y_i^\pi = y_j^\pi\}} -1 \right) \cdot (N-2).
+\label{eq:map1}
+\end{align} 
+Note that Equation \ref{eq:map1} represents a pseudo $F$ that is calculated based on a two-dimensional configuration $\mathbf{z}$, denoted as $F_\mathbf{z}$.
+
+Using a pair $(F^\pi, F_\mathbf{z}^\pi)$ for every permutation, a mapping function $f_\mathbf{z}: F^\pi \rightarrow F_\mathbf{z}^\pi$ can be derived by performing a local regression. 
+An example is given below, where it is shown that $f_\mathbf{z}(\cdot)$ can change by the choice of hyperparameter $\lambda$.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5.5in]{submissions/nips/figures/mds_Fval.pdf}
+    \caption*{Mapping pseudo $F$'s between two dimensionalities. Each data point was obtained by permuting labels over 1,000 iteration, and by setting a hyperparameter for performing the Majorize-Minimization algorithm ($\lambda=0.3$, left; $\lambda=0$, right).}
+    \label{fig:mds-fval}
+\end{figure}
+
+Finally, the confirmatory term for our FMDS objective is derived by seeking $\mathbf{z}$ such that
+
+\begin{align}
+&\argmin_\mathbf{z}\,\left|F_\mathbf{z} - f_\mathbf{z}(F)\right| \\
+&\quad = \argmin_\mathbf{z}\,\left|(N-2)\cdot\left(\frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{2\sum_{i,j}\epsilon_{ij}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2} -1 \right) - f_\mathbf{z}(F)\right| \\
+&\quad= \argmin_\mathbf{z}\,\left|\frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{2\sum_{i,j}\epsilon_{ij}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2} -1 - \frac{f_\mathbf{z}(F)}{N-2} \right| \\
+&\quad= \argmin_\mathbf{z}\,\left| \frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2 - 2\sum_{i,j}\epsilon_{ij}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2 \cdot [1+f_\mathbf{z}(F)/(N-2)]}{2\sum_{i,j}\epsilon_{ij}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2} \right| \label{eq:pre_approx}\\
+&\quad\approx \argmin_\mathbf{z}\,\left| \sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2 - 2\sum_{i,j}\epsilon_{ij}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2 \cdot \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right) \right| \label{eq:approx}\\
+&\quad= \argmin_\mathbf{z}\,\left|\sum_{i,j} \left[1- 2\epsilon_{ij} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right|,
+\end{align}
+% where Equation \ref{eq:approx} is approximated from Equation \ref{eq:pre_approx}, which is viable when a value of the nominator approaches to 0.
+consituting Equation 4 of the main text.
+
+
+
+\section{MAJORIZE-MINIMIZATION ALGORITHM} \label{sec:mds-deriv-mm}
+We provide an analytical expression to derive an iteration and update rule using Majorize-Minimization (MM) algorithm. 
+Here, a configuration $\mathbf{z^*}= (\mathbf{z}_1^*, \cdots \mathbf{z}_N^*)\in \bbr^{N\times 2}$ is sought to minimize an objective term for FMDS, $O(\mathbf{z})$.
+We have enabled this by applying the MM algorithm for every index $k=1,\cdots N$ minimizing $O(\mathbf{z})$ while other configuration points except for $\mathbf{z}_k$ are fixed.
+In other words,
+\begingroup
+\allowdisplaybreaks
+\begin{align}
+\mathbf{z}_k^* 
+&= \argmin_{\mathbf{z}_k}O(\mathbf{z} | \mathbf{z}_k) \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{i,j} (d_{ij} - \|\mathbf{z}_i - \mathbf{z}_j\|_2)^2 + \lambda\left|\sum_{i,j} \left[1- 2\epsilon_{ij} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right| \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{j=1}^N (d_{jk} - \|\mathbf{z}_j - \mathbf{z}_k\|_2)^2 + \lambda\delta(\mathbf{z})\sum_{j=1}^N \left[1- 2\epsilon_{jk} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right] \cdot \|\mathbf{z}_j - \mathbf{z}_k\|_2^2 \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{j=1}^N \left[1+\lambda\delta(\mathbf{z}) \left(1- 2\epsilon_{jk} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right) \right] 
+\|\mathbf{z}_k-\mathbf{z}_j\|_2^2 
+- 2d_{jk}\|\mathbf{z}_k-\mathbf{z}_j\|_2
+\label{eq:appc_mm1}
+\end{align}
+\endgroup
+where we have defined $\epsilon_{ij}$ and $\delta (\mathbf{z})$ as
+\begin{align}
+\epsilon_{ij} &= \1\{y_i = y_j\}, \quad
+\delta (\mathbf{z}) = \text{sign}\left\{\,\sum_{i,j} \left[1- 2\epsilon_{ij} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right\}
+\end{align}
+for simplicity. As described by \cite{borg97b}, applying MM algorithm starts with majorizing with Equation \ref{eq:appc_mm1}, which is written as
+
+\begin{equation}
+\sum_{j=1}^N\,
+\left[1+\lambda\delta(\mathbf{z}) \left(1- 2\epsilon_{jk} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right) \right] \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 -
+2d_{jk}\,\frac{\sum_{s=1}^2 (z_{ks}-z_{js})(\Tilde{z}_{ks}-z_{js})}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}, \label{eq:appc_mm2}
+\end{equation}
+where $\Tilde{\mathbf{z}}_k$ is a fixed term (not updated) while ${\mathbf{z}}_k$ still remains as a variable.
+
+Next, we assume that a change of mapping function $f_\mathbf{z}(F)$ is negligible and that $\delta(\mathbf{z})$ remains constant during the iteration (e.g., small change in $\mathbf{z}_k$ by a step). These allow us to approximate Equation \ref{eq:appc_mm2} with a quadratic expression in terms of $\mathbf{z}$ which can be readily minimized.
+To find its minimum at $\mathbf{z}_{k}=\mathbf{z}_{k}^\dagger$, a derivative is taken with respect to $z_{ks}$ and is set to zero.
+In other words, we obtain
+\begin{align}
+\begin{split}
+0 = \sum_{j=1}^N\, \left[1+\lambda\delta(\mathbf{z}) \left(1- 2\epsilon_{jk} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right) \right] (z_{ks}^\dagger - z_{js}) 
+- d_{jk}\frac{\Tilde{z}_{ks}-z_{js}}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}.
+\end{split}
+\end{align}
+
+Noting that for a balanced design where $\sum_{j=1}^N \epsilon_{jk}= {N}/{2}$, for $k=1,\cdots N$, we rewrite the above with
+\begin{align}
+\begin{split}
+& \sum_{j=1}^N\, \left[1+\lambda\delta(\mathbf{z}) \left(1- 2\epsilon_{jk} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right) \right] z_{ks}^\dagger \\
+&\qquad= \left[ N + \lambda\delta(\mathbf{z})N - \lambda\delta(\mathbf{z})N\left(1+\frac{f_\mathbf{z}(F)}{N-2}\right) \right] z_{ks}^\dagger \\
+&\qquad= \left( N - \frac{N\lambda\delta(\mathbf{z})f_\mathbf{z}(F)}{N-2} \right) z_{ks}^\dagger \\
+&\qquad= \sum_{j=1}^N\, \left[1+\lambda\delta(\mathbf{z}) \left(1- 2\epsilon_{jk} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right) \right] z_{js} + d_{jk}\frac{\Tilde{z}_{ks}-z_{js}}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}.
+\end{split}
+\end{align}
+\begin{align}
+\begin{split}
+\therefore z_{ks}^\dagger = 
+\frac{(N-2)}{N(N-2) - N\lambda\delta(\mathbf{z}) f_\mathbf{z}(F)} \cdot\left\{\sum_{j=1}^N\, \left[1+\lambda\delta(\mathbf{z}) \left(1- 2\epsilon_{jk} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right) \right]  z_{js} + d_{jk}\frac{\Tilde{z}_{ks}-z_{js}}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}\right\}.
+\end{split}
+\end{align}
+
+Rewriting Equation S17 in a vector form gives us an update rule of $\mathbf{z}$ in Algorithm 2 as following:
+\begin{align}
+\begin{split}
+\mathbf{z}_k \gets
+\frac{(N-2)}{N(N-2) - N\lambda\delta(\mathbf{z}) f_\mathbf{z}(F)}\cdot \left\{\sum_{j=1}^N\, \left[1+\lambda\delta(\mathbf{z}) \left(1- 2\epsilon_{jk} \left(1+\frac{f_\mathbf{z}(F)}{N-2}\right)\right) \right]  \mathbf{z}_{j} + d_{jk}\frac{\mathbf{z}_k -\mathbf{z}_j}{\|{\mathbf{z}}_k-\mathbf{z}_j\|_2}\right\}.
+\end{split}
+\end{align}
+
+
+
+\section{NEURAL NETWORK ARCHITECTURE}
+In this section we describe a procedure of analyzing microbiome data using neural network architecture. 
+To construct a classifier of bacterial community with a convolutional neural network, we first convert the microbial compositional data into a two-dimensional image matrix by implementing PopPhy-CNN \citep{reiman20}. 
+In detail, each matrix reflects a phylogenetic tree structure by bacterial 16S rRNA amplicon (amplicon sequence variant or ASV) and its relative abundance which is normalized by cumulative sum scaling (CSS) \citep{paulson13}.
+Seventy-two microbial samples across all sites were converted to 2D arrays with a size of 10 x 42.
+The data was randomly split into training and validation sets (12 and 60 each) using the stratified K-Fold.
+
+Next, we employ a self-supervised learning method, SimCLR \citep{chen20} as a benchmark.
+To preserve the phylogenetic information by its row or column index, crop or flip filters were excluded from data augmentation procedure.
+Instead, random brightness and contrast / jitter filter were applied with following parameters: (0.6, 0.2) for pretraining, (0.3, 0.1) for finetuning.
+The encoder for our SimCLR consists of one Gaussian noise filter, two 2D convolution layers (with kernel size of 5 by 3), and one fully connected layer with 32 output nodes.
+The projection head consists of two dense layers (32 output nodes each),
+and the linear probe consists of one dense layer (10 output nodes).
+Pretraining was performed for 50 epochs, resulting its validation accuracy of 50\%.
+Finetuning followed for another 50 epochs, resulting its validation accuracy of 83.3\% (see Figure).
+Finally, a trained encoder was used to represent a feature (vector of 32) for each microbiome sample.
+For each pair of features, L\subscript{2}-squared distance was calculated to obtain Stress-1 and Shepard plot.
+\clearpage
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=7in]{submissions/aistats/figures/supp-nn-eval.pdf}
+    \caption*{Performance of SimCLR classifier by 50 training epochs. Validation accuracy from (a) Site 1 and (b) Site 2 community data. Validation loss by categorical cross-entropy from (c) Site 1 and (d) Site 2 data.}
+    \label{fig:supp_nn_eval}
+\end{figure}
+
+
+
+\section{ALTERNATIVE EVALUATION METRICS}
+
+In this section, we provide an alternative evaluation of various dimension reduction methods by utilizing the metric proposed by \citet{rhodes21}. 
+The metric has been introduced to evaluate the performance of RF-PHATE and the procedure is as follows.
+First, find the classification accuracy using the original instances as predictors in a k-NN classifier model. 
+Next, find the regression MSE from a k-NN regression model, where the original distances serve as predictors and the embeddings as the response. 
+Lastly, compute the correlation coefficient between these two importance scores. 
+The assertion is that a higher correlation indicates better preservation of variable structure. 
+Table \ref{tab:eval} shows the numerical assessment of methods for simulated and microbial community dataset. 
+
+\begin{table}[h!]
+    \caption{Performance evaluation of dimensionality reduction methods using simulated and community site data with alternative evaluation criterion proposed by \citet{rhodes21}.}
+    \centering
+    \begin{tabular}{c|c c c}
+     & \textbf{SIMULATION} & \textbf{SITE 1} & \textbf{SITE 2}\\
+     \hline \\
+        FMDS	&0.370	&0.041	&0.231\\
+        MDS	    &0.334	&-0.016&	0.150\\
+        SMDS	&0.502	&0.592	&0.485\\
+        UMAP-S	&0.728	&0.784	&0.722\\
+        UMAP-U	&0.412	&0.135	&0.183\\
+        t-SNE	&0.319	&0.122	&0.173\\
+        Isomap	&0.315	&0.009	&0.140
+    \end{tabular}
+    \label{tab:eval}
+\end{table}
+
+We observe the alternative metric does not directly quantify the effectiveness of embeddings within the context of inference. 
+% Fundamentally, the pivotal concern is the extent of inferential information conveyed by the embeddings. 
+In specific, examining the correlation between two importance scores (data-labels and data-embedding) constitutes a partial evaluation and does not fully explain the embedding-labels relationship. 
+To overcome the limitation, a new metric has been designed for our study as described in the main text.
+The metric calculates both of the correlation between $F$-ratios and the ratio of $p$-values and examines data-labels and embedding-labels relationships.
+
+
+
+\section{COMPUTATIONAL COMPLEXITY}
+In this section, we provide an upper bound of computational complexity for running algorithms to perform FMDS.
+It is evaluated on a basis of a single iteration, as the theoretical cost of entire majorization approach is yet to be characterized (see a recent work by \citet{Streeter23}).
+We discuss the time complexity of each step in \textsc{mapping} and \textsc{mmfmds} functions as outlined in the main text (Algorithms 1 and 2).
+
+For \textsc{mapping} function, an $F$-ratio is computed from a set of permuted labels $y^\pi$ and each of input matrices $d$, $\mathbf{z}$.
+Each computation takes $\cO(N^2)$ operations where $N$ is the sample size.
+The step repeats for a number of iteration $p=999$, resulting in $\cO(2pN^2)$ operations.
+Additional steps are taken to sort the lists of permuted $F$-ratios with $\cO(2N\log N)$.
+In total, the complexity is $\cO(2pN^2 + 2N\log N)$.
+
+For \textsc{mmfmds} function, an $F$-ratio is computed once from $d$, $y$ then mapped to $f_\mathbf{z}(F)$, which takes $\cO(N^2 + \log N)$ operations.
+Next, a sign of FMDS confirmatory term $\delta(\mathbf{z})$ is obtained and the step takes $\cO(N^2)$ operations.
+Finally, a configuration $\mathbf{z}$ is updated for every point, taking $\cO(N^2)$ operations.
+Therefore, the complexity for one iteration of the majorization algorithm is $\cO(3N^2 + \log N)$.
+
+In summary, the computational cost of performing FMDS (unit iteration) is $\cO(2pN^2 + 3N^2 + 2N\log N + \log N) \approx \cO(pN^2)$. 
+It is compared with other dimension reduction methods as below.
+
+\begin{table}[h]
+    \caption{Comparison of time complexity between different dimensionality reduction methods.}
+    \centering
+    \begin{tabular}{c|c c}
+       & Complexity & Algorithm \\
+     \hline
+        FMDS\footnotemark & $\cO(pN^2)$ & Majorization \citep{borg97a} \\
+        MDS & $\cO(N^3)$ & \citet{Torgerson52} \\
+        SMDS$^1$ & $\cO(N^2)$ & \citet{witten11} \\
+        UMAP & $\cO(N\log N)$ & \citet{mcInnes18} \\
+        t-SNE$^1$ & $\cO(N^2)$ & \citet{maaten08} \\
+        Isomap & $\cO(N^2\log N)$ & \cite{tenenbaum00}
+    \end{tabular}
+    \label{tab:complexity}
+\end{table}
+All experiments are run on a single Macbook Pro 2016 laptop with a 3.1 GHz Dual-core Intel core i5 CPU.
+\footnotetext[1]{Corresponds to a single iteration and does not represent a total complexity.}
+
+\section{SUPPLEMENTARY FIGURES}
+\begin{figure}[h!]
+\renewcommand{\figurename}{Supplementary Figure}
+    \centering
+    \includegraphics[width=6.5in]{submissions/nips/figures/sim_data_2d.pdf}
+    \caption[Two-dimensional plot of simulated data.]{Two-dimensional plot of 100 simulated data points.}
+    \label{fig:sim_data_2d}
+\end{figure}
+
+\begin{figure}[h!]
+\renewcommand{\figurename}{Supplementary Figure}
+    \centering
+    \includegraphics[width=5.5in]{submissions/nips/figures/shepard-sim-all.png}
+    \caption[Shepard plot of simulated dataset.]{Shepard plot of simulation data using SuperMDS \citep{witten11} (first row) and \textit{F}-informed MDS (second row). A comparison is made based on a ratio between confirmatory and MDS term. Note that the FMDS consistently shows a linear relationship irrespective of the $\lambda$ values, while the SMDS configurations show large dispersion even with the small $\lambda$ values.}
+    \label{fig:shepard_sim_all}
+\end{figure}
+
+\begin{figure}
+\renewcommand{\figurename}{Supplementary Figure}
+    \centering
+    \includegraphics[width=6.5in]{submissions/nips/figures/site-config-all.pdf}
+    \caption[Visualization of bacterial community using FMDS.]{Visualization of bacterial community using proposed FMDS. Microbial community samples are collected from Site 1 (top row) and Site 2 (bottom row).}
+    \label{fig:site_config_all}
+\end{figure}
+
+\begin{figure}
+\renewcommand{\figurename}{Supplementary Figure}
+    \centering
+    \includegraphics[width=6.5in]{submissions/nips/figures/shepard_site.png}
+    \caption[Shepard plot of community dataset.]{Shepard plot in microbial community data collected from site 1 (first row) and site 2 (second row) for a range of hyperparameters.}
+    \label{fig:shepard_site}
+\end{figure}
+
+\clearpage
+
+\setlength{\itemindent}{-\leftmargin}
+\makeatletter\renewcommand{\@biblabel}[1]{}\makeatother
+\bibliographystyle{abbrvnat}
+\bibliography{submissions/aistats/refs}
+
+\end{document}
