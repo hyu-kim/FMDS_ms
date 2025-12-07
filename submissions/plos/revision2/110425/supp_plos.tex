@@ -1,0 +1,423 @@
+\documentclass[11pt]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% Setup %%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=1in]{geometry}
+\usepackage{fmtcount} % 1st, 2nd...
+\usepackage[english]{babel}
+\usepackage{soul} % spacing
+\usepackage{enumerate} % change enum label
+\usepackage{framed} % frame pagebreak
+\usepackage{authblk}
+\usepackage{setspace}
+\usepackage{tocloft}
+
+%%%%% Math, Code 
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{array}
+\usepackage{mathtools} 
+\usepackage{verbatim}
+\usepackage{fancyvrb} % verbatim
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+%%%%% Graphic, Figure, Table
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{xcolor}
+\usepackage[labelsep=none]{caption}
+\usepackage{subcaption}
+\usepackage{multirow} % table
+\usepackage{longtable} % table to next page
+\usepackage{rotating}
+\usepackage{wrapfig} % wrap fig, tbl with text
+
+%%%%% Bib, Cite
+\usepackage{url}
+\usepackage{cite}
+\usepackage{fancyref}
+\usepackage{hyperref}
+\hypersetup{linktocpage}
+
+%%%%%% Setup
+% \captionsetup{compatibility=false} %subfig
+% \DeclareCaptionLabelFormat{Sformat}{S#2 #1}
+% \captionsetup[figure]{labelformat=Sformat}
+% \captionsetup[table]{labelformat=Sformat}
+\hypersetup{colorlinks=false}
+\setlength{\parskip}{0.5em}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{dfn}{Definition}
+\newtheorem{ex}{Example}
+\newtheorem{cmt}{Cmt}[section]
+\newtheorem{rmk}{Remark}[section]
+\newcommand{\rb}[1]{\raisebox{-.5em}[0pt]{#1}}
+\newcommand{\1}{{\rm 1}\kern-0.24em{\rm I}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cO}{\mathcal{O}}
+\renewcommand{\mid}{\, | \ , }
+\makeatletter
+\renewcommand\theequation{S\@arabic\c@equation}
+\makeatother
+
+\renewcommand\Affilfont{\normalsize}
+% \renewcommand{\baselinestretch}{1.3}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\bbr}{\mathbb{R}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Supporting Information of ``Multidimensional scaling informed by $F$-statistic: Visualizing grouped microbiome data with inference''}
+\author[1\dag]{Hyungseok Kim}
+\author[2\dag]{Soobin Kim}
+\author[3]{Jeffrey A. Kimbrel}
+\author[3]{Megan M. Morris}
+\author[3]{Xavier Mayali}
+\author[1$*$]{Cullen R. Buie}
+\affil[1]{Massachusetts Institute of Technology, Cambridge, MA, USA}
+\affil[2]{University of California, Davis, Davis, CA, USA}
+\affil[3]{Lawrence Livermore National Laboratory, Livermore, CA, USA}
+\affil[$\dagger$] {These authors contributed equally to this work.}
+\affil[$^*$]{Correspondence: crb@mit.edu.}
+% \author{}
+\date{}
+
+\begin{document}
+
+\renewcommand*\contentsname{\normalsize List of Supplementary Notes}
+\makeatletter
+\renewcommand{\tableofcontents}{\@starttoc{toc}}
+\renewcommand*\l@section{\@dottedtocline{1}{0em}{6.3em}}
+\let\l@table\l@content
+\makeatother
+
+\makeatletter
+\renewcommand{\listoffigures}{\@starttoc{lof}}
+\renewcommand*\l@figure{\@dottedtocline{1}{0em}{3.5em}}
+\let\l@table\l@figure
+\makeatother
+
+\makeatletter
+\renewcommand{\listoftables}{\@starttoc{lot}}
+\renewcommand*\l@table{\@dottedtocline{1}{0em}{4.5em}}
+\let\l@table\l@table
+\makeatother
+
+\renewcommand\thesection{S\arabic{section} Appendix.}
+\makeatletter
+\renewcommand*{\@seccntformat}[1]{\csname the#1\endcsname\hspace{0.5em}}
+\makeatother
+
+\renewcommand{\figurename}{\!\!}
+\let\standardthefigure\thefigure
+\renewcommand\thefigure{S\standardthefigure\ Fig.\ }
+\addtolength{\cftfignumwidth}{15pt}
+
+\renewcommand{\tablename}{\!\!}
+\let\standardthetable\thetable
+\renewcommand\thetable{S\standardthetable\ Table.\ }
+
+% \renewcommand{\algorithmname}{\!\!}
+\let\standardthealgorithm\thealgorithm
+\renewcommand\thealgorithm{S\standardthealgorithm}
+
+\maketitle
+% \def\thefootnote{\arabic{footnote}}
+
+{\noindent\normalsize\bf List of Supplementary Information}
+\tableofcontents
+\listoffigures
+\listoftables
+\clearpage
+
+
+\section{Objective function for computing $F$-MDS} \label{sec:app1}
+
+First, we derive a mapping function $f_\mathbf{z}(F_\mathbf{x})$ for minimizing an objective function and computing $F$-informed MDS.
+The mapping function guides to minimize a difference in $p$-values testing group differences under the original $S$- and two-dimensional embedding through the confirmatory term of the objective (see Eq 5 of the main text).
+These \textit{p}-values are obtained from an empirical distribution of the pseudo-$F$s by permuted labels \cite{anderson01} (Eq 4, main text). 
+For a given label set $[y_i]_{i=1}^{N}$ and its group number $G$, a permuted label set $[y_i^\Pi]_{i=1}^{N}$ and $F$-statistics are expressed as
+\begin{equation}
+\begin{aligned}
+F^\Pi_\mathbf{x} &= 
+\left(\frac{\sum_{i,j}d_{ij}^2}{G \sum_{i,j}d_{ij}^2\,\1\{y_i^\Pi = y_j^\Pi\}} -1 \right) \cdot \frac{N-G}{G-1}, \\
+F^\Pi_\mathbf{z} &= 
+\left(\frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{G\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2\,\1\{y_i^\Pi = y_j^\Pi\}} -1 \right) \cdot \frac{N-G}{G-1}.
+\label{eq:map1}
+\end{aligned}
+\end{equation}
+% \end{align} 
+
+It should be noted that the pseudo $F$-ratios can range differently based on how the samples are projected onto 2D. To scale between these two ratios and minimize the difference in $p$-values, we consider a mapping $f_\mathbf{z}: F_\mathbf{x} \rightarrow F_\mathbf{z}$ from a pair of ratios $(F_\mathbf{x}^{\Pi_1}, F_\mathbf{z}^{\Pi_2})$ where each element was ordered from two independent sets of repeated permutations. Figure below exemplifies how the $F$-ratios at each dimensionality scaled differently and depended on the choice of hyperparameter $\lambda$. In both settings, the $F$-ratio in $S$-dimension ranged in [0,6] whereas in 2D representation the ratio ranged in [0,4]. The hyperparameter, however, impacted the detailed relationship between ordered $F_\mathbf{x}$ and ordered $F_\mathbf{x}$, when compared to each other. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=5.5in]{submissions/plos/figures/supp-mds_Fval.pdf}
+    \caption*{Figure: Mapping pseudo-$F$'s between two dimensionalities. Each $F_\mathbf{x} \text{-} F_\mathbf{z}$ relationship was obtained by permuting labels over 1,000 times, and by setting a hyperparameter $\lambda$ that is used to perform the majorization.}
+    \label{fig:mds-fval}
+\end{figure}
+
+Using the mapping function $f_\mathbf{z}$, we derive an exact expression for the confirmatory term introduced in the $F$-MDS objective function. The proposed form $\left|F_\mathbf{z} - f_\mathbf{z}(F_\mathbf{x})\right|$ measures how accurately the 2D representation reflects the $S$-dimensional distance structure regarding the sample labels. A difference close to zero indicates that no further updates to the representation are required (denoted $\mathbf{Z}^*$). Substituting the confirmatory term $\left|F_\mathbf{z} - f_\mathbf{z}(F_\mathbf{x})\right|$ with Equation \ref{eq:map1}, we define $\epsilon_{ij}\coloneqq\1\{y_i^\Pi = y_j^\Pi\}$ and write
+\begin{align}
+\mathbf{Z}^* &= \argmin_\mathbf{Z}\,\left|F_\mathbf{z} - f_\mathbf{z}(F_\mathbf{x})\right| \\
+& = \argmin_\mathbf{Z}\,\left|\frac{N-G}{G-1}\cdot\left(\frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{G\sum_{i,j}\epsilon_{ij}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2} -1 \right) - f_\mathbf{z}(F_\mathbf{x})\right| \\
+&= \argmin_\mathbf{Z}\,\left|\frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{G\sum_{i,j}\epsilon_{ij}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2} -1 - \frac{G-1}{N-G}\cdot{f_\mathbf{z}(F_\mathbf{x})} \right| \label{eq:pre_approx}\\
+&\approx \argmin_\mathbf{Z}\,\left| \sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2 - G\sum_{i,j}\epsilon_{ij}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2 \cdot \left(1+\frac{G-1}{N-G}\cdot{f_\mathbf{z}(F_\mathbf{x})}\right) \right| \label{eq:approx}\\
+&= \argmin_\mathbf{Z}\,\left|\sum_{i,j} \left[1- G\epsilon_{ij} \left(1+\frac{G-1}{N-G}\cdot{f_\mathbf{z}(F_\mathbf{x})}\right)\right] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right| \label{eq:pre_conf},
+\end{align}
+where Equation \ref{eq:approx} follows from the numerator of Equation \ref{eq:pre_approx}. 
+
+Finally, the exact $F$-MDS confirmatory term is derived through a scaling analysis of expression \ref{eq:pre_conf} by comparing its value to that of the raw stress (main text Eq 1). Binary semisynthetic datasets generated by SparseDOSSA \cite{Ma21}, with sizes $N$ varying from 50 to 1000, were used to compute the following quantities,
+\begin{align}
+\text{Raw stress} &= \sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2 \\
+\text{Pre-confirmatory} &= \sum_{i,j} \left[1- G\epsilon_{ij} \left(1+\frac{G-1}{N-G}\cdot{f_\mathbf{z}(F_\mathbf{x})}\right)\right] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2.
+\end{align}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=6.5in]{submissions/plos/figures/supp-scaling.pdf}
+    \caption*{Figure: Scaling analysis of raw stress and pre-confirmatory terms across data size $N\in\{50,100,200,500,1000\}$ with semisynthetic data.}
+    \label{fig:supp_scaling}
+\end{figure}
+Computing these two values across different data sizes $N$, as shown in the figure above, indicates that the raw stress and pre-confirmatory terms scale differentially with $N$, with approximate powers 2.1 and 1.0, respectively. While the theoretical foundations remain to be established for such zero-inflated, log-normally distributed data, empirical analysis suggests that the size effect can be removed by multiplying the pre-confirmatory term with $N$.
+
+By combining raw stress and confirmatory terms with hyperparameter $\lambda$, we conclude the derivation of the $F$-MDS objective function as
+\begin{equation}
+    O_{\rm FMDS}(\mathbf{Z}) = \sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2 + \lambda N \left|\sum_{i,j} \left[1- G\epsilon_{ij} \left(1+\frac{G-1}{N-G}\cdot{f_\mathbf{z}(F_\mathbf{x})}\right)\right] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right|.
+\label{eq:fmds_objective}
+\end{equation}
+
+
+
+\section{Majorization algorithm} \label{sec:app2}
+
+We seek a configuration $\mathbf{Z^*}= (\mathbf{z}_1^*, \cdots \mathbf{z}_N^*)\in \bbr^{N\times 2}$ that minimizes the $F$-MDS objective function, $O_{\text{FMDS}}(\mathbf{Z})$.
+Previous work by Witten \& Tibshirani \cite{witten11} suggests that MDS-based ordinations can be computed by applying the Majorization (or Majorize-Minimization) algorithm to a quadratic expression in $\mathbf{Z}$. 
+Although our $F$-MDS objective function is also quadratic in $\mathbf{Z}$ and the Majorization algorithm is applicable, the coefficient of the confirmatory term depends on the sample size $N$ and the hyperparameter $\lambda$, as shown in Equation \ref{eq:fmds_objective}.
+For the algorithm to consistently produce the optimized $\mathbf{Z}$, it is important to define an update rule that is independent of the sample size. Therefore, we exclude the coefficient $N$ from Equation \ref{eq:fmds_objective}, and to further ensure the convexity of the majorized form, we constrain $\lambda$ to [0,1]:
+\begin{align*}
+\text{minimize } O^* (\mathbf{Z}) = \sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2 + \lambda \left|\sum_{i,j} \left[1- G\epsilon_{ij} \left(1+\frac{G-1}{N-G}\cdot{f_\mathbf{z}(F_\mathbf{x})}\right)\right] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right|.
+\end{align*}
+
+In detail, the algorithm sequentially seeks a point $\mathbf{z}_k^*$ for every $k=1,\cdots N$, while other configuration points remain fixed. This is written as
+\begingroup
+\allowdisplaybreaks
+\begin{align}
+\mathbf{z}_k^* 
+&= \argmin_{\mathbf{z}_k}O^*(\mathbf{Z} | \mathbf{z}_1,\cdots \mathbf{z}_{k-1}, \mathbf{z}_{k+1}, \mathbf{z}_N) \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{j=1}^N (d_{jk} - \|\mathbf{z}_j - \mathbf{z}_k\|_2)^2 + \lambda\delta(\mathbf{z})\sum_{j=1}^N \left[1- G\epsilon_{jk} \left(1 + \frac{G-1}{N-G}{f_\mathbf{z}(F)}\right)\right] \|\mathbf{z}_j - \mathbf{z}_k\|_2^2 \\
+&= \argmin_{\mathbf{z}_k}\, \sum_{j=1}^N \left[1+\lambda\delta(\mathbf{z}) \left(1- G\epsilon_{jk} \left(1+ \frac{G-1}{N-G}{f_\mathbf{z}(F)} \right)\right) \right] \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 - 2d_{jk}\|\mathbf{z}_k-\mathbf{z}_j\|_2
+\label{eq:appc_mm1}
+\end{align}
+\endgroup
+where we define $\delta (\mathbf{z}) \coloneqq \text{sign}\left\{\,\sum_{i,j} \left[1- G \epsilon_{ij} \left(1 + \frac{G-1}{N-G}{f_\mathbf{z}(F)} \right)\right] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right\}$.
+
+As described by \cite{borg97b}, applying the algorithm starts with majorizing with Equation \ref{eq:appc_mm1},
+\begin{equation}
+\sum_{j=1}^N\,
+\left[1+\lambda\delta(\mathbf{z}) \left(1- G \epsilon_{jk} \left(1+ \frac{G-1}{N-G}{f_\mathbf{z}(F)} \right)\right) \right] \|\mathbf{z}_k-\mathbf{z}_j\|_2^2 - 2d_{jk}\,\frac{\sum_{s=1}^2 (z_{ks}-z_{js})(\Tilde{z}_{ks}-z_{js})}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}, \label{eq:appc_mm2}
+\end{equation}
+where $\Tilde{\mathbf{z}}_k$ remain fixed while updating ${\mathbf{z}}_k$. We further assume that a change of mapping function $f_\mathbf{z}(F)$ is negligible and that $\delta(\mathbf{z})$ remains constant during the iteration (e.g., a small change in $\mathbf{z}_k$ from metric MDS). These allow us to approximate Equation \ref{eq:appc_mm2} with a quadratic expression in terms of $\mathbf{z}$ and proceed to its minimization, given its convexity.
+To find the minimum at $\mathbf{z}_{k}=\mathbf{z}_{k}^\dagger$, a derivative is taken with respect to $z_{ks}$ and is set to zero.
+Applying it to Equation \ref{eq:appc_mm2}, we have
+\begin{align}
+\begin{split}
+0 = \sum_{j=1}^N\, \left[1+\lambda\delta(\mathbf{z}) \left(1- G\epsilon_{jk} \left(1 + \frac{G-1}{N-G}{f_\mathbf{z}(F)} \right)\right) \right] (z_{ks}^\dagger - z_{js}) 
+- d_{jk}\frac{\Tilde{z}_{ks}-z_{js}}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}, \forall s=1,2
+\label{eq:mm_balance}
+\end{split}
+\end{align}
+and for a balanced design where $\sum_{j=1}^N \epsilon_{jk}= {N}/{G}$ with every $k=1,\cdots N$,
+\begin{align}
+\left( N - \frac{(G-1)N\lambda\delta(\mathbf{z})f_\mathbf{z}(F)}{N-G} \right) z_{ks}^\dagger = \sum_{j=1}^N\, \left[1+\lambda\delta(\mathbf{z}) \left(1- G \epsilon_{jk} \left(1+ \frac{G-1}{N-G}{f_\mathbf{z}(F)} \right)\right) \right] z_{js} + d_{jk}\frac{\Tilde{z}_{ks}-z_{js}}{\|\Tilde{\mathbf{z}}_k-\mathbf{z}_j\|_2}.
+\label{eq:update_element}
+\end{align}
+Rewriting Equation \ref{eq:update_element} in a vector form, we finally obtain the update rule of $\mathbf{Z}$ as
+\begin{align}
+\begin{split}
+\mathbf{z}_k \gets
+& \frac{N-G}{N(N-G) - (G-1)N\lambda\delta(\mathbf{z}) f_\mathbf{z}(F)}\times \\ 
+&\quad\left\{\sum_{j=1}^N\, \left[1+\lambda\delta(\mathbf{z}) \left(1- G \epsilon_{jk} \left(1+ \frac{G-1}{N-G}{f_\mathbf{z}(F)} \right)\right) \right]  \mathbf{z}_{j} + d_{jk}\frac{\mathbf{z}_k -\mathbf{z}_j}{\|{\mathbf{z}}_k-\mathbf{z}_j\|_2}\right\}.
+\label{eq:mm_update}
+\end{split}
+\end{align}
+
+
+
+\section{Hyperparameter selection procedure}
+
+We adopt a quantitative framework to select the hyperparameter $\lambda$ and compute the optimal $F$-MDS. First, we introduce an objective function $f_{\rm obj}(\lambda)$ to quantify the relationship between $\lambda$ and algorithmic performance. Earlier analysis of $F$-MDS indicates that higher values of $\lambda$ significantly reduce computation time, meausred by the number of epochs $n_{\rm epoch}(\lambda)$, but increase the deviation from the original distance structure (measured, for example, by Pearson correlation $\rho_{\rm dist}$ between pairwise distances). To balance these effects, we define
+\begin{equation}
+    f_{\rm obj}(\lambda) = \log n_{\rm epoch}(\lambda) \cdot (1- \rho_{\rm dist}(\lambda)).
+    \label{eq:def_grid_search}
+\end{equation}
+We then select the optimal hyperparameter by minimizing $f_{\rm obj}(\lambda)$. Note that $F$-MDS produces a 2D representation uniquely determined by the input data matrix-- unlike standard machine learning models, this approach avoids the risk of overfitting. Hence, a simple grid suffices for hyperparameter selection. 
+
+Computations of $f_{\rm obj}(\lambda)$ over $\lambda\in[0,1]$ show that the objective function is largely determined by the logarithmic epoch number (see \ref{fig:fmds_gridsearch}A). The optimal hyperparameter, denoted as $\lambda_{\rm min}$, was calculated as 0.78$\pm$0.17 (mean$\pm$sd), with all optimal values greater than or equal to 0.5. We found no statistically significant relationship between $\lambda_{\rm min}$ and data size $N$ ($p = 0.294$, Spearman correlation test). This further suggests the hyperparameter selection procedure using grid search is robust against overfitting.
+
+
+
+\section{Human gut microbiome dataset}
+
+We retrieved two sets of human gut microbiome data from a publicly available repository \cite{Pasolli16}, previously generated from Shotgun Metagenomic Sequencing, where the reads were merged at the genus level \cite{reiman20}. 
+The first dataset contained a gut microbiome derived from 118 healthy and 114 liver cirrhosis patients from a single study \cite{Qin14}.
+The second includes samples from a human gut of 217 healthy and 223 patients with type 2 diabetes (T2D) from two separate studies \cite{Qin12, Karlsson13}.
+
+For both datasets, a phylogenetic tree was generated using phyloT \cite{Letunic23} where branch lengths were uniformly assigned with unity, resulting in 268 (cirrhosis) and 216 (T2D) features or taxa respectively. Taxonomy and abundance table were obtained using the phylogenetic tree and the merged reads, respectively, which were then integrated via \texttt{phyloseq} (Bioconductor v3.18). Pairwise distance matrix $\mathbf{D}$ was computed based on the weighted Unifrac \cite{lozupone07}.
+
+
+
+\section{Neural network model and architecture}
+
+We sought to compare our $F$-MDS with neural network models that are used for dimensionality reduction. To convert compositional microbial abundance into a matrix with its phylogenetic information, we implemented PopPhy-CNN \cite{reiman20} architecture. Each converted matrix reflected a phylogenetic tree structure by bacterial 16S rRNA amplicon (amplicon sequence variant or ASV) and its relative abundance which is normalized by cumulative sum scaling (CSS) \cite{paulson13}.
+Thirty-six bacterial community samples were retrieved and re-analyzed from the previous work \cite{kim22}. The samples represent balanced design of diatom-associated community with and without presence of the host. Each compositional sample was converted to a 2D array sized $10 \times 42$.
+The data was randomly split into training and validation sets (6 and 30 each) using the stratified K-Fold.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=6in]{submissions/plos/figures/supp-nn-eval.pdf}
+    \caption*{Figure: Performance of self-supervised learning classifier by 50 training epochs. (A) Validation accuracy and (B) validation loss measured by categorical cross-entropy using bacterial community data represented as an image using PopPhy-CNN.}
+    \label{fig:supp_nn_eval}
+\end{figure}
+
+The neural network architecture included an encoder consisting of one Gaussian noise filter, two 2D convolution layers (with kernel size of 5 by 3), and one fully connected layer with 32 output nodes. 
+A self-supervised learning framework using SimCLR \cite{chen20} was chosen to explore its capability of arranging the microbiome data. The data augmentation was performed by applying random brightness and contrast filters with following parameters: (0.6, 0.2) for pretraining, (0.3, 0.1) for finetuning. In a pretraining step of SimCLR, a model was constructed by compiling encoder, projection head (two dense layers each of 32 output nodes), and one dense layer (10 output nodes). Site 1 and 2 datasets were individually trained and evaluated (30, 6 samples each) for the pretraining step, resulting a linear probing accuracy of 53.3\% after 50 training epochs (see Figure above). In the following finetuning step, the encoder is added with linear probe, resulting in a validation accuracy higher than 83.3\% after 50 epochs (see figure below). The trained encoder was used to obtain a 32 nodes-sized feature for each microbial community sample. The 32-dimensional feature was used for evaluating this neural network model with quality metrics.
+Pairwise distance was calculated using $L_2$-squared metric to obtain Stress-1 and Shepard plot.
+
+
+
+\section{Computational complexity}
+
+We provide an upper bound of computational complexity of majorization algorithm for performing $F$-MDS.
+Like most iteration-based optimizations, the computation cost of majorization was estimated on the basis of a single step.
+We discuss the time complexity of each step outlined in Algorithms 1 and 2 of the main text.
+
+For computing the mapping function (Algorithm 1), a pseudo-$F$-ratio is computed from a set of permuted labels $y^\Pi$ and each of input matrices $d$, $\mathbf{z}$.
+Each computation takes $\cO(N^2)$ operations with $N$ being the sample size.
+The step repeats for a number of iteration, e.g., $p=999$, resulting in $\cO(2pN^2)$ operations.
+Additional steps are taken to sort the lists of permuted $F$-ratios with $\cO(2N\log N)$.
+In total, the complexity is $\cO(2pN^2 + 2N\log N)$.
+
+For majorization step (Algorithm 2), the $F$-ratio is computed once and is mapped to $f_\mathbf{z}(F)$, taking $\cO(N^2 + \log N)$ operations.
+Next, the sign of $F$-MDS confirmatory term $\delta(\mathbf{Z})$ is obtained and the step takes $\cO(N^2)$ operations.
+Finally, the 2D representation $\mathbf{Z}$ is updated for every point, taking $\cO(N^2)$ operations.
+Therefore, the complexity for one iteration of the majorization algorithm is $\cO(3N^2 + \log N)$.
+
+In summary, the computational cost of performing $F$-MDS (unit iteration) is $\cO(2pN^2 + 3N^2 + 2N\log N + \log N) \approx \cO(pN^2)$. 
+It is compared with other dimension reduction methods which is summarized below.
+
+\begin{table}[h]
+    \caption*{Comparison of time complexity between different dimensionality reduction methods.}
+    \centering
+    \begin{tabular}{c c c}
+    \hline
+       Method & Complexity & Algorithm \\
+    \hline
+        $F$-informed MDS\footnotemark & $\cO(pN^2)$ & Majorization \cite{borg97a} \\
+        \multirow[c]{2}{*}{MDS} & $\cO(N^3)$ & Eigendecomposition \cite{Torgerson52} \\
+         & $\cO(N\log N)$ & Divide-and-conquer \cite{Yang06} \\
+        Supervised MDS$^1$ & $\cO(N^2)$ & Majorization \cite{witten11} \\
+        UMAP & $\cO(N^{1.14})$ & NN-descent \cite{mcInnes18, Dong11} \\
+        \multirow{2}{*}{t-SNE$^1$} & $\cO(N^2)$ & Gradient descent \cite{maaten08} \\
+         & $\cO(N\log N)$ & Barnes-Hut or dual-tree \cite{Maaten14} \\
+        Isomap & $\cO(N^2\log N)$ & Dijkstra’s \cite{tenenbaum00, Pedregosa11} \\
+    \hline
+    \end{tabular}
+    \label{tab:complexity}
+\end{table}
+
+\footnotetext[1]{Corresponds to a single iteration and does not represent a total complexity.}
+
+\clearpage
+
+
+
+% \section*{Supplementary Figure}
+% Figures
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=6.5in]{submissions/plos/figures/Fig_S1_rev.pdf}
+    \caption[Visualization of a semisynthetic dataset using SparseDOSSA.]{Visualization of a semisynthetic dataset using SparseDOSSA. (A) Heatmap of its log-scaled relative abundance by its microbial taxa and sample number. (B) Density histogram of the data and (C) principal coordinates analysis (PCoA) and PERMANOVA $p$-values based on PCoA results with Euclidean distance ($p_\mathbf{z}$) and original structure with Bray-Curtis dissimilarity ($p_\mathbf{x}$). $N=200$ samples were generated as described.}
+    \label{fig:sim_data_vis}
+\end{figure}
+\clearpage
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=6.5in]{submissions/plos/figures/Fig_S2_rev.pdf}
+    \caption[PERMANOVA $p$-values from $F$-informed MDS representations using semisynthetic data.]{PERMANOVA $p$-values from $F$-informed MDS representations using semisynthetic data. $p$-values were plotted against the number of $F$-MDS training epochs for every hyperparameter $\lambda$. Triplicate datasets with size $N=50,100,200,500$ were evaluated. Once $p_\mathbf{z}$ reached to 1 during iteration, the majorization operation was discontinued (e.g., replicate 3 with $N=50$, $\lambda = 0.04$).}
+    \label{fig:sim_fmds_track}
+\end{figure}
+\clearpage
+
+\begin{figure}
+    \centering
+    \includegraphics[width=6.5in]{submissions/plos/figures/Fig_S3_rev.pdf}
+    \caption[Pairwise distance analyses from $F$-informed MDS and supervised MDS.]{Pairwise distance analyses from $F$-informed MDS and supervised MDS using semisynthetic data. The plots are titled with the dataset size $N$ and compared across different methods with hyperparameter values as follows: $\lambda$, $F$-MDS; $\alpha$, superMDS. After calculating pairwise distances with Bray-Curtis dissimilarity (original) and Euclidean (2D representation), (B) their Pearson correlation coefficient and (C) normalized stress (Stress-1) were obtained. Error bars are standard deviation of triplicates.}
+    \label{fig:sim_fmds_smds}
+\end{figure}
+\clearpage
+
+\begin{figure}
+    \centering
+    \includegraphics[width=6.5in]{submissions/plos/figures/Fig_S4_rev_gridsearch.pdf}
+    \caption[Hyperparameter selection using grid search.]{Hyperparameter selection for $F$-informed MDS using grid search. An objective function $f_{\rm obj}(\lambda)$ was defined to simultaneously reflect the number of training epochs and the preservation of the original structure (see Equation \ref{eq:def_grid_search}). (A) For each semisynthetic dataset size $N$, $f_{\rm obj}(\lambda)$ is plotted against the hyperparameter $\lambda$. The minimum value of $f_{\rm obj}(\lambda)$ is highlighted in red. (B) The optimal hyperparameter $\lambda_{\rm min}$ is plotted against dataset size $N$, with each dataset represented by a symbol.}
+    \label{fig:fmds_gridsearch}
+\end{figure}
+\clearpage
+
+\begin{figure}
+    \centering
+    \includegraphics[width=5.05in]{submissions/plos/figures/Fig_S5_rev.pdf}
+    \caption[Comparison of quality metrics of benchmark ordination methods.]{Comparison of quality metrics of ordination methods evaluated on semisynthetic datasets. Trustworthiness and continuity to evaluate (A) Local structural preservation is assessed using trustworthiness and continuity. (B) Global structural preservation is similarly evaluated with trustworthiness and continuity. (C) Global distortion is quantified by Stress-1 and Pearson correlation of Shepard diagrams. (D) Preservation of statistical inference is measured by the $F$-rank-ratio and $F$-correlation using randomly permuted label sets. The following hyperparameters were used for each method: $\lambda$ for $F$-MDS, number of neighbors $n$ for UMAP (both supervised (-S) and unsupervised (-U)), perplexity (perp) for t-SNE, and the number of shortest dissimilarities $n$ for Isomap. Error bars represent the standard deviation across triplicate measurements.}
+    \label{fig:sim_eval_all}
+\end{figure}
+\clearpage
+
+\begin{figure}
+    \centering
+    \includegraphics[width=5in]{submissions/plos/figures/Fig_S6_rev.pdf}
+    \caption[Shepard plot from algal microbiome dataset with eight ordination methods.]{Shepard plot of algal-associated bacterial community data using eight dimension reduction methods. The plots are titled with the respective method and hyperparameter values as follows: $\lambda$, $F$-MDS; $\alpha$, superMDS; Nearest neighbors number, supervised (-S) or unsupervised (-U) UMAP; Perplexity, t-SNE; Shortest dissimilarities number, Isomap; none, neural network (NN). X- and Y-axis denote distances in the original and embedding dimensions, respectively.}
+    \label{fig:shepard_alga_all}
+\end{figure}
+\clearpage
+
+\begin{figure}
+    \centering
+    \includegraphics[width=5in]{submissions/plos/figures/Fig_S7_rev.pdf}
+    \caption[\textit{F}-correlation plot from algal microbiome dataset.]{\textit{F}-correlation plot from algal microbiome dataset. Pseudo $F$-ratios comparing the original dimension (x-axis) and from eight dimension reduction methods (y-axis) with algal microbiome data. Pseudo $F$'s were calculated by randomly permuting labels by 500 times. Highlighted with red denotes the location of $F$'s from unpermuted labels. Each plot is titled with the method and hyperparameter used.}
+    \label{fig:f_corr_alga_all}
+\end{figure}
+\clearpage
+
+\begin{figure}
+    \centering
+    \includegraphics[width=6.5in]{submissions/plos/figures/Fig_S8_rev.pdf}
+    \caption[Cluster centroid and variances of $F$-MDS representations.]{Cluster centroids and variances of $F$-MDS representations are shown for semisynthetic datasets of size $N=50$ (A–C), $N=100$ (D–F), $N=200$ (G–I), $N=500$ (J–L) and for the algal microbiome (M–O). The first column in each row displays the distance between group centroids. The second and third columns show the variance of each group, measured along the long and short principal axes, respectively. For the variance panels, blue and red colors denote groups 1 and 2. Error bars represent the standard deviation across triplicate measurements.}
+    \label{fig:fmds_rep_analysis}
+\end{figure}
+\clearpage
+
+\begin{figure}
+    \centering
+    \includegraphics[width=6.5in]{submissions/plos/figures/Fig_S9_rev.pdf}
+    \caption[Visualization of a semisynthetic ternary dataset.]{Visualization of a semisynthetic ternary dataset. (A) Heatmap of its log-scaled relative abundance by its microbial taxa and sample number. (B) Density histogram of the data and (C) principal coordinates analysis (PCoA) and PERMANOVA $p$-values based on PCoA results with Euclidean distance ($p_\mathbf{z}$) and original structure with Bray-Curtis dissimilarity ($p_\mathbf{x}$). $N=75$ semisynthetic data were generated.}
+    \label{fig:sim_ternary_vis}
+\end{figure}
+\clearpage
+
+
+\begin{singlespace}
+\bibliographystyle{acm}
+\bibliography{refs}
+\end{singlespace}
+
+\end{document}
