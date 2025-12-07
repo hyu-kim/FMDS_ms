@@ -1,0 +1,463 @@
+\begin{thebibliography}{10}
+
+\bibitem{Greenacre21}
+Greenacre M.
+\newblock Compositional Data Analysis.
+\newblock Annual Review of Statistics and Its Application. 2021;8(Volume 8,
+  2021):271--299.
+\newblock doi:{10.1146/annurev-statistics-042720-124436}.
+
+\bibitem{Gloor17}
+Gloor GB, Macklaim JM, Pawlowsky-Glahn V, Egozcue JJ.
+\newblock Microbiome datasets are compositional: And this is not optional.
+\newblock Frontiers in Microbiology. 2017;8.
+
+\bibitem{Martino19}
+Martino C, Morton~James T, Marotz~Clarisse A, Thompson~Luke R, Tripathi A,
+  Knight R, et~al.
+\newblock A Novel Sparse Compositional Technique Reveals Microbial
+  Perturbations.
+\newblock mSystems. 2019;4(1):10.1128/msystems.00016--19.
+\newblock doi:{10.1128/msystems.00016-19}.
+
+\bibitem{Martin02}
+Martin AP.
+\newblock Phylogenetic approaches for describing and comparing the diversity of
+  microbial communities.
+\newblock Applied Environmental Microbiology. 2002;68(8):3673--82.
+
+\bibitem{Armstrong22}
+Armstrong G, Rahman G, Martino C, McDonald D, Gonzalez A, Mishne G, et~al.
+\newblock Applications and comparison of dimensionality reduction methods for
+  microbiome data.
+\newblock Frontiers in Bioinformatics. 2022;2.
+\newblock doi:{10.3389/fbinf.2022.821861}.
+
+\bibitem{peterson24}
+Peterson CB, Saha S, Do KA.
+\newblock Analysis of Microbiome Data.
+\newblock Annual Review of Statistics and Its Application. 2024;11(Volume 11,
+  2024):483--504.
+\newblock doi:{10.1146/annurev-statistics-040522-120734}.
+
+\bibitem{Lin20}
+Lin H, Peddada SD.
+\newblock Analysis of compositions of microbiomes with bias correction.
+\newblock Nature Communications. 2020;11(1):3514.
+\newblock doi:{10.1038/s41467-020-17041-7}.
+
+\bibitem{Weiss17}
+Weiss S, Xu ZZ, Peddada S, Amir A, Bittinger K, Gonzalez A, et~al.
+\newblock Normalization and microbial differential abundance strategies depend
+  upon data characteristics.
+\newblock Microbiome. 2017;5(1):27.
+\newblock doi:{10.1186/s40168-017-0237-y}.
+
+\bibitem{McMurdie14}
+McMurdie PJ, Holmes S.
+\newblock Waste Not, Want Not: Why Rarefying Microbiome Data Is Inadmissible.
+\newblock PLOS Computational Biology. 2014;10(4):e1003531.
+\newblock doi:{10.1371/journal.pcbi.1003531}.
+
+\bibitem{paulson13}
+Paulson JN, Stine OC, Bravo HC, Pop M.
+\newblock Differential abundance analysis for microbial marker-gene surveys.
+\newblock Nature Methods. 2013;10.
+\newblock doi:{10.1038/nmeth.2658}.
+
+\bibitem{Jeganathan21}
+Jeganathan P, Holmes SP.
+\newblock A Statistical Perspective on the Challenges in Molecular Microbial
+  Biology.
+\newblock Journal of Agricultural, Biological and Environmental Statistics.
+  2021;26(2):131--160.
+\newblock doi:{10.1007/s13253-021-00447-1}.
+
+\bibitem{borg97a}
+Borg I, Groenen P.
+\newblock In: Borg I, Groenen PJF, editors. A Majorization Algorithm for
+  Solving MDS. New York, NY: Springer New York; 1997. p. 169--197.
+
+\bibitem{gijbels13}
+Gijbels I, Omelka M.
+\newblock Testing for homogeneity of multivariate dispersions using
+  dissimilarity measures.
+\newblock Biometrics. 2013;69(1):137--145.
+
+\bibitem{Shi22}
+Shi Y, Zhang L, Peterson CB, Do KA, Jenq RR.
+\newblock Performance determinants of unsupervised clustering methods for
+  microbiome data.
+\newblock Microbiome. 2022;10(1):25.
+\newblock doi:{10.1186/s40168-021-01199-3}.
+
+\bibitem{Bray57}
+Bray JR, Curtis JT.
+\newblock An Ordination of the Upland Forest Communities of Southern Wisconsin.
+\newblock Ecological Monographs. 1957;27(4):325--349.
+\newblock doi:{10.2307/1942268}.
+
+\bibitem{lozupone05}
+Lozupone C, Knight R.
+\newblock {UniFrac}: a new phylogenetic method for comparing microbial
+  communities.
+\newblock Applied and Environmental Microbiology. 2005;71(12):8228--35.
+
+\bibitem{lozupone07}
+Lozupone CA, Hamady M, Kelley ST, Knight R.
+\newblock Quantitative and qualitative beta diversity measures lead to
+  different insights into factors that structure microbial communities.
+\newblock Applied and Environmental Microbiology. 2007;73(5):1576--85.
+
+\bibitem{Kuczynski10}
+Kuczynski J, Liu Z, Lozupone C, McDonald D, Fierer N, Knight R.
+\newblock Microbial community resemblance methods differ in their ability to
+  detect biologically relevant patterns.
+\newblock Nature Methods. 2010;7(10):813--819.
+\newblock doi:{10.1038/nmeth.1499}.
+
+\bibitem{Shi20}
+Shi Y, Zhang L, Do KA, Peterson CB, Jenq RR.
+\newblock aPCoA: covariate adjusted principal coordinates analysis.
+\newblock Bioinformatics. 2020;36(13):4099--4101.
+\newblock doi:{10.1093/bioinformatics/btaa276}.
+
+\bibitem{Wang22}
+Wang Y, Sun F, Lin W, Zhang S.
+\newblock AC-PCoA: Adjustment for confounding factors using principal
+  coordinate analysis.
+\newblock PLOS Computational Biology. 2022;18(7):e1010184.
+\newblock doi:{10.1371/journal.pcbi.1010184}.
+
+\bibitem{McInnes18}
+McInnes L, Healy J, Melville J.
+\newblock UMAP: Uniform manifold approximation and projection for dimension
+  reduction.
+\newblock arXiv. 2018; p. arXiv:1802.03426.
+\newblock doi:{10.48550/arXiv.1802.03426}.
+
+\bibitem{Armstrong21}
+Armstrong G, Martino C, Rahman G, Gonzalez A, Vázquez-Baeza Y, Mishne G,
+  et~al.
+\newblock Uniform Manifold Approximation and Projection (UMAP) reveals
+  composite patterns and resolves visualization artifacts in microbiome data.
+\newblock mSystems. 2021;6(5):e0069121.
+\newblock doi:{10.1128/mSystems.00691-21}.
+
+\bibitem{Bertini11}
+Bertini E, Tatu A, Keim D.
+\newblock Quality Metrics in High-Dimensional Data Visualization: An Overview
+  and Systematization.
+\newblock IEEE Transactions on Visualization and Computer Graphics.
+  2011;17(12):2203--2212.
+\newblock doi:{10.1109/TVCG.2011.229}.
+
+\bibitem{Gonzalez12}
+Gonzalez A, Knight R.
+\newblock Advancing analytical algorithms and pipelines for billions of
+  microbial sequences.
+\newblock Current Opinion in Biotechnology. 2012;23(1):64--71.
+\newblock doi:{10.1016/j.copbio.2011.11.028}.
+
+\bibitem{Espadoto21}
+Espadoto M, Martins RM, Kerren A, Hirata NST, Telea AC.
+\newblock Toward a quantitative survey of dimension reduction techniques.
+\newblock IEEE Transactions on Visualization and Computer Graphics.
+  2021;27(3):2153--2173.
+\newblock doi:{10.1109/tvcg.2019.2944182}.
+
+\bibitem{Lause24}
+Lause J, Berens P, Kobak D.
+\newblock The art of seeing the elephant in the room: 2D embeddings of
+  single-cell data do make sense.
+\newblock PLOS Computational Biology. 2024;20(10):e1012403.
+\newblock doi:{10.1371/journal.pcbi.1012403}.
+
+\bibitem{Cui24}
+Cui S, Nassiri S, Zakeri I.
+\newblock Mcadet: A feature selection method for fine-resolution single-cell
+  RNA-seq data based on multiple correspondence analysis and community
+  detection.
+\newblock PLOS Computational Biology. 2024;20(10):e1012560.
+\newblock doi:{10.1371/journal.pcbi.1012560}.
+
+\bibitem{Narayan21}
+Narayan A, Berger B, Cho H.
+\newblock Assessing single-cell transcriptomic variability through
+  density-preserving data visualization.
+\newblock Nature Biotechnology. 2021;39(6):765--774.
+\newblock doi:{10.1038/s41587-020-00801-7}.
+
+\bibitem{Venna01}
+Venna J, Kaski S.
+\newblock Neighborhood preservation in nonlinear projection methods: An
+  experimental study.
+\newblock In: Dorffner G, Bischof H, Hornik K, editors. Artificial Neural
+  Networks — ICANN 2001. Springer Berlin Heidelberg;. p. 485--491.
+
+\bibitem{borg05c}
+Borg I, Groenen P.
+\newblock In: Borg I, Groenen PJF, editors. MDS Models and Measures of Fit. New
+  York, NY: Springer New York; 2005. p. 37--61.
+
+\bibitem{Hawinkel19}
+Hawinkel S, Kerckhof FM, Bijnens L, Thas O.
+\newblock A unified framework for unconstrained and constrained ordination of
+  microbiome read count data.
+\newblock PLOS ONE. 2019;14(2):e0205474.
+\newblock doi:{10.1371/journal.pone.0205474}.
+
+\bibitem{Randolph18}
+Randolph TW, Zhao S, Copeland W, Hullar M, Shojaie A.
+\newblock Kernel-penalized regression for analysis of microbiome data.
+\newblock The Annals of Applied Statistics. 2018;12(1):540--566, 27.
+
+\bibitem{Borg05d}
+Borg I, Groenen PJF.
+\newblock In: Borg I, Groenen PJF, editors. The Four Purposes of
+  Multidimensional Scaling. New York, NY: Springer New York; 2005. p. 3--18.
+\newblock Available from: \url{https://doi.org/10.1007/0-387-28981-X_1}.
+
+\bibitem{borg97b}
+Borg I, Groenen P.
+\newblock In: Borg I, Groenen P, editors. Confirmatory MDS. New York, NY:
+  Springer New York; 1997. p. 181--197.
+
+\bibitem{ding18}
+Ding CS.
+\newblock In: Ding CS, editor. Testing Pattern Hypotheses with MDS. Cham:
+  Springer International Publishing; 2018. p. 165--173.
+
+\bibitem{cox93}
+Cox TF, Ferry G.
+\newblock Discriminant analysis using non-metric multidimensional scaling.
+\newblock Pattern Recognition. 1993;26(1):145--153.
+
+\bibitem{yang18}
+Yang F, Yang W, Gao R, Liao Q.
+\newblock Discriminative multidimensional scaling for low-resolution face
+  recognition.
+\newblock IEEE Signal Processing Letters. 2018;25(3):388--392.
+\newblock doi:{10.1109/LSP.2017.2746658}.
+
+\bibitem{witten11}
+Witten DM, Tibshirani R.
+\newblock Supervised multidimensional scaling for visualization,
+  classification, and bipartite ranking.
+\newblock Computational Statistics \& Data Analysis. 2011;55(1):789--801.
+
+\bibitem{Demaine21}
+Demaine E, Hesterberg A, Koehler F, Lynch J, Urschel J.
+\newblock Multidimensional scaling: Approximation and complexity.
+\newblock arXiv. 2021; p. arXiv:2109.11505.
+\newblock doi:{10.48550/arXiv.2109.11505}.
+
+\bibitem{zheng19}
+Zheng JX, Pawar S, Goodman DFM.
+\newblock Graph drawing by stochastic gradient descent.
+\newblock IEEE Transactions on Visualization and Computer Graphics.
+  2019;25(9):2738--2748.
+
+\bibitem{Lin16}
+Lin Z, Yang C, Zhu Y, Duchi J, Fu Y, Wang Y, et~al.
+\newblock Simultaneous dimension reduction and adjustment for confounding
+  variation.
+\newblock Proceedings of the National Academy of Sciences.
+  2016;113(51):14662--14667.
+\newblock doi:{10.1073/pnas.1617317113}.
+
+\bibitem{anderson01}
+Anderson MJ.
+\newblock A new method for non-parametric multivariate analysis of variance.
+\newblock Austral Ecology. 2001;26(1):32--46.
+
+\bibitem{Platt05}
+Platt J.
+\newblock Fastmap, metricmap, and landmark mds are all nyström algorithms.
+\newblock In: International Workshop on Artificial Intelligence and Statistics.
+  PMLR;. p. 261--268.
+
+\bibitem{Yang06}
+Yang T, Liu J, McMillan L, Wang W.
+\newblock A fast approximation to multidimensional scaling.
+\newblock In: Proceedings of the ECCV Workshop on Computation Intensive Methods
+  for Computer Vision (CIMCV); 2006.
+
+\bibitem{Qu15}
+Qu T, Cai Z.
+\newblock A fast multidimensional scaling algorithm.
+\newblock In: 2015 IEEE International Conference on Robotics and Biomimetics
+  (ROBIO); 2015. p. 2569--2574.
+
+\bibitem{deLeeuw88}
+de~Leeuw J.
+\newblock Convergence of the majorization method for multidimensional scaling.
+\newblock Journal of Classification. 1988;5(2):163--180.
+
+\bibitem{Kruskal64}
+Kruskal JB.
+\newblock Nonmetric multidimensional scaling: A numerical method.
+\newblock Psychometrika. 1964;29(2):115--129.
+
+\DIFaddbegin \bibitem{Fang25}
+\DIFadd{Fang Z, Su X, Tabuchi T, Huang J, Kasai H.
+}\newblock \DIFadd{StableMDS: A Novel Gradient Descent-Based Method for Stabilizing and
+  Accelerating Weighted Multidimensional Scaling.
+}\newblock \DIFadd{Proceedings of The 28th International Conference on Artificial
+  Intelligence and Statistics. 2025;258:1981--1989.
+}
+
+\DIFaddend \bibitem{clarke93}
+Clarke KR.
+\newblock Non-parametric multivariate analyses of changes in community
+  structure.
+\newblock Australian Journal of Ecology. 1993;18(1):117--143.
+
+\bibitem{holmes96}
+Holmes AP, Blair RC, Watson JD, Ford I.
+\newblock Nonparametric analysis of statistic images from functional mapping
+  experiments.
+\newblock Journal of Cerebral Blood Flow \& Metabolism. 1996;16(1):7--22.
+
+\DIFdelbegin \bibitem{Adams22}
+\DIFdel{Adams MP}\DIFdelend \DIFaddbegin \bibitem{Sankaran25}
+\DIFadd{Sankaran K, Kodikara S, Li JJ, Cao KAL}\DIFaddend .
+\newblock \DIFdelbegin \DIFdel{Integral, mean and covariance of the simplex-truncated multivariate
+  normal distribution}\DIFdelend \DIFaddbegin \DIFadd{Semisynthetic simulation for microbiome data analysis.
+}\newblock \DIFadd{Briefings in Bioinformatics. 2025;26(1).
+}\newblock \DIFadd{doi:}{\DIFadd{10.1093/bib/bbaf051}}\DIFaddend .
+\DIFaddbegin 
+
+\bibitem{Ma21}
+\DIFadd{Ma S, Ren B, Mallick H, Moon YS, Schwager E, Maharjan S, et~al.
+}\DIFaddend \newblock \DIFaddbegin \DIFadd{A statistical model for describing and simulating microbial community
+  profiles.
+}\newblock \DIFaddend PLOS \DIFdelbegin \DIFdel{ONE. 2022}\DIFdelend \DIFaddbegin \DIFadd{Computational Biology. 2021}\DIFaddend ;17(\DIFdelbegin \DIFdel{7):e0272014}\DIFdelend \DIFaddbegin \DIFadd{9):e1008913}\DIFaddend .
+\newblock doi:{10.1371/journal.\DIFdelbegin \DIFdel{pone.0272014}\DIFdelend \DIFaddbegin \DIFadd{pcbi.1008913}\DIFaddend }.
+
+\DIFaddbegin \bibitem{Lloyd17}
+\DIFadd{Lloyd-Price J, Mahurkar A, Rahnavard G, Crabtree J, Orvis J, Hall AB, et~al.
+}\newblock \DIFadd{Strains, functions and dynamics in the expanded Human Microbiome
+  Project.
+}\newblock \DIFadd{Nature. 2017;550(7674):61--66.
+}\newblock \DIFadd{doi:}{\DIFadd{10.1038/nature23889}}\DIFadd{.
+}
+
+\DIFaddend \bibitem{kim22}
+Kim H, Kimbrel JA, Vaiana CA, Wollard JR, Mayali X, Buie CR.
+\newblock Bacterial response to spatial gradients of algal-derived nutrients in
+  a porous microplate.
+\newblock The ISME Journal. 2022;16(4):1036--1045.
+
+\bibitem{Qin14}
+Qin N, Yang F, Li A, Prifti E, Chen Y, Shao L, et~al.
+\newblock Alterations of the human gut microbiome in liver cirrhosis.
+\newblock Nature. 2014;513(7516):59--64.
+\newblock doi:{10.1038/nature13568}.
+
+\bibitem{Karlsson13}
+Karlsson FH, Tremaroli V, Nookaew I, Bergström G, Behre CJ, Fagerberg B,
+  et~al.
+\newblock Gut metagenome in European women with normal, impaired and diabetic
+  glucose control.
+\newblock Nature. 2013;498(7452):99--103.
+\newblock doi:{10.1038/nature12198}.
+
+\bibitem{Qin12}
+Qin J, Li Y, Cai Z, Li S, Zhu J, Zhang F, et~al.
+\newblock A metagenome-wide association study of gut microbiota in type 2
+  diabetes.
+\newblock Nature. 2012;490(7418):55--60.
+\newblock doi:{10.1038/nature11450}.
+
+\bibitem{Pasolli16}
+Pasolli E, Truong DT, Malik F, Waldron L, Segata N.
+\newblock Machine learning meta-analysis of large metagenomic datasets: Tools
+  and biological insights.
+\newblock PLoS Computational Biology. 2016;12(7):e1004977.
+\newblock doi:{10.1371/journal.pcbi.1004977}.
+
+\bibitem{reiman20}
+Reiman D, Metwally AA, Sun J, Dai Y.
+\newblock {PopPhy-CNN}: A phylogenetic tree embedded architecture for
+  convolutional neural networks to predict host phenotype from metagenomic
+  data.
+\newblock IEEE Journal of Biomedical and Health Informatics.
+  2020;24(10):2993--3001.
+
+\bibitem{Soneson24}
+Soneson C. dreval: Evaluate Reduced Dimension Representations; 2024.
+\newblock Available from: \url{https://github.com/csoneson/dreval}.
+
+\bibitem{dexter18}
+Dexter E, Rollwagen-Bollens G, Bollens SM.
+\newblock The trouble with stress: A flexible method for the evaluation of
+  nonmetric multidimensional scaling.
+\newblock Limnology and Oceanography: Methods. 2018;16(7):434--443.
+
+\bibitem{Nikkila02}
+Nikkilä J, Törönen P, Kaski S, Venna J, Castrén E, Wong G.
+\newblock Analysis and visualization of gene expression data using
+  Self-Organizing Maps.
+\newblock Neural Networks. 2002;15(8):953--966.
+\newblock doi:{10.1016/S0893-6080(02)00070-9}.
+
+\bibitem{Kaski03}
+Kaski S, Nikkilä J, Oja M, Venna J, Törönen P, Castrén E.
+\newblock Trustworthiness and metrics in visualizing similarity of gene
+  expression.
+\newblock BMC Bioinformatics. 2003;4(1):48.
+\newblock doi:{10.1186/1471-2105-4-48}.
+
+\bibitem{Serviss17}
+Serviss JT, Gådin JR, Eriksson P, Folkersen L, Grandér D.
+\newblock ClusterSignificance: a bioconductor package facilitating statistical
+  analysis of class cluster separations in dimensionality reduced data.
+\newblock Bioinformatics. 2017;33(19):3126--3128.
+\newblock doi:{10.1093/bioinformatics/btx393}.
+
+\bibitem{maaten08}
+van~der Maaten L, Hinton G.
+\newblock Visualizing data using {t-SNE}.
+\newblock Journal of Machine Learning Research. 2008;9(86):2579--2605.
+
+\bibitem{tenenbaum00}
+Tenenbaum JB, de~Silva V, Langford JC.
+\newblock A global geometric framework for nonlinear dimensionality reduction.
+\newblock Science. 2000;290(5500):2319--23.
+
+\bibitem{Samo18}
+Samo TJ, Kimbrel JA, Nilson DJ, Pett‐Ridge J, Weber PK, Mayali X.
+\newblock Attachment between heterotrophic bacteria and microalgae influences
+  symbiotic microscale interactions.
+\newblock Environmental Microbiology. 2018;20(12):4385--4400.
+\newblock doi:{10.1111/1462-2920.14357}.
+
+\bibitem{Kimbrel19}
+Kimbrel JA, Samo TJ, Ward C, Nilson D, Thelen MP, Siccardi A, et~al.
+\newblock Host selection and stochastic effects influence bacterial community
+  assembly on the microalgal phycosphere.
+\newblock Algal Research. 2019;40:101489.
+\newblock doi:{10.1016/j.algal.2019.101489}.
+
+\bibitem{chen20}
+Chen T, Kornblith S, Norouzi M, Hinton G.
+\newblock A simple framework for contrastive learning of visual
+  representations.
+\newblock In: Proceedings of the 37th International Conference on Machine
+  Learning. vol. 119. Proceedings of Machine Learning Research; 2020. p.
+  1597--1607\DIFaddbegin \DIFadd{.
+}
+
+\bibitem{deleeuw24}
+\DIFadd{Leeuw JD.
+}\newblock \DIFadd{Convergence of SMACOF.
+}\newblock \DIFadd{arXiv. 2024;doi:}{\DIFadd{10.48550/arXiv.2407.12945}}\DIFaddend .
+
+\bibitem{Streeter23}
+Streeter M.
+\newblock Universal majorization-minimization algorithms.
+\newblock arXiv. 2023; p. arXiv:2308.00190.
+\newblock doi:{10.48550/arXiv.2308.00190}.
+
+\end{thebibliography}
