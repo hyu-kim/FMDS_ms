@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+    \documentclass[11pt]{article}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%% Setup %%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage[margin=1in]{geometry}
@@ -140,23 +140,23 @@
 \clearpage
 
 
-\section{Objective function for computing $F$-MDS} \label{sec:app1}
+\section{$F$-MDS objective function and mapping between $F$-ratios} \label{sec:app1}
 
-First, we derive a mapping function $f_\mathbf{z}(F_\mathbf{x})$ for minimizing an objective function and computing $F$-informed MDS.
-The mapping function guides to minimize a difference in $p$-values testing group differences under the original $S$- and two-dimensional embedding through the confirmatory term of the objective (see Eq 5 of the main text).
+In this section, we derive an objective function to compute $F$-informed MDS. 
+We defined the objective function $O_{\rm FMDS}(\mathbf{Z})$ from the MDS stress function by adding a confirmatory term so that PERMANOVA $p$-values are close to each other when the function is minimized.
+First, a local regression function $f_\mathbf{z}(F_\mathbf{x})$ was designed to minimize a difference in the $p$-values testing group differences under the original $S$- and two-dimensional embedding through the confirmatory term (see Eq 5 of the main text).
 These \textit{p}-values are obtained from an empirical distribution of the pseudo-$F$s by permuted labels \cite{anderson01} (Eq 4, main text). 
-For a given label set $[y_i]_{i=1}^{N}$ and its group number $G$, a permuted label set $[y_i^\Pi]_{i=1}^{N}$ and $F$-statistics are expressed as
+In specific, for a given label group set $[y_i]_{i=1}^{N}$ with the number of groups $G$, the pseudo $F$-statistics are expressed as
 \begin{equation}
 \begin{aligned}
 F^\Pi_\mathbf{x} &= 
 \left(\frac{\sum_{i,j}d_{ij}^2}{G \sum_{i,j}d_{ij}^2\,\1\{y_i^\Pi = y_j^\Pi\}} -1 \right) \cdot \frac{N-G}{G-1}, \\
 F^\Pi_\mathbf{z} &= 
-\left(\frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{G\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2\,\1\{y_i^\Pi = y_j^\Pi\}} -1 \right) \cdot \frac{N-G}{G-1}.
+\left(\frac{\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2}{G\sum_{i,j}\|\mathbf{z}_i - \mathbf{z}_j\|_2^2\,\1\{y_i^\Pi = y_j^\Pi\}} -1 \right) \cdot \frac{N-G}{G-1},
 \label{eq:map1}
 \end{aligned}
 \end{equation}
-% \end{align} 
-
+where superscript $\Pi$ denoting the permutation. 
 It should be noted that the pseudo $F$-ratios can range differently based on how the samples are projected onto 2D. To scale between these two ratios and minimize the difference in $p$-values, we consider a mapping $f_\mathbf{z}: F_\mathbf{x} \rightarrow F_\mathbf{z}$ from a pair of ratios $(F_\mathbf{x}^{\Pi_1}, F_\mathbf{z}^{\Pi_2})$ where each element was ordered from two independent sets of repeated permutations. Figure below exemplifies how the $F$-ratios at each dimensionality scaled differently and depended on the choice of hyperparameter $\lambda$. In both settings, the $F$-ratio in $S$-dimension ranged in [0,6] whereas in 2D representation the ratio ranged in [0,4]. The hyperparameter, however, impacted the detailed relationship between ordered $F_\mathbf{x}$ and ordered $F_\mathbf{x}$, when compared to each other. 
 
 \begin{figure}[h]

@@ -338,21 +338,21 @@ p = \frac{1}{K}\,\sum_{k=1}^{K}\1\{F^{\Pi_k}\geq F\}.
 \end{equation}
 
 \paragraph*{Proposal of $F$-informed MDS.}
-To incorporate hypothesis testing into MDS analysis, we take a weakly supervised approach using the following steps (Fig \ref{fig:intro}B).
-First, a two-dimensional representation is initialized by computing metric MDS, which is unsupervised and label-free.
-Next, the representation points are iteratively adjusted to ensure that the $p$-values in 2D space closely match those in the original structure.
-This is enabled by optimizing an objective function with a new confirmatory term added to the raw stress,
+To incorporate hypothesis testing into MDS analysis, we developed a weakly supervised learning method (Fig \ref{fig:intro}B).
+First, a two-dimensional representation was initialized by computing metric MDS (i.e., an unsupervised step).
+Next, the representation points were iteratively adjusted so that the $p$-value calculated in 2D space converged to the original PERMANOVA $p$-value.
+This was achieved by defining an objective function in which a new confirmatory term was added to the raw stress,
 \begin{equation} \label{eq:fmds}
     O_{\rm FMDS}(\mathbf{Z}) \sim
     \underbrace{\frac{1}{2}\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2}_\text{raw stress} +
     \lambda\cdot \underbrace{\left|F_\mathbf{z} - f_\mathbf{z}(F_\mathbf{x})\right|}_\text{confirmatory term},
 \end{equation}
-where the confirmatory term minimizes the discrepancy between $p$-values from the permutation $F$-distributions obtained at each dimension, namely the original and the two-dimensional representations (denoted here as $F_\mathbf{x}$ and $F_\mathbf{z}$, respectively).
-Specifically, recognizing that the distributions may depend on dimensionality, we account for this difference by introducing a local regression function $f_\mathbf{z}$, which maps between the two $F$-ratios, each pre-ordered by magnitude according to the permuted labels.
-In other words, a local regression is performed using two ordered $F$-ratios, $(F_\mathbf{x}, F_\mathbf{z})$, where each element in the tuple is computed from two independent, permuted sets, $\mathbf{y}^{\Pi_1}$ and $\mathbf{y}^{\Pi_2}$ (Algorithm \ref{alg:mapping}). Details on the mapping function and the derivation of an exact $O_{\rm FMDS}$ are given in \nameref{sec:app1}.
+where the confirmatory term minimized the discrepancy between the $p$-values from the permutation $F$-distributions obtained in each space, namely the original and the two-dimensional (denoted $F_\mathbf{x}$ and $F_\mathbf{z}$, respectively).
+Because the two $F$-ratios were scaled differently, we introduced a local regression function $f_\mathbf{z}$ to map between them (Algorithm \ref{alg:mapping}). In addition, prior to the regression, each ratio was computed iteratively using a set of permuted labels $\mathbf{y}^{\Pi_k}$ for $k=1, \cdots, K$, and the resulting values were sorted by magnitude. This enabled the original $F$-ratio (from the unpermuted labels) to be mapped precisely in the two-dimensional space.
+Details of the mapping function and the derivation of the exact $O_{\rm FMDS}$ are given in \nameref{sec:app1}.
 
 \begin{algorithm}[h]
-\caption{Mapping function $f_\mathbf{z}$.}
+\caption{Regression function $f_\mathbf{z}$ for mapping between $F_\mathbf{x}$ and $F_\mathbf{z}$.}
 \label{alg:mapping}
 \begin{algorithmic}[1]
 \Require{
@@ -364,37 +364,36 @@ In other words, a local regression is performed using two ordered $F$-ratios, $(
 }
 \Ensure{
 \begin{tabular}{@{}ll}
-    $f_\mathbf{z}:\bbr\rightarrow\bbr$ & : mapping function    
+    $f_\mathbf{z}:\bbr\rightarrow\bbr$ &
 \end{tabular}
 }
 \State$\mathcal{L}_\mathbf{x} \Leftarrow$ empty list
 \State$\mathcal{L}_\mathbf{z} \Leftarrow$ empty list
-\For{$1\leq i \leq 999$}
-    \State$\mathbf{y}^{\Pi_1} \Leftarrow$ random permutation on $\mathbf{y}$
-    \State$\mathbf{y}^{\Pi_2} \Leftarrow$ random permutation on $\mathbf{y}$
-    \State$F^{\Pi_1}_\mathbf{x} \Leftarrow$ pseudo-$F$ using $\mathbf{D}$ and $\mathbf{y}^{\Pi_1}$
-    \State$F^{\Pi_2}_\mathbf{z} \Leftarrow$ pseudo-$F$ using $\mathbf{Z}$ and $\mathbf{y}^{\Pi_2}$
-    \State$\mathcal{L}_\mathbf{x} \Leftarrow$ append $F^{\Pi_1}_\mathbf{x}$ to $\mathcal{L}_\mathbf{x}$
-    \State$\mathcal{L}_\mathbf{z} \Leftarrow$ append $F^{\Pi_2}_\mathbf{z}$ to $\mathcal{L}_\mathbf{z}$
+\For{$1\leq k \leq 999$}
+    \State$\mathbf{y}^{\Pi} \Leftarrow$ random permutation on $\mathbf{y}$
+    \State$F^{\Pi}_\mathbf{x} \Leftarrow$ pseudo-$F$ using $\mathbf{D}$ and $\mathbf{y}^{\Pi}$
+    \State$F^{\Pi}_\mathbf{z} \Leftarrow$ pseudo-$F$ using $\mathbf{Z}$ and $\mathbf{y}^{\Pi}$
+    \State$\mathcal{L}_\mathbf{x} \Leftarrow$ append $F^{\Pi}_\mathbf{x}$ to $\mathcal{L}_\mathbf{x}$
+    \State$\mathcal{L}_\mathbf{z} \Leftarrow$ append $F^{\Pi}_\mathbf{z}$ to $\mathcal{L}_\mathbf{z}$
 \EndFor
 \State$\mathcal{L}_\mathbf{x} \Leftarrow$ sort $\mathcal{L}_\mathbf{x}$ by an increasing order
 \State$\mathcal{L}_\mathbf{z} \Leftarrow$ sort $\mathcal{L}_\mathbf{z}$ by an increasing order
-\State$f_\mathbf{z} \Leftarrow$ local regression from $\mathcal{L}_\mathbf{x}$ to $\mathcal{L}_\mathbf{z}$
+\State$f_\mathbf{z} \Leftarrow$ local regression between $\mathcal{L}_\mathbf{x}$ and $\mathcal{L}_\mathbf{z}$
 \end{algorithmic}
 \end{algorithm}
 
 
 \paragraph*{Majorization algorithm.}
-We implement the majorization (or Majorization-Minimization) algorithm to minimize the $F$-MDS objective (Eq \ref{eq:fmds}). First, an exact form of $O_{\rm FMDS}(\mathbf{Z})$ is derived to match the physical dimension of each term (\nameref{sec:app1}),
+We implemented the majorization (or Majorization-Minimization) algorithm to minimize the $F$-MDS objective (Eq \ref{eq:fmds}). First, an exact form of $O_{\rm FMDS}(\mathbf{Z})$ was derived to match the physical dimension of each term (\nameref{sec:app1}),
 \begin{equation}
     O_{\rm FMDS}(\mathbf{Z}) = \frac{1}{N}\sum_{i,j} (d_{ij} - \| \mathbf{z}_i - \mathbf{z}_j \|_2 )^2 + \lambda\left|\sum_{i,j} \left[1- G\epsilon_{ij} \left(1+\frac{G-1}{N-G}f_\mathbf{z}(F_\mathbf{x})\right)\right] \|\mathbf{z}_i - \mathbf{z}_j\|_2^2\right|.
 \end{equation}
-Next, as similarly described in \cite{borg05c, witten11}, the majorization is applied to seek an optimal $k$-th point for every $k=1,\cdots N$, while keeping other points fixed:
+Next, as similarly described in \cite{borg05c, witten11}, the majorization was applied to seek an optimal $k$-th point for every $k=1,\cdots N$, while keeping other points fixed:
 \begin{equation}
     \mathbf{z}_k^* = \argmin_{\mathbf{z}_k}O_{\rm FMDS}(\mathbf{Z} | \mathbf{z}_1,\cdots \mathbf{z}_{k-1}, \mathbf{z}_{k+1}, \mathbf{z}_N).
     \label{eq:seek_z}
 \end{equation}
-It can be analytically shown that Eq \ref{eq:seek_z} can be majorized with a quadratic expression in $\mathbf{z}_k$, which is further minimized by taking a derivative with respect to each element of $\mathbf{z}_k$ (denoted as ${z}_{ks},\ s=1,2$). An update rule is established by solving for ${z}_{ks}$ after setting the derivative to zero. It should be noted that the update is applied exclusively to the representation where its group-wise difference is not identified ($p_\mathbf{z}\gg p_\mathbf{x}$), which is significant under the original structure ($p_\mathbf{x} < 0.1$).  Detailed derivations of the expression and the update rule for $\mathbf{Z}$ are described in \nameref{sec:app2}, and the whole procedure is summarized in Algorithm \ref{alg:mm}.
+It can be analytically shown that Eq \ref{eq:seek_z} can be majorized with a quadratic expression in $\mathbf{z}_k$, which is further minimized by taking a derivative with respect to each element of $\mathbf{z}_k$ (denoted as ${z}_{ks},\ s=1,2$). An update rule was established by solving for ${z}_{ks}$ after setting the derivative to zero. It should be noted that the update is applied exclusively to the representation where its group-wise difference is not identified ($p_\mathbf{z}\gg p_\mathbf{x}$), which is significant under the original structure ($p_\mathbf{x} < 0.1$).  Detailed derivations of the expression and the update rule for $\mathbf{Z}$ are described in \nameref{sec:app2}, and the whole procedure is summarized in Algorithm \ref{alg:mm}.
 
 \begin{algorithm}[h]
 \caption{Update rule for computing $F$-MDS.}
@@ -634,7 +633,7 @@ The authors acknowledge the MIT Office of Research Computing and Data for provid
 % Include only the SI item label in the paragraph heading. Use the \nameref{label} command to cite SI items in the text.
 \paragraph*{S1 Appendix.}
 \label{sec:app1}
-{\bf Objective function for computing $F$-MDS.}
+{\bf $F$-MDS objective function and mapping between $F$-ratios.}
 
 \paragraph*{S2 Appendix.}
 \label{sec:app2}
