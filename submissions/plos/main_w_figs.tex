@@ -393,7 +393,7 @@ Next, as similarly described in \cite{borg05c, witten11}, the majorization was a
     \mathbf{z}_k^* = \argmin_{\mathbf{z}_k}O_{\rm FMDS}(\mathbf{Z} | \mathbf{z}_1,\cdots \mathbf{z}_{k-1}, \mathbf{z}_{k+1}, \mathbf{z}_N).
     \label{eq:seek_z}
 \end{equation}
-It can be analytically shown that Eq \ref{eq:seek_z} can be majorized with a quadratic expression in $\mathbf{z}_k$, which is further minimized by taking a derivative with respect to each element of $\mathbf{z}_k$ (denoted as ${z}_{ks},\ s=1,2$). An update rule was established by solving for ${z}_{ks}$ after setting the derivative to zero. It should be noted that the update is applied exclusively to the representation where its group-wise difference is not identified ($p_\mathbf{z}\gg p_\mathbf{x}$), which is significant under the original structure ($p_\mathbf{x} < 0.1$).  Detailed derivations of the expression and the update rule for $\mathbf{Z}$ are described in \nameref{sec:app2}, and the whole procedure is summarized in Algorithm \ref{alg:mm}.
+It can be analytically shown that Eq \ref{eq:seek_z} can be majorized with a quadratic expression in $\mathbf{z}_k$, which is further minimized by taking a derivative with respect to each element of $\mathbf{z}_k$ (denoted as ${z}_{ks},\ s=1,2$). An update rule was established by solving for ${z}_{ks}$ after setting the derivative to zero. It should be noted that the update is applied exclusively to the representation where its group-wise difference is significant under the original structure ($p_\mathbf{x} < 0.1$), but not identified in the two-dimensional embedding ($p_\mathbf{z}\gg p_\mathbf{x}$). The update was designed to continue until when the difference between $p_\mathbf{x}$ and $p_\mathbf{z}$ is minimized. Detailed derivations of the expression and the update rule for $\mathbf{Z}$ are described in \nameref{sec:app2}, which is summarized in Algorithm \ref{alg:mm}.
 
 \begin{algorithm}[h]
 \caption{Update rule for computing $F$-MDS.}
@@ -412,13 +412,17 @@ It can be analytically shown that Eq \ref{eq:seek_z} can be majorized with a qua
 \end{tabular}
 }
 \State$F_\mathbf{x} \Leftarrow$ pseudo-$F$ using $\mathbf{D}, \mathbf{y}$ (Eq \ref{eq:pseudof})
-\For{$1\leq t \leq T$}
+\State$p_{\mathbf{x},\,{\rm new}} \Leftarrow$ $p$-value for group difference in $\mathbf{X}$
+\State$p_{\mathbf{z},\,{\rm new}},\,p_{\mathbf{z},\,{\rm old}} \Leftarrow$ $p$-value for group difference in $\mathbf{Z}$
+\While{$\left(|p_{\mathbf{z},\,{\rm old}} - p_{\mathbf{x}}|>0.05\right) \lor \left(|p_{\mathbf{z},\,{\rm new}} - p_{\mathbf{x}}| < |p_{\mathbf{z},\,{\rm old}} - p_{\mathbf{x}}|\right)$}
+\State$p_{\mathbf{z},\,{\rm old}} \Leftarrow$ $p$-value for group difference in $\mathbf{Z}$
 \For{$1\leq k \leq N$}
     \State$\delta(\mathbf{Z}) \Leftarrow$ sign of confirmatory term (Equation S13)
     \State$f_\mathbf{z}(F_\mathbf{x}) \Leftarrow$ mapping function (Algorithm \ref{alg:mapping})
-    \State$\mathbf{z}_k \Leftarrow$ update $\mathbf{z}_k$ with $\delta(\mathbf{z})$ and $f_\mathbf{z}(F_\mathbf{x})$  (Equation S16)
+    \State$\mathbf{z}_k \Leftarrow$ update $\mathbf{z}_k$ using $\delta(\mathbf{Z})$ and $f_\mathbf{z}(F_\mathbf{x})$  (Equation S16)
 \EndFor
-\EndFor
+\State$p_{\mathbf{z},\,{\rm new}} \Leftarrow$ $p$-value for group difference in $\mathbf{Z}$
+\EndWhile
 \end{algorithmic}
 \end{algorithm}
 
@@ -502,7 +506,7 @@ Experiments were performed using R via RStudio either on Apple M3 chip with 16 G
 % Results and Discussion can be combined; please write results in past tense.
 \section*{Results}
 \subsection*{$F$-informed MDS is robust to a choice of hyperparameter.}
-We first characterized the behavior of $F$-informed MDS by observing changes in the MDS representation across a range of hyperparameters. After each update of the representation $\mathbf{Z}$, the changes were recorded by computing the objective function $O_{\rm FMDS}(\mathbf{Z})$, and PERMANOVA $p$-value $p_\mathbf{z}$ from testing on $\mathbf{Z}$. The $p$-value was chosen as a tracking measure instead of the pseudo $F$-statistic because its distribution varied depending on the hyperparameter $\lambda$ (\nameref{sec:app1}). To generate data, binary, balanced datasets of sizes $N$ ranging from 50 to 500 were simulated using SparseDOSSA \cite{Ma21}, a Bayesian model of microbiome communities that captures their major features. The statistical model was trained using 239 human stool-derived community samples with 332 microbial species \cite{Lloyd17}, followed by mean adjustment of one feature to reflect inter-group differences (\nameref{sec:methods}). A heatmap of a simulation result, along with its histogram, confirmed that the data were sparsely normalized (\nameref{fig:sim_data_vis}A,B). A two-dimensional representation obtained using principal coordinates analysis showed that the group difference was indistinguishable (\nameref{fig:sim_data_vis}C). Indeed, PERMANOVA testing of the metric MDS representation with Euclidean distance did not detect a statistically significant difference ($p_\mathbf{z}>0.51$), whereas the original data structure did reveal a significant difference ($p_\mathbf{x}<0.05$, Table \ref{table:sim_data}).
+We first characterized the behavior of $F$-informed MDS by observing changes in the MDS representation across a range of hyperparameters. After each update of the representation $\mathbf{Z}$, the changes were recorded by computing the objective function $O_{\rm FMDS}(\mathbf{Z})$, and PERMANOVA $p$-value $p_\mathbf{z}$ from testing on $\mathbf{Z}$. The $p$-value was chosen as a tracking measure instead of the pseudo $F$-statistic (\nameref{sec:app1}). To generate data, binary, balanced datasets of sizes $N$ ranging from 50 to 500 were simulated using SparseDOSSA \cite{Ma21}, a Bayesian model of microbiome communities that captures their major features. The statistical model was trained using 239 human stool-derived community samples with 332 microbial species \cite{Lloyd17}, followed by mean adjustment of one feature to reflect inter-group differences (\nameref{sec:methods}). A heatmap of a simulation result, along with its histogram, confirmed that the data were sparsely normalized (\nameref{fig:sim_data_vis}A,B). A two-dimensional representation obtained using principal coordinates analysis showed that the group difference was indistinguishable (\nameref{fig:sim_data_vis}C). Indeed, PERMANOVA testing of the metric MDS representation with Euclidean distance did not detect a statistically significant difference ($p_\mathbf{z}>0.51$), whereas the original data structure did reveal a significant difference ($p_\mathbf{x}<0.05$, Table \ref{table:sim_data}).
 
 \begin{table}[h!]
 % \begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
@@ -522,7 +526,7 @@ Replicate 3 & 0.041 & 0.991 & 0.027 & 0.915 & 0.026 & 0.995 & 0.047 & 0.809\\ \h
 % \end{adjustwidth}
 \end{table}
 
-Tracking changes in the $F$-MDS representation over training epochs indicated that a minimal hyperparameter value was required for the majorization algorithm to minimize the objective function (Fig \ref{fig:sim_iter}A). For semisynthetic datasets generated with SparseDOSSA, we observed a gradual decrease in $p_\mathbf{z}$-value and $O_{\rm FMDS}(\mathbf{Z})$ over successive epochs (Fig \ref{fig:sim_iter}B), as expected. The algorithm converged in fewer than 25 iterations when $\lambda\geq0.2$. In this setting, termination occurred when $p_\mathbf{z}$ approached $p_\mathbf{x}$ sufficiently closely(e.g., difference $<0.01$). This trend was validated by repeating the experiment across triplicates of simulated datasets of varying sizes, confirming that $\lambda=0.1$ was the minimal value required for convergence and optimization (\nameref{fig:sim_fmds_track}). To preserve convexity of the majorization form of $O_{\rm FMDS}(\mathbf{Z})$ with a positive quadratic coefficient, the hyperparameter was constrained to values not exceeding unity (Fig \ref{fig:sim_iter}C, \nameref{sec:app2}).
+Tracking changes in the $F$-MDS representation over training epochs indicated that a minimal hyperparameter value was required for the majorization algorithm to minimize the objective function (Fig \ref{fig:sim_iter}A). For semisynthetic datasets generated with SparseDOSSA, we observed a gradual decrease in $p_\mathbf{z}$-value and $O_{\rm FMDS}(\mathbf{Z})$ over successive epochs (Fig \ref{fig:sim_iter}B), as expected. When the algorithm was allowed to continue, $p_\mathbf{z}$-values oscillated between 0 and 1, with a higher rate when $\lambda$ increased (\nameref{fig:fmds_track_cont}). With the stopping rule (\nameref{sec:app2}), the algorithm converged in fewer than 25 iterations when $\lambda\geq0.2$. In this setting, termination occurred when $p_\mathbf{z}$ approached $p_\mathbf{x}$ sufficiently closely and when the difference was minimized. This trend was validated by repeating the experiment across triplicates of simulated datasets of varying sizes, confirming that $\lambda=0.1$ was the minimal value required for convergence and optimization (\nameref{fig:sim_fmds_track}). To preserve convexity of the majorization form of $O_{\rm FMDS}(\mathbf{Z})$ with a positive quadratic coefficient, the hyperparameter was constrained to values not exceeding unity (Fig \ref{fig:sim_iter}C, \nameref{sec:app2}).
 
 
 \begin{figure}[h!]
@@ -660,34 +664,38 @@ The authors acknowledge the MIT Office of Research Computing and Data for provid
 {\bf Visualization of a binary semisynthetic dataset using SparseDOSSA.}
 
 \paragraph*{S2 Fig.}
-\label{fig:sim_fmds_track}
-{\bf PERMANOVA $p$-values from $F$-informed MDS representations using semisynthetic data.}
+\label{fig:fmds_track_cont}
+{\bf Changes in $p$-values for group difference in $F$-informed MDS representations without stopping rule.}
 
 \paragraph*{S3 Fig.}
+\label{fig:sim_fmds_track}
+{\bf PERMANOVA $p$-values from $F$-informed MDS representations of semisynthetic datasets.}
+
+\paragraph*{S4 Fig.}
 \label{fig:sim_fmds_smds}
 \textbf{Pairwise distance analyses from $F$-informed MDS and supervised MDS.}
 
-\paragraph*{S4 Fig.}
+\paragraph*{S5 Fig.}
 \label{fig:fmds_gridsearch}
 \textbf{Hyperparameter selection using grid search method.}
 
-\paragraph*{S5 Fig.}
+\paragraph*{S6 Fig.}
 \label{fig:sim_eval_all}
 \textbf{Comparison of quality metrics of benchmark ordination methods on all datasets.}
 
-\paragraph*{S6 Fig.}
+\paragraph*{S7 Fig.}
 \label{fig:shepard_alga_all}
 \textbf{Shepard plot from algal microbiome dataset with eight ordination methods.}
 
-\paragraph*{S7 Fig.}
+\paragraph*{S8 Fig.}
 \label{fig:f_corr_alga_all}
 \textbf{\textit{F}-correlation plot from algal microbiome dataset.}
 
-\paragraph*{S8 Fig.}
+\paragraph*{S9 Fig.}
 \label{fig:fmds_rep_analysis}
 \textbf{Cluster centroid and variances of $F$-MDS representations.} 
 
-\paragraph*{S9 Fig.}
+\paragraph*{S10 Fig.}
 \label{fig:sim_ternary_vis}
 \textbf{Visualization of a ternary semisynthetic dataset.}
 
