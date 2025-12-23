@@ -256,7 +256,7 @@ More recently, an alternative visualization tool for high-dimensional biological
 \begin{figure}[h!]
 \begin{adjustwidth}{0in}{0in}
     \centering
-    \includegraphics[width=5.2in]{submissions/plos/figures/Fig1_rev.png}
+    \includegraphics[width=5.2in]{submissions/plos/figures/Fig1_rev2.pdf}
     \caption{\textbf{\textit{F}-informed multidimensional scaling (MDS) for microbial ecology data analysis.} (a) Schematic overview of analyzing a dataset, represented as a design matrix $\mathbf{X}$ of $N$ samples with $S$ features or taxa. In a balanced design, samples are grouped by $a$ replicates of the same experimental condition. Note that compositionality requires that the summation of elements $x_{ij}$ across features is fixed or independent of a feature $j$ (e.g., 1). Exploratory analysis of $\mathbf{X}$ is performed through its ordination, followed by statistical inference, including hypothesis testing (e.g., PERMANOVA) or differential abundance analysis. (b) Computational process diagram of reducing the dimensionality of $\mathbf{X}$ using label set $\mathbf{y}$ for visualization, ensuring compliance with inference results based on the $F$-statistic.}
     \label{fig:intro}
 \end{adjustwidth}
@@ -414,7 +414,7 @@ It can be analytically shown that Eq \ref{eq:seek_z} can be majorized with a qua
 \State$F_\mathbf{x} \Leftarrow$ pseudo-$F$ using $\mathbf{D}, \mathbf{y}$ (Eq \ref{eq:pseudof})
 \State$p_{\mathbf{x},\,{\rm new}} \Leftarrow$ $p$-value for group difference in $\mathbf{X}$
 \State$p_{\mathbf{z},\,{\rm new}},\,p_{\mathbf{z},\,{\rm old}} \Leftarrow$ $p$-value for group difference in $\mathbf{Z}$
-\While{$\left(|p_{\mathbf{z},\,{\rm old}} - p_{\mathbf{x}}|>0.05\right) \lor \left(|p_{\mathbf{z},\,{\rm new}} - p_{\mathbf{x}}| < |p_{\mathbf{z},\,{\rm old}} - p_{\mathbf{x}}|\right)$}
+\While{$\left(|p_{\mathbf{z},\,{\rm new }} - p_{\mathbf{x}}|>0.05\right) \lor \left(|p_{\mathbf{z},\,{\rm new}} - p_{\mathbf{x}}| < |p_{\mathbf{z},\,{\rm old}} - p_{\mathbf{x}}|\right)$}
 \State$p_{\mathbf{z},\,{\rm old}} \Leftarrow$ $p$-value for group difference in $\mathbf{Z}$
 \For{$1\leq k \leq N$}
     \State$\delta(\mathbf{Z}) \Leftarrow$ sign of confirmatory term (Equation S13)
