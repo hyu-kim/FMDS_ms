@@ -104,7 +104,10 @@
 \usepackage{array}
 \usepackage{multirow}
 
-\usepackage{algorithm, algorithmicx, algpseudocode}%
+\usepackage{algorithm, algorithmicx, algpseudocode}
+
+\usepackage{soul}
+\sethlcolor{yellow}
 
 % create "+" rule type for thick vertical lines
 \newcolumntype{+}{!{\vrule width 2pt}}
@@ -256,7 +259,7 @@ More recently, an alternative visualization tool for high-dimensional biological
 \begin{figure}[h!]
 \begin{adjustwidth}{0in}{0in}
     \centering
-    \includegraphics[width=5.2in]{submissions/plos/figures/Fig1_rev2.pdf}
+    \includegraphics[width=5.2in]{submissions/plos/figures/Fig1_rev2.png}
     \caption{\textbf{\textit{F}-informed multidimensional scaling (MDS) for microbial ecology data analysis.} (a) Schematic overview of analyzing a dataset, represented as a design matrix $\mathbf{X}$ of $N$ samples with $S$ features or taxa. In a balanced design, samples are grouped by $a$ replicates of the same experimental condition. Note that compositionality requires that the summation of elements $x_{ij}$ across features is fixed or independent of a feature $j$ (e.g., 1). Exploratory analysis of $\mathbf{X}$ is performed through its ordination, followed by statistical inference, including hypothesis testing (e.g., PERMANOVA) or differential abundance analysis. (b) Computational process diagram of reducing the dimensionality of $\mathbf{X}$ using label set $\mathbf{y}$ for visualization, ensuring compliance with inference results based on the $F$-statistic.}
     \label{fig:intro}
 \end{adjustwidth}
@@ -512,7 +515,7 @@ We first characterized the behavior of $F$-informed MDS by observing changes in 
 % \begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
 \centering
 \caption{
-{\bf PERMANOVA testing of group differences in semi-synthetic datasets using the original structure ($p_\mathbf{x}$) and principal coordinates analysis representation ($p_\mathbf{z}$).}}
+{\bf PERMANOVA test results for group differences in semi-synthetic datasets using the original structure ($p_\mathbf{x}$) and the principal coordinates analysis representation ($p_\mathbf{z}$). The datasets were generated using SparseDOSSA \cite{Ma21} \hl{(section ``Semisynthetic data'' of Methods).}}}
 \begin{tabular}{|l+l|l|l|l|l|l|l|l|}
 \hline
 \multirow{2}{*}{} & 
@@ -536,7 +539,7 @@ Repeating the experiment across triplicate simulated datasets of varying sizes c
 \begin{figure}[h!]
     \centering
     \includegraphics[width=5.2in]{submissions/plos/figures/Fig2_rev.png}
-    \caption{\textbf{Majorization algorithm optimizes the \textit{F}-informed MDS objective function.} (A) Changes in each term comprising the objective function (Eq \ref{eq:fmds}), including raw stress and confirmatory terms, are plotted against the training epochs for different hyperparameter values $\lambda$. A semisynthetic dataset of $N=200$, replicate 1, was generated using SparseDOSSA \cite{Ma21} (section ``Dataset and evaluation''). (B) The PERMANOVA $p$-value under two-dimensional representation ($p_\mathbf{z}$) is plotted against epoch and $\lambda$. (C) Number of epochs until convergence is plotted against the hyperparameter, ranging between 0.2 and 1. Error bars indicate the standard deviation of triplicates.}
+    \caption{\textbf{Majorization algorithm optimizes the \textit{F}-informed MDS objective function.} (A) Changes in each term comprising the objective function (Eq \ref{eq:fmds}), including raw stress and confirmatory terms, are plotted against the training epochs for different hyperparameter values $\lambda$. A semisynthetic dataset of $N=200$, replicate 1, was generated using SparseDOSSA \cite{Ma21} \hl{(see the ``Semisynthetic data'' section of the Methods)}. (B) The PERMANOVA $p$-value under two-dimensional representation ($p_\mathbf{z}$) is plotted against epoch and $\lambda$. (C) Number of epochs until convergence is plotted against the hyperparameter, ranging between 0.2 and 1. Error bars indicate the standard deviation of triplicates.}
     \label{fig:sim_iter}
 \end{figure}
 
@@ -549,12 +552,12 @@ To further compare structural deviations, we calculated the Pearson correlation 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=5.2in]{submissions/plos/figures/Fig3_rev.png}
-    \caption{\textbf{\textit{F}-informed MDS is robust to the choice of hyperparameters.} (A) Shepard plots comparing pairwise distances from $F$-informed MDS ($F$-MDS) and supervised MDS (superMDS) under both zero (metric MDS) and nonzero hyperparameter settings ($\lambda$, $\alpha=1$). Distances in the original high-dimensional space were computed using Bray-Curtis dissimilarity; distances in the two-dimensional embedding used Euclidean metric. (B) For each method, the Pearson correlation coefficient was calculated between original and embedded distances. (C) Normalized stress (Stress-1) was computed for each embedding. Analysis used semisynthetic datasets with $N=200$ (section ``Dataset and evaluation''). Error bars indicate standard deviation across triplicate datasets.}
+    \caption{\textbf{\textit{F}-informed MDS is robust to the choice of hyperparameters.} (A) Shepard plots comparing pairwise distances from $F$-informed MDS ($F$-MDS) and supervised MDS (superMDS) under both zero (metric MDS) and nonzero hyperparameter settings ($\lambda$, $\alpha=1$). Distances in the original high-dimensional space were computed using Bray-Curtis dissimilarity; distances in the two-dimensional embedding used Euclidean metric. (B) For each method, the Pearson correlation coefficient was calculated between original and embedded distances. (C) Normalized stress (Stress-1) was computed for each embedding. Analysis used semisynthetic datasets with $N=200$ \hl{(see the ``Semisynthetic data'' section of the Methods)}. Error bars indicate standard deviation across triplicate datasets.}
     \label{fig:mds_eval_sim}
 \end{figure}
 
 
-Based on the hyperparameter $\lambda$'s influence on the MDS configuration, a grid search was additionally conducted to identify an optimal value. Prior analysis demonstrated a faster $F$-MDS convergence with larger $\lambda$ (Fig \ref{fig:sim_iter}C). To balance the convergence rate against structural deviation while mitigating bias across the metrics, we defined an objective function $f_{\rm obj}(\lambda)$ via min-max normalization (\nameref{sec:app3_rev}). The loss function was evaluated over $\lambda$ between 0.15 and 1, where the convergence was assured (\nameref{fig:fmds_gridsearch}A). Across semisynthetic datasets, the hyperparameter $\lambda$ that minimized $f_{\rm obj}(\lambda)$ was greater than or equal to 0.5 ($0.73\pm0.19$, mean $\pm$ s.d.; see \nameref{fig:fmds_gridsearch}B).
+Based on the hyperparameter $\lambda$'s influence on the MDS configuration, a grid search was conducted to identify an optimal value. Prior analysis demonstrated a faster $F$-MDS convergence with larger $\lambda$ (Fig \ref{fig:sim_iter}C). To balance the convergence rate against structural deviation while mitigating bias across the metrics, we defined an objective function $f_{\rm obj}(\lambda)$ via min-max normalization (\nameref{sec:app3_rev}). The loss function was evaluated over $\lambda$ between 0.15 and 1, where the convergence was assured (\nameref{fig:fmds_gridsearch}A). Across semisynthetic datasets, the hyperparameter $\lambda$ that minimized $f_{\rm obj}(\lambda)$ was greater than or equal to 0.5 ($0.73\pm0.19$, mean $\pm$ s.d.; see \nameref{fig:fmds_gridsearch}B).
 
  
 \subsection*{Using different quality metrics confirms the consistent performance of $F$-MDS.}
@@ -570,7 +573,7 @@ For global structure preservation, MDS-based ordinations (e.g., metric MDS, $F$-
 \begin{figure}[h!]
     \centering
     \includegraphics[width=5.2in]{submissions/plos/figures/Fig4_rev.png}
-    \caption{\textbf{Different quality metrics confirm consistent preservation of the semisynthetic data pattern with \textit{F}-informed MDS.} Six dimension reduction methods were evaluated to test their preservation of (A) local and (B) global structure by calculating trustworthiness and continuity using two nearest-neighbor numbers, $k=14$ (local), $k=150$ (global). The methods were also evaluated using (C) global distortion metrics (Stress-1 and Shepard diagram correlation) and (D) statistical inference metrics, including the ratio in statistical significance ($F$-rank-ratio) and correlation in $F$-ratios ($F$-correlation) using a randomly permuted label set. The following hyperparameters were applied to each method: $\lambda$ ($F$-MDS), number of neighbors $n$ (UMAP, supervised (-S) and unsupervised (-U)), perplexity ``perp'' (t-SNE), and the number of shortest dissimilarities $n$ (Isomap). Three semisynthetic datasets of $N=200$ were generated as described in section ``Dataset and evaluation''. The standard deviations were calculated and displayed with error bars.}
+    \caption{\textbf{Different quality metrics confirm consistent preservation of the semisynthetic data pattern with \textit{F}-informed MDS.} Six dimension reduction methods were evaluated to test their preservation of (A) local and (B) global structure by calculating trustworthiness and continuity using two nearest-neighbor numbers, $k=14$ (local), $k=150$ (global). The methods were also evaluated using (C) global distortion metrics (Stress-1 and Shepard diagram correlation) and (D) statistical inference metrics, including the ratio in statistical significance ($F$-rank-ratio) and correlation in $F$-ratios ($F$-correlation) using a randomly permuted label set. The following hyperparameters were applied to each method: $\lambda$ ($F$-MDS), number of neighbors $n$ (UMAP, supervised (-S) and unsupervised (-U)), perplexity ``perp'' (t-SNE), and the number of shortest dissimilarities $n$ (Isomap). Three semisynthetic datasets of $N=200$ were generated \hl{as described in section ``Semisynthetic data'' of Methods}. The standard deviations were calculated and displayed with error bars.}
     \label{fig:eval_simul}
 \end{figure}
 
@@ -584,7 +587,7 @@ Similarly, UMAP-U and Isomap achieved the highest scores for preserving local ne
 \begin{figure}[h!]
     \centering
     \includegraphics[width=5.2in]{submissions/plos/figures/Fig5_rev.png}
-    \caption{\textbf{Different quality metrics confirm consistent preservation of the algal microbiome pattern with \textit{F}-informed MDS.} Seven dimension reduction methods were evaluated for their preservation of (A) local and (B) global structure by calculating trustworthiness and continuity using two nearest neighbor numbers $k=3$ (local), $k=27$ (global). The methods were also assessed based on (C) global distortion metrics (Stress-1 and Shepard plot correlation) and (D) the ratio of $p$-values ($F$-rank-ratio) and correlation in $F$-ratios ($F$-correlation) using randomly permuted label set. A dataset of $N=36$ bacterial communities was analyzed as described in section ``Dataset and evaluation''. The following hyperparameters were applied: $\lambda$ ($F$-MDS), number of neighbors $n_U$ (UMAP, supervised (-S) and unsupervised (-U)), perplexity ``perp'' (t-SNE), and the number of shortest dissimilarities $n_I$ (Isomap).}
+    \caption{\textbf{Different quality metrics confirm consistent preservation of the algal microbiome pattern with \textit{F}-informed MDS.} Seven dimension reduction methods were evaluated for their preservation of (A) local and (B) global structure by calculating trustworthiness and continuity using two nearest neighbor numbers $k=3$ (local), $k=27$ (global). The methods were also assessed based on (C) global distortion metrics (Stress-1 and Shepard plot correlation) and (D) the ratio of $p$-values ($F$-rank-ratio) and correlation in $F$-ratios ($F$-correlation) using randomly permuted label set. \hl{A dataset of $N=36$ bacterial communities was analyzed as described in section ``Real microbiome community'' of Methods.} The following hyperparameters were applied: $\lambda$ ($F$-MDS), number of neighbors $n_U$ (UMAP, supervised (-S) and unsupervised (-U)), perplexity ``perp'' (t-SNE), and the number of shortest dissimilarities $n_I$ (Isomap).}
     \label{fig:eval_real}
 \end{figure}
 
@@ -612,7 +615,7 @@ Similar trends were observed in the bacterial community dataset, where inter-gro
 \begin{figure}[h!]
     \centering
     \includegraphics[width=5.2in]{submissions/plos/figures/Fig7_rev.png}
-    \caption{\textbf{Multi-class data is discriminated based on statistical inference.} Comparison of metric MDS and \textit{F}-informed MDS ($\lambda=0.5$) visualizations using a four-dimensional, three-class simulated dataset. Each dataset group follows normal distribution with the same covariance but different means (\nameref{fig:sim_ternary_vis}). Ellipses of respective colors are drawn with a confidence level of 0.68. Semisynthetic dataset of $N=75$ was generated (section ``Semisynthetic data'' in Methods)}
+    \caption{\textbf{Multi-class data is discriminated based on statistical inference.} Comparison of metric MDS and \textit{F}-informed MDS ($\lambda=0.5$) visualizations using a four-dimensional, three-class simulated dataset. Each dataset group follows normal distribution with the same covariance but different means (\nameref{fig:sim_ternary_vis}). Ellipses of respective colors are drawn with a confidence level of 0.68. Semisynthetic dataset of $N=75$ was generated (\hl{see the section ``Semisynthetic data'' of the Methods.)}}
     \label{fig:vis_multiclass}
 \end{figure}
 
@@ -621,7 +624,7 @@ Similar trends were observed in the bacterial community dataset, where inter-gro
 \section*{Discussion}
 In this work, we proposed a weakly supervised multidimensional scaling method based on the $F$-ratio and characterized its representations by varying hyperparameters and the epoch number of the majorization algorithm. Evaluations using simulated and bacterial community datasets showed that our $F$-informed MDS outperformed existing MDS-based and other dimension reduction methods in preserving local and global structures, as well as class-based information (e.g., statistical inference). The datasets used in this study represented cases where metric MDS failed to identify group differences through visualizations, partly due to the loss of such information during dimensionality reduction. Our dispersion-based approach expanded the applicability of MDS by introducing an additional constraint to minimally adjust the representation while directly enabling group-associated inferences.
 
-In microbiome research, for example, applying $F$-informed MDS to bacterial community datasets can allow users to interpret biologically meaningful patterns with higher confidence. It is also possible that our method could be employed in other domains where multivariate signals are processed based on distance metrics, such as metabolomics data clustering \cite{Hansel25}, network connectivity analysis with spatial neuroimaging \cite{Kinsey24}, or spectral analysis for pharmaceutics quality control \cite{Puchert11}.
+In microbiome research, for example, applying $F$-informed MDS to bacterial community datasets can allow users to interpret biologically meaningful patterns with higher confidence. It is also possible that the method could be employed in other domains where multivariate signals are processed based on distance metrics, such as metabolomics data clustering \cite{Hansel25}, network connectivity analysis with spatial neuroimaging \cite{Kinsey24}, or spectral analysis for pharmaceutics quality control \cite{Puchert11}.
 
 One limitation of $F$-informed MDS, however, is that its computation relies on the initial configuration from metric MDS, and the computational cost increase with iterations of majorization and label permutations (a summary of method costs is provided in \nameref{sec:app6_rev}). Indeed, majorization for MDS has been known for its high computational cost \cite{Fang25}, although its numerical convergence is guaranteed \cite{deleeuw24} and we did not observe any stability issues in our simulation. Recent theoretical advances in computational algorithms, including majorization \cite{Streeter23} or (stochastic) gradient descent \cite{Demaine21, zheng19} open doors for improving our framework toward unrestricted initialization and more efficient iterations. Additionally, empirical observations suggest that $F$-MDS representations became less reliant on the choice of hyperparameter at higher values. Once the relationship between the two objective-constituting terms is clarified, it could lead to a viable strategy for selecting an optimal hyperparameter without requiring recursive procedures such as cross-validation.
 
