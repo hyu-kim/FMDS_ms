@@ -480,4 +480,10 @@ Streeter M.
 \newblock arXiv. 2023; p. arXiv:2308.00190.
 \newblock doi:{10.48550/arXiv.2308.00190}.
 
+\bibitem{Kim25}
+\DIFadd{Kim H, Kim S, Kimbrel J, Morris M, Mayali X, Buie C
+}\newblock \DIFadd{Multidimensional scaling informed by F-statistic: Visualizing microbiome for inference [Dataset].
+}\newblock \DIFadd{Dryad. 2025.
+}
+
 \end{thebibliography}
