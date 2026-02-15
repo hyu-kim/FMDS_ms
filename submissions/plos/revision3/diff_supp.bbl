@@ -1,0 +1,153 @@
+\begin{thebibliography}{10}
+
+\bibitem{anderson01}
+{\sc Anderson, M.~J.}
+\newblock A new method for non-parametric multivariate analysis of variance.
+\newblock {\em Austral Ecology 26}, 1 (2001), 32--46.
+
+\bibitem{borg97b}
+{\sc Borg, I., and Groenen, P.}
+\newblock {\em Confirmatory MDS}.
+\newblock Springer New York, New York, NY, 1997, pp.~181--197.
+
+\bibitem{borg97a}
+{\sc Borg, I., and Groenen, P.}
+\newblock {\em A Majorization Algorithm for Solving MDS}.
+\newblock Springer New York, New York, NY, 1997, pp.~169--197.
+
+\bibitem{chen20}
+{\sc Chen, T., Kornblith, S., Norouzi, M., and Hinton, G.}
+\newblock A simple framework for contrastive learning of visual
+  representations.
+\newblock In {\em Proceedings of the 37th International Conference on Machine
+  Learning\/} (2020), vol.~119, Proceedings of Machine Learning Research,
+  pp.~1597--1607.
+
+\bibitem{Dong11}
+{\sc Dong, W., Moses, C., and Li, K.}
+\newblock Efficient k-nearest neighbor graph construction for generic
+  similarity measures.
+\newblock In {\em Proceedings of the 20th International Conference on World
+  Wide Web\/} (New York, NY, USA, 2011), WWW '11, Association for Computing
+  Machinery, p.~577–586.
+
+\bibitem{Karlsson13}
+{\sc Karlsson, F.~H., Tremaroli, V., Nookaew, I., Bergström, G., Behre, C.~J.,
+  Fagerberg, B., Nielsen, J., and Bäckhed, F.}
+\newblock Gut metagenome in european women with normal, impaired and diabetic
+  glucose control.
+\newblock {\em Nature 498}, 7452 (2013), 99--103.
+
+\bibitem{kim22}
+{\sc Kim, H., Kimbrel, J.~A., Vaiana, C.~A., Wollard, J.~R., Mayali, X., and
+  Buie, C.~R.}
+\newblock Bacterial response to spatial gradients of algal-derived nutrients in
+  a porous microplate.
+\newblock {\em The ISME Journal 16}, 4 (2022), 1036--1045.
+
+\bibitem{Letunic23}
+{\sc Letunic, I.}
+\newblock phylot: a tree generator, 12/8/2023 2023.
+
+\bibitem{lozupone07}
+{\sc Lozupone, C.~A., Hamady, M., Kelley, S.~T., and Knight, R.}
+\newblock Quantitative and qualitative beta diversity measures lead to
+  different insights into factors that structure microbial communities.
+\newblock {\em Applied and Environmental Microbiology 73}, 5 (2007), 1576--85.
+
+\bibitem{Ma21}
+{\sc Ma, S., Ren, B., Mallick, H., Moon, Y.~S., Schwager, E., Maharjan, S.,
+  Tickle, T.~L., Lu, Y., Carmody, R.~N., Franzosa, E.~A., Janson, L., and
+  Huttenhower, C.}
+\newblock A statistical model for describing and simulating microbial community
+  profiles.
+\newblock {\em PLOS Computational Biology 17}, 9 (2021), e1008913.
+
+\bibitem{mcInnes18}
+{\sc McInnes, L., Healy, J., and Melville, J.}
+\newblock Umap: Uniform manifold approximation and projection for dimension
+  reduction.
+\newblock {\em arXiv\/} (2018), arXiv:1802.03426.
+
+\bibitem{Pasolli16}
+{\sc Pasolli, E., Truong, D.~T., Malik, F., Waldron, L., and Segata, N.}
+\newblock Machine learning meta-analysis of large metagenomic datasets: Tools
+  and biological insights.
+\newblock {\em PLoS Computational Biology 12}, 7 (2016), e1004977.
+
+\bibitem{paulson13}
+{\sc Paulson, J.~N., Stine, O.~C., Bravo, H.~C., and Pop, M.}
+\newblock Differential abundance analysis for microbial marker-gene surveys.
+\newblock {\em Nature Methods 10\/} (2013).
+
+\bibitem{Pedregosa11}
+{\sc Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B.,
+  Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V.,
+  Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., and
+  Duchesnay, E.}
+\newblock Scikit-learn: Machine learning in python.
+\newblock {\em Journal of Machine Learning Research 12\/} (2011), 2825–2830.
+
+\bibitem{Qin12}
+{\sc Qin, J., Li, Y., Cai, Z., Li, S., Zhu, J., Zhang, F., Liang, S., Zhang,
+  W., Guan, Y., Shen, D., Peng, Y., Zhang, D., Jie, Z., Wu, W., Qin, Y., Xue,
+  W., Li, J., Han, L., Lu, D., Wu, P., Dai, Y., Sun, X., Li, Z., Tang, A.,
+  Zhong, S., Li, X., Chen, W., Xu, R., Wang, M., Feng, Q., Gong, M., Yu, J.,
+  Zhang, Y., Zhang, M., Hansen, T., Sanchez, G., Raes, J., Falony, G., Okuda,
+  S., Almeida, M., LeChatelier, E., Renault, P., Pons, N., Batto, J.-M., Zhang,
+  Z., Chen, H., Yang, R., Zheng, W., Li, S., Yang, H., Wang, J., Ehrlich,
+  S.~D., Nielsen, R., Pedersen, O., Kristiansen, K., and Wang, J.}
+\newblock A metagenome-wide association study of gut microbiota in type 2
+  diabetes.
+\newblock {\em Nature 490}, 7418 (2012), 55--60.
+
+\bibitem{Qin14}
+{\sc Qin, N., Yang, F., Li, A., Prifti, E., Chen, Y., Shao, L., Guo, J.,
+  Le~Chatelier, E., Yao, J., Wu, L., Zhou, J., Ni, S., Liu, L., Pons, N.,
+  Batto, J.~M., Kennedy, S.~P., Leonard, P., Yuan, C., Ding, W., Chen, Y., Hu,
+  X., Zheng, B., Qian, G., Xu, W., Ehrlich, S.~D., Zheng, S., and Li, L.}
+\newblock Alterations of the human gut microbiome in liver cirrhosis.
+\newblock {\em Nature 513}, 7516 (2014), 59--64.
+
+\bibitem{reiman20}
+{\sc Reiman, D., Metwally, A.~A., Sun, J., and Dai, Y.}
+\newblock {PopPhy-CNN}: A phylogenetic tree embedded architecture for
+  convolutional neural networks to predict host phenotype from metagenomic
+  data.
+\newblock {\em IEEE Journal of Biomedical and Health Informatics 24}, 10
+  (2020), 2993--3001.
+
+\bibitem{tenenbaum00}
+{\sc Tenenbaum, J.~B., de~Silva, V., and Langford, J.~C.}
+\newblock A global geometric framework for nonlinear dimensionality reduction.
+\newblock {\em Science 290}, 5500 (2000), 2319--23.
+
+\bibitem{Torgerson52}
+{\sc Torgerson, W.~S.}
+\newblock Multidimensional scaling: I. theory and method.
+\newblock {\em Psychometrika 17}, 4 (1952), 401--419.
+
+\bibitem{Maaten14}
+{\sc Van Der~Maaten, L.}
+\newblock Accelerating t-sne using tree-based algorithms.
+\newblock {\em Journal of Machine Learning Research 15}, 1 (2014), 3221--3245.
+
+\bibitem{maaten08}
+{\sc van~der Maaten, L., and Hinton, G.}
+\newblock Visualizing data using {t-SNE}.
+\newblock {\em Journal of Machine Learning Research 9}, 86 (2008), 2579--2605.
+
+\bibitem{witten11}
+{\sc Witten, D.~M., and Tibshirani, R.}
+\newblock Supervised multidimensional scaling for visualization,
+  classification, and bipartite ranking.
+\newblock {\em Computational Statistics \& Data Analysis 55}, 1 (2011),
+  789--801.
+
+\bibitem{Yang06}
+{\sc Yang, T., Liu, J., McMillan, L., and Wang, W.}
+\newblock A fast approximation to multidimensional scaling.
+\newblock In {\em Proceedings of the ECCV Workshop on Computation Intensive
+  Methods for Computer Vision (CIMCV)\/} (2006).
+
+\end{thebibliography}

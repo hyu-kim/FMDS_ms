@@ -1,4 +1,7 @@
 % Template for PLoS
+%DIF LATEXDIFF DIFFERENCE FILE
+
+
 % Version 3.6 Aug 2022
 %
 % % % % % % % % % % % % % % % % % % % % % %
@@ -182,7 +185,71 @@
 \newcommand{\E}{\mathbf{E}}
 
 %% END MACROS SECTION
-
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFaddtex}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdeltex}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+\providecommand{\DIFmodbegin}{} %DIF PREAMBLE
+\providecommand{\DIFmodend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF HYPERREF PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}} %DIF PREAMBLE
+\newcommand{\DIFscaledelfig}{0.5}
+%DIF HIGHLIGHTGRAPHICS PREAMBLE %DIF PREAMBLE
+\RequirePackage{settobox} %DIF PREAMBLE
+\RequirePackage{letltxmacro} %DIF PREAMBLE
+\newsavebox{\DIFdelgraphicsbox} %DIF PREAMBLE
+\newlength{\DIFdelgraphicswidth} %DIF PREAMBLE
+\newlength{\DIFdelgraphicsheight} %DIF PREAMBLE
+% store original definition of \includegraphics %DIF PREAMBLE
+\LetLtxMacro{\DIFOincludegraphics}{\includegraphics} %DIF PREAMBLE
+\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}} %DIF PREAMBLE
+\newcommand{\DIFdelincludegraphics}[2][]{% %DIF PREAMBLE
+\sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}% %DIF PREAMBLE
+\settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\scalebox{\DIFscaledelfig}{% %DIF PREAMBLE
+\parbox[b]{\DIFdelgraphicswidth}{\usebox{\DIFdelgraphicsbox}\\[-\baselineskip] \rule{\DIFdelgraphicswidth}{0em}}\llap{\resizebox{\DIFdelgraphicswidth}{\DIFdelgraphicsheight}{% %DIF PREAMBLE
+\setlength{\unitlength}{\DIFdelgraphicswidth}% %DIF PREAMBLE
+\begin{picture}(1,1)% %DIF PREAMBLE
+\thicklines\linethickness{2pt} %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}% %DIF PREAMBLE
+\end{picture}% %DIF PREAMBLE
+}\hspace*{3pt}}} %DIF PREAMBLE
+} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbegin}{\DIFaddbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddend}{\DIFaddend} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbegin}{\DIFdelbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelend}{\DIFdelend} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbegin}{\DIFOaddbegin \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbegin}{\DIFOdelbegin \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbeginFL}{\DIFaddbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddendFL}{\DIFaddendFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbeginFL}{\DIFdelbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelendFL}{\DIFdelendFL} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbeginFL}{\DIFOaddbeginFL \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
 
 \begin{document}
 \vspace*{0.2in}
@@ -220,7 +287,7 @@ Cullen R. Buie\textsuperscript{1,5*}
 \P These authors also contributed equally to this work.
 
 % Current address notes
-Current Address: \#\!a Global Manufacturing Sciences and Technology, Sanofi, Framingham, MA 01707, USA
+Current Address: \#\!a Global Manufacturing Sciences and Technology, Sanofi, Framingham, MA 01701, USA
 \#\!b Oak Ridge Institute for Science and Education, Department of Energy, Oak Ridge, TN 37830, USA 
 
 % Use the asterisk to denote corresponding authorship and provide email address in note below.
@@ -259,7 +326,7 @@ More recently, an alternative visualization tool for high-dimensional biological
 \begin{figure}[h!]
 \begin{adjustwidth}{0in}{0in}
     \centering
-    % \includegraphics[width=5.2in]{submissions/plos/figures/Fig1_rev2.png}
+    \includegraphics[width=5.2in]{submissions/plos/figures/Fig1_rev2.png}
     \caption{\textbf{\textit{F}-informed multidimensional scaling (MDS) for microbial ecology data analysis.} (a) Schematic overview of analyzing a dataset, represented as a design matrix $\mathbf{X}$ of $N$ samples with $S$ features or taxa. In a balanced design, samples are grouped by $a$ replicates of the same experimental condition. Note that compositionality requires that the summation of elements $x_{ij}$ across features is fixed or independent of a feature $j$ (e.g., 1). Exploratory analysis of $\mathbf{X}$ is performed through its ordination, followed by statistical inference, including hypothesis testing (e.g., PERMANOVA) or differential abundance analysis. (b) Computational process diagram of reducing the dimensionality of $\mathbf{X}$ using label set $\mathbf{y}$ for visualization, ensuring compliance with inference results based on the $F$-statistic.}
     \label{fig:intro}
 \end{adjustwidth}
@@ -343,7 +410,7 @@ p = \frac{1}{K}\,\sum_{k=1}^{K}\1\{F^{\Pi_k}\geq F\}.
 \paragraph*{Proposal of $F$-informed MDS.}
 To incorporate hypothesis testing into MDS analysis, we developed a weakly supervised learning method (Fig \ref{fig:intro}B).
 First, a two-dimensional representation was initialized by computing metric MDS (i.e., an unsupervised step).
-Next, the representation points were iteratively adjusted so that the $p$-value calculated in 2D space matches to the original PERMANOVA $p$-value.
+Next, the representation points were iteratively adjusted so that the $p$-value calculated in 2D space \DIFdelbegin \DIFdel{converged }\DIFdelend \DIFaddbegin \hl{matches} \DIFaddend to the original PERMANOVA $p$-value.
 This was achieved by defining an objective function in which a new confirmatory term was added to the raw stress,
 \begin{equation} \label{eq:fmds}
     O_{\rm FMDS}(\mathbf{Z}) \sim
@@ -502,7 +569,8 @@ Two new metrics were also defined and used, which we termed as $F$-correlation a
 \end{equation}
 with $\text{corr}(\cdot,\cdot)$ denoting the Pearson coefficient between two random variables and superscript $\Pi$ indicating a permutation of group labels $\mathbf{y}$.
 
-Experiments were performed using R via RStudio either on Apple M3 chip with 16 GB of RAM, or on 128-thread IBM POWER9 CPU with 256 GB of RAM at the MIT Office of Research Computing and Data. Datasets are publicly available on Dryad at https://doi.org/10.5061/dryad.vmcvdnd3x \cite{Kim25}.
+Experiments were performed using R via RStudio either on Apple M3 chip with 16 GB of RAM, or on 128-thread IBM POWER9 CPU with 256 GB of RAM at the MIT Office of Research Computing and Data.
+Datasets are publicly available on Dryad at https://doi.org/10.5061/dryad.vmcvdnd3x \cite{Kim25}.
 
 
 
@@ -532,34 +600,34 @@ Replicate 3 & 0.041 & 0.991 & 0.027 & 0.915 & 0.026 & 0.995 & 0.047 & 0.809\\ \h
 Tracking changes in the $F$-MDS representation over training epochs indicated that a minimal hyperparameter value and a stopping rule were required for the majorization algorithm to minimize the objective function (Fig \ref{fig:sim_iter}A). In semisynthetic datasets generated with SparseDOSSA, we observed a gradual decrease in $p_\mathbf{z}$-value and $O_{\rm FMDS}(\mathbf{Z})$ over successive epochs. 
 When training continued without a stopping rule, $p_\mathbf{z}$-values oscillated between 0 and 1, with a higher oscillation rate at larger $\lambda$ (\nameref{fig:sim_fmds_track}A). 
 The stopping rule was therefore defined to trigger once $p_\mathbf{z}$ approached $p_\mathbf{x}$ closely and their difference was minimized (\nameref{sec:app2}). 
-Under this rule, the algorithm stopped in fewer than 30 iterations when $\lambda\geq0.2$ (Fig \ref{fig:sim_iter}B). 
+Under this rule, the algorithm \DIFdelbegin \DIFdel{converged }\DIFdelend \DIFaddbegin \hl{stopped} \DIFaddend in fewer than 30 iterations when $\lambda\geq0.2$ (Fig \ref{fig:sim_iter}B). 
 Repeating the experiment across triplicate simulated datasets of varying sizes confirmed that $\lambda=0.15$ was the minimal value required for convergence and optimization (\nameref{fig:sim_fmds_track}B).
-Herein, ``convergence'' refers to satisfying the distributional matching criterion where $p_\mathbf{z}$ is close to $p_\mathbf{x}$, rather than asymptotic gradient zeroing. 
-To preserve convexity of the majorization form of $O_{\rm FMDS}(\mathbf{Z})$ with a positive quadratic coefficient, the hyperparameter was constrained to values not exceeding unity (Fig \ref{fig:sim_iter}C, \nameref{sec:app2}).
+\DIFaddbegin \DIFadd{Herein, ``convergence'' refers to satisfying the distributional matching criterion where $p_\mathbf{z}$ is close to $p_\mathbf{x}$, rather than asymptotic gradient zeroing. 
+}\DIFaddend To preserve convexity of the majorization form of $O_{\rm FMDS}(\mathbf{Z})$ with a positive quadratic coefficient, the hyperparameter was constrained to values not exceeding unity (Fig \ref{fig:sim_iter}C, \nameref{sec:app2}).
 
 
 \begin{figure}[h!]
     \centering
-    % \includegraphics[width=5.2in]{submissions/plos/figures/Fig2_rev.png}
-    \caption{\textbf{Majorization algorithm optimizes the \textit{F}-informed MDS objective function.} (A) Changes in each term comprising the objective function (Eq \ref{eq:fmds}), including raw stress and confirmatory terms, are plotted against the training epochs for different hyperparameter values $\lambda$. A semisynthetic dataset of $N=200$, replicate 1, was generated using SparseDOSSA \cite{Ma21} (see the ``Semisynthetic data'' section of the Methods). (B) The PERMANOVA $p$-value under two-dimensional representation ($p_\mathbf{z}$) is plotted against epoch and $\lambda$ until the stopping criteria are met. (C) Number of epochs until convergence is plotted against the hyperparameter, ranging between 0.2 and 1. Error bars indicate the standard deviation of triplicates.}
+    \includegraphics[width=5.2in]{submissions/plos/figures/Fig2_rev.png}
+    \caption{\textbf{Majorization algorithm optimizes the \textit{F}-informed MDS objective function.} (A) Changes in each term comprising the objective function (Eq \ref{eq:fmds}), including raw stress and confirmatory terms, are plotted against the training epochs for different hyperparameter values $\lambda$. A semisynthetic dataset of $N=200$, replicate 1, was generated using SparseDOSSA \cite{Ma21} (see the ``Semisynthetic data'' section of the Methods). (B) The PERMANOVA $p$-value under two-dimensional representation ($p_\mathbf{z}$) is plotted against epoch and $\lambda$ \DIFaddbeginFL \hl{until the stopping criteria are met}\DIFaddendFL . (C) Number of epochs until convergence is plotted against the hyperparameter, ranging between 0.2 and 1. Error bars indicate the standard deviation of triplicates.}
     \label{fig:sim_iter}
 \end{figure}
 
 
-After confirming the minimization of the objective with different hyperparameters, we next asked whether these values for $F$-MDS impacted its 2D representation. The visualizations were assessed using Shepard diagram and Stress, two quality metrics commonly used to evaluate how well an MDS representation preserves the distance structure from the original dimension (see \nameref{sec:methods}). Supervised MDS (superMDS \cite{witten11}) was chosen as a benchmark ordination method because its objective function is similarly controlled by a single hyperparameter $\alpha$ within the same range $[0,1]$, ensuring performance of its majorization algorithm. Shepard diagram analysis of these MDS methods showed that pairwise Euclidean distances deviated from the original structure in the two-dimensional representation to a greater extent when a nonzero hyperparameter was used. Interestingly, however, the change was more subtle in $F$-MDS (Fig \ref{fig:mds_eval_sim}A, \nameref{fig:sim_fmds_smds}A). 
+After confirming the \DIFdelbegin \DIFdel{convergence }\DIFdelend \DIFaddbegin \hl{minimization} \DIFaddend of the objective with different hyperparameters, we next asked whether these values for $F$-MDS impacted its 2D representation. The visualizations were assessed using Shepard diagram and Stress, two quality metrics commonly used to evaluate how well an MDS representation preserves the distance structure from the original dimension (see \nameref{sec:methods}). Supervised MDS (superMDS \cite{witten11}) was chosen as a benchmark ordination method because its objective function is similarly controlled by a single hyperparameter $\alpha$ within the same range $[0,1]$, ensuring \DIFdelbegin \DIFdel{convergence }\DIFdelend \DIFaddbegin \hl{performance} \DIFaddend of its majorization algorithm. Shepard diagram analysis of these MDS methods showed that pairwise Euclidean distances deviated from the original structure in the two-dimensional representation to a greater extent when a nonzero hyperparameter was used. Interestingly, however, the change was more subtle in $F$-MDS (Fig \ref{fig:mds_eval_sim}A, \nameref{fig:sim_fmds_smds}A). 
 
 To further compare structural deviations, we calculated the Pearson correlation coefficient from the Shepard plot as well as the normalized stress (i.e., Stress-1, Eq \ref{eq:mds_stress1}). The pairwise distances correlation consistently remained above $\sim\!0.4$ for all tested values of $\lambda$ in $F$-MDS, whereas superMDS showed a decrease in correlation coefficients to below than $0.1$ as $\alpha$ increased (Fig \ref{fig:mds_eval_sim}B, \nameref{fig:sim_fmds_smds}B). Similarly, the increase in Stress-1 due to a higher hyperparameter was 19.1-fold greater in superMDS than in $F$-MDS (Fig \ref{fig:mds_eval_sim}C, \nameref{fig:sim_fmds_smds}A). Together with previous results, these findings confirm that the proposed method retains the original distance information as effectively as metric MDS while being less dependent on the hyperparameter. At the same time, it successfully rearranges the 2D structure so that the groups become statistically distinct. 
 
 
 \begin{figure}[h!]
     \centering
-    % \includegraphics[width=5.2in]{submissions/plos/figures/Fig3_rev.png}
+    \includegraphics[width=5.2in]{submissions/plos/figures/Fig3_rev.png}
     \caption{\textbf{\textit{F}-informed MDS is robust to the choice of hyperparameters.} (A) Shepard plots comparing pairwise distances from $F$-informed MDS ($F$-MDS) and supervised MDS (superMDS) under both zero (metric MDS) and nonzero hyperparameter settings ($\lambda$, $\alpha=1$). Distances in the original high-dimensional space were computed using Bray-Curtis dissimilarity; distances in the two-dimensional embedding used Euclidean metric. (B) For each method, the Pearson correlation coefficient was calculated between original and embedded distances. (C) Normalized stress (Stress-1) was computed for each embedding. Analysis used semisynthetic datasets with $N=200$ (see the ``Semisynthetic data'' section of the Methods). Error bars indicate standard deviation across triplicate datasets.}
     \label{fig:mds_eval_sim}
 \end{figure}
 
 
-Based on the hyperparameter $\lambda$'s influence on the MDS configuration, a grid search was conducted to identify an optimal value. Prior analysis demonstrated a faster $F$-MDS optimization with larger $\lambda$ (Fig \ref{fig:sim_iter}C). To balance the epoch number against structural deviation while mitigating bias across the metrics, we defined an objective function $f_{\rm obj}(\lambda)$ via min-max normalization (\nameref{sec:app3_rev}). The loss function was evaluated over $\lambda$ between 0.15 and 1, where the performance was assured (\nameref{fig:fmds_gridsearch}A). Across semisynthetic datasets, the hyperparameter $\lambda$ that minimized $f_{\rm obj}(\lambda)$ was greater than or equal to 0.5 ($0.73\pm0.19$, mean $\pm$ s.d.; see \nameref{fig:fmds_gridsearch}B).
+Based on the hyperparameter $\lambda$'s influence on the MDS configuration, a grid search was conducted to identify an optimal value. Prior analysis demonstrated a faster $F$-MDS \DIFdelbegin \DIFdel{convergence }\DIFdelend \DIFaddbegin \hl{optimization} \DIFaddend with larger $\lambda$ (Fig \ref{fig:sim_iter}C). To balance the \DIFdelbegin \DIFdel{convergence rate }\DIFdelend \DIFaddbegin \DIFadd{epoch number }\DIFaddend against structural deviation while mitigating bias across the metrics, we defined an objective function $f_{\rm obj}(\lambda)$ via min-max normalization (\nameref{sec:app3_rev}). The loss function was evaluated over $\lambda$ between 0.15 and 1, where the \DIFdelbegin \DIFdel{convergence }\DIFdelend \DIFaddbegin \hl{performance} \DIFaddend was assured (\nameref{fig:fmds_gridsearch}A). Across semisynthetic datasets, the hyperparameter $\lambda$ that minimized $f_{\rm obj}(\lambda)$ was greater than or equal to 0.5 ($0.73\pm0.19$, mean $\pm$ s.d.; see \nameref{fig:fmds_gridsearch}B).
 
  
 \subsection*{Using different quality metrics confirms the consistent performance of $F$-MDS.}
@@ -574,7 +642,7 @@ For global structure preservation, MDS-based ordinations (e.g., metric MDS, $F$-
 
 \begin{figure}[h!]
     \centering
-    % \includegraphics[width=5.2in]{submissions/plos/figures/Fig4_rev.png}
+    \includegraphics[width=5.2in]{submissions/plos/figures/Fig4_rev.png}
     \caption{\textbf{Different quality metrics confirm consistent preservation of the semisynthetic data pattern with \textit{F}-informed MDS.} Six dimension reduction methods were evaluated to test their preservation of (A) local and (B) global structure by calculating trustworthiness and continuity using two nearest-neighbor numbers, $k=14$ (local), $k=150$ (global). The methods were also evaluated using (C) global distortion metrics (Stress-1 and Shepard diagram correlation) and (D) statistical inference metrics, including the ratio in statistical significance ($F$-rank-ratio) and correlation in $F$-ratios ($F$-correlation) using a randomly permuted label set. The following hyperparameters were applied to each method: $\lambda$ ($F$-MDS), number of neighbors $n$ (UMAP, supervised (-S) and unsupervised (-U)), perplexity ``perp'' (t-SNE), and the number of shortest dissimilarities $n$ (Isomap). Three semisynthetic datasets of $N=200$ were generated as described in section ``Semisynthetic data'' of Methods. The standard deviations were calculated and displayed with error bars.}
     \label{fig:eval_simul}
 \end{figure}
@@ -588,7 +656,7 @@ Similarly, UMAP-U and Isomap achieved the highest scores for preserving local ne
 
 \begin{figure}[h!]
     \centering
-    % \includegraphics[width=5.2in]{submissions/plos/figures/Fig5_rev.png}
+    \includegraphics[width=5.2in]{submissions/plos/figures/Fig5_rev.png}
     \caption{\textbf{Different quality metrics confirm consistent preservation of the algal microbiome pattern with \textit{F}-informed MDS.} Seven dimension reduction methods were evaluated for their preservation of (A) local and (B) global structure by calculating trustworthiness and continuity using two nearest neighbor numbers $k=3$ (local), $k=27$ (global). The methods were also assessed based on (C) global distortion metrics (Stress-1 and Shepard plot correlation) and (D) the ratio of $p$-values ($F$-rank-ratio) and correlation in $F$-ratios ($F$-correlation) using randomly permuted label set. A dataset of $N=36$ bacterial communities was analyzed as described in section ``Real microbiome community'' of Methods. The following hyperparameters were applied: $\lambda$ ($F$-MDS), number of neighbors $n_U$ (UMAP, supervised (-S) and unsupervised (-U)), perplexity ``perp'' (t-SNE), and the number of shortest dissimilarities $n_I$ (Isomap).}
     \label{fig:eval_real}
 \end{figure}
@@ -602,7 +670,7 @@ For the simulated dataset, we observed a shift in group centroids when hyperpara
 
 \begin{figure}[h!]
     \centering
-    % \includegraphics[width=5.2in]{submissions/plos/figures/Fig6_rev.png}
+    \includegraphics[width=5.2in]{submissions/plos/figures/Fig6_rev.png}
     \caption{\textbf{\textit{F}-informed MDS can visualize group-based data discrimination.} Two-dimensional representations of (A) a simulated dataset and (B) an algal microbiome dataset, generated using metric MDS and $F$-informed MDS ($F$-MDS) with two hyperparameter settings ($\lambda=$ 0.5, 1). Ellipses of respective colors are drawn with a confidence level of 0.68.}
     \label{fig:vis}
 \end{figure}
@@ -616,7 +684,7 @@ Similar trends were observed in the bacterial community dataset, where inter-gro
 
 \begin{figure}[h!]
     \centering
-    % \includegraphics[width=5.2in]{submissions/plos/figures/Fig7_rev.png}
+    \includegraphics[width=5.2in]{submissions/plos/figures/Fig7_rev.png}
     \caption{\textbf{Multi-class data is discriminated based on statistical inference.} Comparison of metric MDS and \textit{F}-informed MDS ($\lambda=0.5$) visualizations using a four-dimensional, three-class simulated dataset. Each dataset group follows normal distribution with the same covariance but different means (\nameref{fig:sim_ternary_vis}). Ellipses of respective colors are drawn with a confidence level of 0.68. Semisynthetic dataset of $N=75$ was generated (see the section ``Semisynthetic data'' of the Methods.)}
     \label{fig:vis_multiclass}
 \end{figure}
@@ -640,7 +708,8 @@ The authors acknowledge the MIT Office of Research Computing and Data for provid
 
 \nolinenumbers
 
-\bibliography{submissions/plos/refs}
+% \bibliography{submissions/plos/refs}
+\input{diff_main.bbl}
 
 
 \section*{Supporting Information Captions}
@@ -676,7 +745,7 @@ The authors acknowledge the MIT Office of Research Computing and Data for provid
 
 \paragraph*{S2 Fig.}
 \label{fig:sim_fmds_track}
-{\bf Stabiliity and trajectories of PERMANOVA $p$-values from $F$-MDS representations.}
+{\bf \DIFaddbegin \DIFadd{Stabiliity and trajectories of }\DIFaddend PERMANOVA $p$-values from $F$-MDS representations\DIFdelbegin \DIFdel{of semisynthetic datasets}\DIFdelend .}
 
 \paragraph*{S3 Fig.}
 \label{fig:sim_fmds_smds}
@@ -707,3 +776,4 @@ The authors acknowledge the MIT Office of Research Computing and Data for provid
 \textbf{Visualization of a ternary semisynthetic dataset.}
 
 \end{document}
+

@@ -343,7 +343,7 @@ p = \frac{1}{K}\,\sum_{k=1}^{K}\1\{F^{\Pi_k}\geq F\}.
 \paragraph*{Proposal of $F$-informed MDS.}
 To incorporate hypothesis testing into MDS analysis, we developed a weakly supervised learning method (Fig \ref{fig:intro}B).
 First, a two-dimensional representation was initialized by computing metric MDS (i.e., an unsupervised step).
-Next, the representation points were iteratively adjusted so that the $p$-value calculated in 2D space converged to the original PERMANOVA $p$-value.
+Next, the representation points were iteratively adjusted so that the $p$-value calculated in 2D space \hl{matches} to the original PERMANOVA $p$-value.
 This was achieved by defining an objective function in which a new confirmatory term was added to the raw stress,
 \begin{equation} \label{eq:fmds}
     O_{\rm FMDS}(\mathbf{Z}) \sim
@@ -502,7 +502,7 @@ Two new metrics were also defined and used, which we termed as $F$-correlation a
 \end{equation}
 with $\text{corr}(\cdot,\cdot)$ denoting the Pearson coefficient between two random variables and superscript $\Pi$ indicating a permutation of group labels $\mathbf{y}$.
 
-Experiments were performed using R via RStudio either on Apple M3 chip with 16 GB of RAM, or on 128-thread IBM POWER9 CPU with 256 GB of RAM at the MIT Office of Research Computing and Data.
+Experiments were performed using R via RStudio either on Apple M3 chip with 16 GB of RAM, or on 128-thread IBM POWER9 CPU with 256 GB of RAM at the MIT Office of Research Computing and Data. Datasets are publicly available on Dryad at https://doi.org/10.5061/dryad.vmcvdnd3x \cite{Kim25}.
 
 
 
@@ -532,19 +532,21 @@ Replicate 3 & 0.041 & 0.991 & 0.027 & 0.915 & 0.026 & 0.995 & 0.047 & 0.809\\ \h
 Tracking changes in the $F$-MDS representation over training epochs indicated that a minimal hyperparameter value and a stopping rule were required for the majorization algorithm to minimize the objective function (Fig \ref{fig:sim_iter}A). In semisynthetic datasets generated with SparseDOSSA, we observed a gradual decrease in $p_\mathbf{z}$-value and $O_{\rm FMDS}(\mathbf{Z})$ over successive epochs. 
 When training continued without a stopping rule, $p_\mathbf{z}$-values oscillated between 0 and 1, with a higher oscillation rate at larger $\lambda$ (\nameref{fig:sim_fmds_track}A). 
 The stopping rule was therefore defined to trigger once $p_\mathbf{z}$ approached $p_\mathbf{x}$ closely and their difference was minimized (\nameref{sec:app2}). 
-Under this rule, the algorithm converged in fewer than 30 iterations when $\lambda\geq0.2$ (Fig \ref{fig:sim_iter}B). 
-Repeating the experiment across triplicate simulated datasets of varying sizes confirmed that $\lambda=0.15$ was the minimal value required for convergence and optimization (\nameref{fig:sim_fmds_track}B). To preserve convexity of the majorization form of $O_{\rm FMDS}(\mathbf{Z})$ with a positive quadratic coefficient, the hyperparameter was constrained to values not exceeding unity (Fig \ref{fig:sim_iter}C, \nameref{sec:app2}).
+Under this rule, the algorithm \hl{stopped} in fewer than 30 iterations when $\lambda\geq0.2$ (Fig \ref{fig:sim_iter}B). 
+Repeating the experiment across triplicate simulated datasets of varying sizes confirmed that $\lambda=0.15$ was the minimal value required for convergence and optimization (\nameref{fig:sim_fmds_track}B).
+Herein, ``convergence'' refers to satisfying the distributional matching criterion where $p_\mathbf{z}$ is close to $p_\mathbf{x}$, rather than asymptotic gradient zeroing. 
+To preserve convexity of the majorization form of $O_{\rm FMDS}(\mathbf{Z})$ with a positive quadratic coefficient, the hyperparameter was constrained to values not exceeding unity (Fig \ref{fig:sim_iter}C, \nameref{sec:app2}).
 
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=5.2in]{submissions/plos/figures/Fig2_rev.png}
-    \caption{\textbf{Majorization algorithm optimizes the \textit{F}-informed MDS objective function.} (A) Changes in each term comprising the objective function (Eq \ref{eq:fmds}), including raw stress and confirmatory terms, are plotted against the training epochs for different hyperparameter values $\lambda$. A semisynthetic dataset of $N=200$, replicate 1, was generated using SparseDOSSA \cite{Ma21} (see the ``Semisynthetic data'' section of the Methods). (B) The PERMANOVA $p$-value under two-dimensional representation ($p_\mathbf{z}$) is plotted against epoch and $\lambda$. (C) Number of epochs until convergence is plotted against the hyperparameter, ranging between 0.2 and 1. Error bars indicate the standard deviation of triplicates.}
+    \caption{\textbf{Majorization algorithm optimizes the \textit{F}-informed MDS objective function.} (A) Changes in each term comprising the objective function (Eq \ref{eq:fmds}), including raw stress and confirmatory terms, are plotted against the training epochs for different hyperparameter values $\lambda$. A semisynthetic dataset of $N=200$, replicate 1, was generated using SparseDOSSA \cite{Ma21} (see the ``Semisynthetic data'' section of the Methods). (B) The PERMANOVA $p$-value under two-dimensional representation ($p_\mathbf{z}$) is plotted against epoch and $\lambda$ \hl{until the stopping criteria are met}. (C) Number of epochs until convergence is plotted against the hyperparameter, ranging between 0.2 and 1. Error bars indicate the standard deviation of triplicates.}
     \label{fig:sim_iter}
 \end{figure}
 
 
-After confirming the convergence of the objective with different hyperparameters, we next asked whether these values for $F$-MDS impacted its 2D representation. The visualizations were assessed using Shepard diagram and Stress, two quality metrics commonly used to evaluate how well an MDS representation preserves the distance structure from the original dimension (see \nameref{sec:methods}). Supervised MDS (superMDS \cite{witten11}) was chosen as a benchmark ordination method because its objective function is similarly controlled by a single hyperparameter $\alpha$ within the same range $[0,1]$, ensuring convergence of its majorization algorithm. Shepard diagram analysis of these MDS methods showed that pairwise Euclidean distances deviated from the original structure in the two-dimensional representation to a greater extent when a nonzero hyperparameter was used. Interestingly, however, the change was more subtle in $F$-MDS (Fig \ref{fig:mds_eval_sim}A, \nameref{fig:sim_fmds_smds}A). 
+After confirming the \hl{minimization} of the objective with different hyperparameters, we next asked whether these values for $F$-MDS impacted its 2D representation. The visualizations were assessed using Shepard diagram and Stress, two quality metrics commonly used to evaluate how well an MDS representation preserves the distance structure from the original dimension (see \nameref{sec:methods}). Supervised MDS (superMDS \cite{witten11}) was chosen as a benchmark ordination method because its objective function is similarly controlled by a single hyperparameter $\alpha$ within the same range $[0,1]$, ensuring \hl{performance} of its majorization algorithm. Shepard diagram analysis of these MDS methods showed that pairwise Euclidean distances deviated from the original structure in the two-dimensional representation to a greater extent when a nonzero hyperparameter was used. Interestingly, however, the change was more subtle in $F$-MDS (Fig \ref{fig:mds_eval_sim}A, \nameref{fig:sim_fmds_smds}A). 
 
 To further compare structural deviations, we calculated the Pearson correlation coefficient from the Shepard plot as well as the normalized stress (i.e., Stress-1, Eq \ref{eq:mds_stress1}). The pairwise distances correlation consistently remained above $\sim\!0.4$ for all tested values of $\lambda$ in $F$-MDS, whereas superMDS showed a decrease in correlation coefficients to below than $0.1$ as $\alpha$ increased (Fig \ref{fig:mds_eval_sim}B, \nameref{fig:sim_fmds_smds}B). Similarly, the increase in Stress-1 due to a higher hyperparameter was 19.1-fold greater in superMDS than in $F$-MDS (Fig \ref{fig:mds_eval_sim}C, \nameref{fig:sim_fmds_smds}A). Together with previous results, these findings confirm that the proposed method retains the original distance information as effectively as metric MDS while being less dependent on the hyperparameter. At the same time, it successfully rearranges the 2D structure so that the groups become statistically distinct. 
 
@@ -557,7 +559,7 @@ To further compare structural deviations, we calculated the Pearson correlation 
 \end{figure}
 
 
-Based on the hyperparameter $\lambda$'s influence on the MDS configuration, a grid search was conducted to identify an optimal value. Prior analysis demonstrated a faster $F$-MDS convergence with larger $\lambda$ (Fig \ref{fig:sim_iter}C). To balance the convergence rate against structural deviation while mitigating bias across the metrics, we defined an objective function $f_{\rm obj}(\lambda)$ via min-max normalization (\nameref{sec:app3_rev}). The loss function was evaluated over $\lambda$ between 0.15 and 1, where the convergence was assured (\nameref{fig:fmds_gridsearch}A). Across semisynthetic datasets, the hyperparameter $\lambda$ that minimized $f_{\rm obj}(\lambda)$ was greater than or equal to 0.5 ($0.73\pm0.19$, mean $\pm$ s.d.; see \nameref{fig:fmds_gridsearch}B).
+Based on the hyperparameter $\lambda$'s influence on the MDS configuration, a grid search was conducted to identify an optimal value. Prior analysis demonstrated a faster $F$-MDS \hl{optimization} with larger $\lambda$ (Fig \ref{fig:sim_iter}C). To balance the epoch number against structural deviation while mitigating bias across the metrics, we defined an objective function $f_{\rm obj}(\lambda)$ via min-max normalization (\nameref{sec:app3_rev}). The loss function was evaluated over $\lambda$ between 0.15 and 1, where the \hl{performance} was assured (\nameref{fig:fmds_gridsearch}A). Across semisynthetic datasets, the hyperparameter $\lambda$ that minimized $f_{\rm obj}(\lambda)$ was greater than or equal to 0.5 ($0.73\pm0.19$, mean $\pm$ s.d.; see \nameref{fig:fmds_gridsearch}B).
 
  
 \subsection*{Using different quality metrics confirms the consistent performance of $F$-MDS.}
